@@ -57,7 +57,7 @@ PASS = your_password_on_mysql_workbench;
 DATABASE = your_schema_name_on_mysql_workbench;
 ```
 
-I implemented these values on MySQL workbench. I'm sure there are other ways to do this. For the DATABASE, enter your local instance and create a new schema on the Schema window on the right.
+I implemented these values on MySQL workbench. I'm sure there are other ways to do this. For the DATABASE, enter your local instance and create a new schema on the Schema window on the left.
 
 ### Starting the program
 
