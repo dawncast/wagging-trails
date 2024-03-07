@@ -25,8 +25,6 @@ Make sure to install everything first in the src directory.
 npm install
 ```
 
-We are currently using _nodemon_ for fast prototyping. It restarts the program everytime we update the codebase.
-
 ## Directory
 
 ```
@@ -51,12 +49,12 @@ Currently, we have only set up the template for the backend of the project. Ther
 
 ### Setting up your .env file
 
-create a file called .env in your src directory.
+Create a file called .env in your src directory. We just need to have the data for back-end for now.
 
 ```javascript
-USER = your - username - on - mysql - workbench;
-PASS = your - password - on - mysql - workbench;
-DATABASE = your - schema - name - on - mysql - workbench;
+USER = your_username_on_mysql_workbench;
+PASS = your_password_on_mysql_workbench;
+DATABASE = your_schema_name_on_mysql_workbench;
 ```
 
 I implemented these values on MySQL workbench. I'm sure there are other ways to do this. For the DATABASE, enter your local instance and create a new schema on the Schema window on the right.
@@ -84,7 +82,7 @@ Server running at http://localhost:8800/
 Connection pool started
 ```
 
-We are currently using the localhost port 8800, but we can change it later after prototyping.
+We will be using _nodemon_ for fast prototyping. It restarts the program everytime we update the codebase. The deployment for now would also be in localhost port 8800, but we can change it later after prototyping.
 
 ## Developing Entities
 
@@ -148,7 +146,7 @@ Service files' complexity will depend on how complex the schemas are. There woul
 
 1. **Initialization:** To instantly create tables without touching the workbench. The number of tables you create here depends on how many tables created after normalization.
 
-2. **Destroying Tables:** _I currently haven't implemented this yet._
+2. **Destroying Tables:** _I haven't implemented this yet._
 
 3. **Request Implementations:** Mostly the bulk of the work. The number of functions to be implemented will depend on how many functions created in the controller file.
 
