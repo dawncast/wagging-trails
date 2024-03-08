@@ -5,7 +5,7 @@ dotenv.config();
 console.log(mysql);
 
 const dbConfig = {
-  host: "127.0.0.1",
+  host: "localhost",
   user: process.env.USER,
   password: process.env.PASS,
   database: process.env.DATABASE,
