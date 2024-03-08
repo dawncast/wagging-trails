@@ -2,14 +2,17 @@ import mysql from "mysql";
 import dotenv from "dotenv";
 dotenv.config();
 
+console.log(mysql);
+
 const dbConfig = {
-  host: "localhost",
+  host: "127.0.0.1",
   user: process.env.USER,
   password: process.env.PASS,
   database: process.env.DATABASE,
   connectionLimit: 3,
   connectTimeout: 60 * 1000,
   multipleStatements: true,
+  port: 3306,
 };
 
 const pool = mysql.createPool(dbConfig);
