@@ -1,6 +1,6 @@
 # Development Guide README
 
-This will be a detailed guide for our team to create the project within format and done efficiently. Currently only for back-end development. 
+This will be a detailed guide for our team to create the project within format and done efficiently. Currently only for back-end development.
 
 ## Setting Up
 
@@ -162,12 +162,45 @@ async function fetchFromDB() {
 
   return new Promise((resolve, reject) => {
     // does the query to the database.
-    pool.query(query, (err, connection) => {
-      // after doing the query, you can do other queries inside
-      // and/or check if the connection is erroneous.
+    pool.query(query, (err, res) => {
+      // after doing the query, you can check if the connection is
+      // erroneous. And example would be:
+      if (err) return reject(err);
 
       // if everything was successful, resolve makes it send a success flag.
-      resolve(connection);
+      resolve(res);
+    });
+  });
+}
+```
+
+For other functions that needed more than one queries, you should first use **pool.getConnection()** instead of **pool.query()**, then have an async function called **executeQueries()** to do the queries you need. Here is an example:
+
+```javascript
+// Function called from a router.get()
+async function fetchFromDB() {
+  return new Promise((resolve, reject) => {
+    // establish the connection.
+    pool.connection(query, (err, res) => {
+      // add the queries here using an async function
+      const executeQueries = async () => {
+        // a try-catch method is optional but recommended
+        // as long as if it's successful, have a resolve() value
+        // at the end
+        try {
+          // Do the query
+          const contactQuery = "INSERT INTO R (a) VALUES (?)";
+          const contactValues = [b];
+          await connection.query(contactQuery, contactValues);
+          // if it works out, return.
+          resolve(true);
+        } catch (error) {
+          reject(error);
+        } finally {
+          // always release the connection after.
+          connection.release();
+        }
+      };
     });
   });
 }
