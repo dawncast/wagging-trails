@@ -6,7 +6,7 @@ import pool from "./databaseService.js";
  */
 async function fetchOwnersFromDB() {
   return new Promise((resolve, reject) => {
-    pool.query("SELECT * FROM test.owner", (error, results, fields) => {
+    pool.query("SELECT * FROM owner", (error, results, fields) => {
       if (error) {
         reject(error);
         return;
@@ -76,7 +76,7 @@ async function insertOwner(email, firstName, lastName, phoneNumber) {
           await connection.query("START TRANSACTION");
 
           // Owner BASE Query Data
-          const ownerQuery = "INSERT INTO test.Owner (email) VALUES (?)";
+          const ownerQuery = "INSERT INTO Owner (email) VALUES (?)";
           const ownerValues = [email];
           await new Promise((resolve, reject) => {
             connection.query(ownerQuery, ownerValues, (err, res) => {
@@ -89,14 +89,14 @@ async function insertOwner(email, firstName, lastName, phoneNumber) {
           }).then(async (ownerID) => {
             // Owner NAME Query Data (connected to BASE due to dependency)
             const nameQuery =
-              "INSERT INTO test.Owner_Name (ownerID, firstName, lastName) VALUES (?, ?, ?)";
+              "INSERT INTO Owner_Name (ownerID, firstName, lastName) VALUES (?, ?, ?)";
             const nameValues = [ownerID, firstName, lastName];
             await connection.query(nameQuery, nameValues);
           });
 
           // Owner CONTACT Query Data
           const contactQuery =
-            "INSERT INTO test.Owner_Contact (email, phoneNumber) VALUES (?, ?)";
+            "INSERT INTO Owner_Contact (email, phoneNumber) VALUES (?, ?)";
           const contactValues = [email, phoneNumber];
           await connection.query(contactQuery, contactValues);
 
