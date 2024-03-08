@@ -1,10 +1,10 @@
 # Development Guide README
 
-This will be a detailed guide for our team to create the project within format and done efficiently. Currently only for back-end development.
+This will be a detailed guide for our team to create the project within format and done efficiently. Currently only for back-end development. 
 
 ## Setting Up
 
-### Applications
+### Applications Used
 
 Not really required, but makes it easier to develop the back-end.
 
