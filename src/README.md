@@ -158,7 +158,7 @@ These are mainly asynchronous functions. In a very high-level explanation, the c
 // Function called from a router.get()
 async function fetchFromDB() {
   // write your query here:
-  const query = "SELECT * FROM schema-name.table";
+  const query = "SELECT * FROM table-name";
 
   return new Promise((resolve, reject) => {
     // does the query to the database.
