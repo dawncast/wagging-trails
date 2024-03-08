@@ -51,10 +51,10 @@ Currently, we have only set up the template for the backend of the project. Ther
 
 Create a file called .env in your src directory. We just need to have the data for back-end for now.
 
-```javascript
-USER = your_username_on_mysql_workbench;
-PASS = your_password_on_mysql_workbench;
-DATABASE = your_schema_name_on_mysql_workbench;
+```
+USER=your_username_on_mysql_workbench
+PASS=your_password_on_mysql_workbench
+DATABASE=your_schema_name_on_mysql_workbench
 ```
 
 I implemented these values on MySQL workbench. I'm sure there are other ways to do this. For the DATABASE, enter your local instance and create a new schema on the Schema window on the left.
