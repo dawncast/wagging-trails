@@ -1,43 +1,31 @@
-import mysql from "mysql";
+import path from "path";
 import dotenv from "dotenv";
+import pg from "pg";
+
+const { Pool } = pg;
 dotenv.config();
 
-console.log(mysql);
 
+// Database connection configuration
 const dbConfig = {
-  host: "localhost",
   user: process.env.USER,
-  password: process.env.PASS,
+  password: process.env.PASSWORD,
+  host: process.env.HOST,
+  port: process.env.PORT,
   database: process.env.DATABASE,
-  connectionLimit: 3,
-  connectTimeout: 60 * 1000,
-  multipleStatements: true,
-  port: 3306,
 };
 
-const pool = mysql.createPool(dbConfig);
+// Create a new PostgreSQL client
+const pool = new Pool(dbConfig);
 
-pool.getConnection((err, connection) => {
-  if (err) {
-    console.error("Initialization error: " + err.message);
-    return;
+(async () => {
+  try {
+    const { rows } = await pool.query("SELECT current_user");
+    const currentUser = rows[0]["current_user"];
+    console.log("Current user:", currentUser);
+  } catch (err) {
+    console.error("Error executing query", err);
   }
-  console.log("Connection pool started");
-  connection.release();
-});
-
-function closePoolAndExit() {
-  console.log("\nTerminating pool");
-  pool.end((err) => {
-    if (err) {
-      console.error("Error on closing pool: " + err.message);
-      process.exit(1);
-    }
-    console.log("Pool closed");
-    process.exit(0);
-  });
-}
-
-process.once("SIGTERM", closePoolAndExit).once("SIGINT", closePoolAndExit);
+})();
 
 export default pool;
