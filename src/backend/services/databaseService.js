@@ -5,7 +5,6 @@ import pg from "pg";
 const { Pool } = pg;
 dotenv.config();
 
-
 // Database connection configuration
 const dbConfig = {
   user: process.env.USER,
@@ -27,5 +26,12 @@ const pool = new Pool(dbConfig);
     console.error("Error executing query", err);
   }
 })();
+
+// Close the pool when the Node.js process terminates
+process.on("SIGINT", () => {
+  pool.end();
+  console.log("Pool Terminated");
+  process.exit();
+});
 
 export default pool;
