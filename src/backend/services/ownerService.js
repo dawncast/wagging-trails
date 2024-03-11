@@ -15,8 +15,9 @@ import pool from "./databaseService.js";
 async function fetchOwnersFromDB() {
   try {
     const client = await pool.connect();
-    await client.query("SELECT * FROM Owner");
+    const result = await client.query("SELECT * FROM Owner");
     client.release();
+    return result.rows;
   } catch (error) {
     console.error("Error fetching owners from the database:", error);
     throw error;
