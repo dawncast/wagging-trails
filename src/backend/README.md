@@ -223,7 +223,7 @@ It might be better (or you need to) insert something in a compound manner becaus
 A high-level explanation would be like this:
 
 ```javascript
-async function insertOwner(a, b, c) {
+async function insertToR(a, b, c) {
   let client;
   try {
     client = await pool.connect();
