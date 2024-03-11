@@ -1,58 +1,62 @@
 import pool from "./databaseService.js";
 
 /**
+ * DEV NOTE: This service file currently contains basic
+ * SQL select, drop/create table, update functions
+ * that you can use to template more complex queries.
+ *
+ * It should be a bit more easier to read than last time.
+ */
+
+/**
  * Fetches Owner(id, email). Use this to template fetch functions.
  * @returns results
  */
 async function fetchOwnersFromDB() {
-  return new Promise((resolve, reject) => {
-    pool.query("SELECT * FROM owner", (error, results, fields) => {
-      if (error) {
-        reject(error);
-        return;
-      }
-      resolve(results);
-    });
-  });
+  try {
+    const client = await pool.connect();
+    await client.query("SELECT * FROM Owner");
+    client.release();
+  } catch (error) {
+    console.error("Error fetching owners from the database:", error);
+    throw error;
+  }
 }
 
 /**
  * Initializes three normalized, owner tables.
- * Use this when your database does not have this table yet.
+ * Drops existing tables to have a fresh set of tables.
+ * For testing, you can use this to refresh your tables.
+ * (eg. your compound insert statement got an error and
+ * only inserted 2/4 normalized tables)
  *
  * @returns true or error message.
  */
 async function initiateOwners() {
+  // Add the tables you want to create.
   const createTableQueries = [
-    "CREATE TABLE IF NOT EXISTS Owner (ownerID INTEGER SERIAL PRIMARY KEY, email VARCHAR(255) UNIQUE NOT NULL)",
-    "CREATE TABLE IF NOT EXISTS Owner_Name (ownerID INTEGER PRIMARY KEY, firstName VARCHAR(255) NOT NULL, lastName VARCHAR(255) NOT NULL, FOREIGN KEY (ownerID) REFERENCES Owner (ownerID) ON DELETE CASCADE)",
-    "CREATE TABLE IF NOT EXISTS Owner_Contact (email VARCHAR(255) PRIMARY KEY, phoneNumber VARCHAR(255) UNIQUE, FOREIGN KEY (email) REFERENCES Owner (email) ON DELETE CASCADE ON UPDATE CASCADE)",
+    "Owner (ownerID SERIAL PRIMARY KEY, email VARCHAR(255) UNIQUE NOT NULL)",
+    "Owner_Name (ownerID INTEGER PRIMARY KEY, firstName VARCHAR(255) NOT NULL, lastName VARCHAR(255) NOT NULL, FOREIGN KEY (ownerID) REFERENCES Owner (ownerID) ON DELETE CASCADE)",
+    "Owner_Contact (email VARCHAR(255) PRIMARY KEY, phoneNumber VARCHAR(255) UNIQUE, FOREIGN KEY (email) REFERENCES Owner (email) ON DELETE CASCADE ON UPDATE CASCADE)",
   ];
-  return new Promise((resolve, reject) => {
-    pool.getConnection((err, connection) => {
-      if (err) {
-        reject(err);
-        return;
-      }
 
-      const executeQueries = async () => {
-        // all queries will be executed here.
-        for (const query of createTableQueries) {
-          try {
-            await connection.query(query);
-          } catch (error) {
-            reject(error);
-            return;
-          }
-        }
-        resolve(true);
-      };
+  // Add the table names tht should be dropped. Should be the same tables on createTableQueries.
+  const dropTables = ["Owner_Name", "Owner_Contact", "Owner"]; // Make sure the order is Dependent->Source. Remove tables that depends on another table.
 
-      executeQueries().finally(() => {
-        connection.release(); // Release the connection
-      });
-    });
-  });
+  try {
+    const client = await pool.connect();
+    for (const table of dropTables) {
+      await client.query(`DROP TABLE IF EXISTS ${table}`);
+    }
+    for (const query of createTableQueries) {
+      await client.query(`CREATE TABLE IF NOT EXISTS ${query}`);
+    }
+    client.release();
+    return true;
+  } catch (error) {
+    console.error("Error initializing owners:", error);
+    throw error;
+  }
 }
 
 //----------------------------------------------------------------
@@ -60,60 +64,46 @@ async function initiateOwners() {
 // This is a large, compound insert function for three tables.
 // (Owner, Owner_Name, Owner_Contact). This was constructed
 // in a way the dependencies needed for Owner_Name is satisfied.
-// To group, look for simpler insertions if this confuses you.
+// Use this method to construct the normalized tables when
+// dependencies are needed.
 //----------------------------------------------------------------
 async function insertOwner(email, firstName, lastName, phoneNumber) {
-  return new Promise((resolve, reject) => {
-    pool.getConnection((err, connection) => {
-      if (err) {
-        reject(err);
-        return;
-      }
+  let client;
+  try {
+    client = await pool.connect();
 
-      const executeQueries = async () => {
-        try {
-          // Start transaction
-          await connection.query("START TRANSACTION");
+    // Start transaction
+    await client.query("BEGIN");
 
-          // Owner BASE Query Data
-          const ownerQuery = "INSERT INTO Owner (email) VALUES (?)";
-          const ownerValues = [email];
-          await new Promise((resolve, reject) => {
-            connection.query(ownerQuery, ownerValues, (err, res) => {
-              if (err) {
-                reject(err);
-                return;
-              }
-              resolve(res.insertId);
-            });
-          }).then(async (ownerID) => {
-            // Owner NAME Query Data (connected to BASE due to dependency)
-            const nameQuery =
-              "INSERT INTO Owner_Name (ownerID, firstName, lastName) VALUES (?, ?, ?)";
-            const nameValues = [ownerID, firstName, lastName];
-            await connection.query(nameQuery, nameValues);
-          });
+    const ownerInsertQuery =
+      "INSERT INTO Owner (email) VALUES ($1) RETURNING ownerID"; // RETURNING ownerID gets the ownerID for Owner_Name to use.
+    const ownerInsertValues = [email];
+    const ownerResult = await client.query(ownerInsertQuery, ownerInsertValues);
+    const ownerID = ownerResult.rows[0].ownerid;
 
-          // Owner CONTACT Query Data
-          const contactQuery =
-            "INSERT INTO Owner_Contact (email, phoneNumber) VALUES (?, ?)";
-          const contactValues = [email, phoneNumber];
-          await connection.query(contactQuery, contactValues);
+    const nameInsertQuery =
+      "INSERT INTO Owner_Name (ownerID, firstName, lastName) VALUES ($1, $2, $3)";
+    const nameInsertValues = [ownerID, firstName, lastName];
+    await client.query(nameInsertQuery, nameInsertValues);
 
-          // Commit the transaction
-          await connection.query("COMMIT");
-          resolve(true);
-        } catch (error) {
-          // Rollback the transaction in case of error
-          await connection.query("ROLLBACK");
-          reject(error);
-        } finally {
-          connection.release();
-        }
-      };
-      executeQueries();
-    });
-  });
+    const contactInsertQuery =
+      "INSERT INTO Owner_Contact (email, phoneNumber) VALUES ($1, $2)";
+    const contactInsertValues = [email, phoneNumber];
+    await client.query(contactInsertQuery, contactInsertValues);
+
+    // Commit the transaction
+    await client.query("COMMIT");
+    return true;
+  } catch (error) {
+    // Rollback the transaction in case of error
+    await client.query("ROLLBACK");
+    console.error("Error inserting owner:", error);
+    throw error;
+  } finally {
+    if (client) {
+      client.release();
+    }
+  }
 }
 
 /**
@@ -125,20 +115,18 @@ async function insertOwner(email, firstName, lastName, phoneNumber) {
  * @returns
  */
 async function updateOwnerName(ownerID, newFirstName, newLastName) {
-  return new Promise((resolve, reject) => {
-    pool.getConnection((err, connection) => {
-      if (err) {
-        reject(err);
-        return;
-      }
-      const query =
-        "UPDATE Owner_Name SET firstName = ?, lastName = ? WHERE ownerID = ?";
-      connection.query(query, [newFirstName, newLastName, ownerID], () => {
-        connection.release();
-        resolve(true);
-      });
-    });
-  });
+  try {
+    const client = await pool.connect();
+    const query =
+      "UPDATE owner_name SET firstName = $1, lastName = $2 WHERE ownerID = $3";
+    const values = [newFirstName, newLastName, ownerID];
+    await client.query(query, values);
+    client.release();
+    return true;
+  } catch (error) {
+    console.error("Error updating owner name:", error);
+    throw error;
+  }
 }
 
 /**
@@ -149,53 +137,36 @@ async function updateOwnerName(ownerID, newFirstName, newLastName) {
  * @returns
  */
 async function updateOwnerContact(ownerID, email, newPhoneNumber) {
-  return new Promise((resolve, reject) => {
-    pool.getConnection((err, connection) => {
-      if (err) {
-        reject(err);
-        return;
-      }
-      try {
-        // Start transaction
-        connection.query("START TRANSACTION");
-        const emailQuery = "UPDATE Owner SET email = ? WHERE ownerID = ?";
-        connection.query(emailQuery, [email, ownerID]);
+  let client;
+  try {
+    client = await pool.connect();
 
-        const phoneQuery =
-          "UPDATE Owner_Contact SET phoneNumber = ? WHERE email = ?";
-        connection.query(phoneQuery, [newPhoneNumber, email]);
-        // Commit the transaction
-        connection.query("COMMIT");
-        resolve(true);
-      } catch (error) {
-        // Rollback the transaction in case of error
-        connection.query("ROLLBACK");
-        reject(error);
-      } finally {
-        if (connection) {
-          connection.release();
-        }
-      }
-    });
-  });
+    // Start transaction
+    await client.query("BEGIN");
+
+    const emailQuery = "UPDATE owner SET email = $1 WHERE ownerID = $2";
+    const emailValues = [email, ownerID];
+    await client.query(emailQuery, emailValues);
+
+    const phoneQuery =
+      "UPDATE owner_contact SET phoneNumber = $1 WHERE email = $2";
+    const phoneValues = [newPhoneNumber, email];
+    await client.query(phoneQuery, phoneValues);
+
+    // Commit the transaction
+    await client.query("COMMIT");
+    return true;
+  } catch (error) {
+    // Rollback the transaction in case of error
+    await client.query("ROLLBACK");
+    console.error("Error updating owner contact:", error);
+    throw error;
+  } finally {
+    if (client) {
+      client.release();
+    }
+  }
 }
-
-// Test Async Function. Might be helpful for templating
-
-// async function test(id, title, desc, cover) {
-//   const query =
-//     "INSERT INTO test.books (id, title, `desc`, cover) VALUES (?, ? ,?, ?)";
-//   const values = [id, title, desc, cover];
-//   return new Promise((resolve, reject) => {
-//     pool.query(query, values, (error, results, fields) => {
-//       if (error) {
-//         reject(error);
-//         return;
-//       }
-//       resolve(results);
-//     });
-//   });
-// }
 
 export {
   fetchOwnersFromDB,

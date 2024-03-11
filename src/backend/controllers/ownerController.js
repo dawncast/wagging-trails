@@ -27,6 +27,7 @@ router.get("/", async (req, res) => {
 
 router.post("/initiate-owners", async (req, res) => {
   const initiateResult = await initiateOwners();
+  console.log("a");
   if (initiateResult) {
     res.json({ success: true });
   } else {
