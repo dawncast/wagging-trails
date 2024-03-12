@@ -69,6 +69,36 @@ This section will first have the development checklist per member, in which the 
 | | <ul><li>[ ] Frontend/Tailwind Layouting        | <ul><li>[x] Frontend setup   |
 |  | <ul><li>[ ] Persistent Storage Integration    | <ul><li>[ ] Media Storage Integration    |
 
+## Timeline
+**Week 1 [Mar 4 - 10]:** Setting up the code base.
+- Initial setup of PostgreSQL and React. Integration of the database to Node.js and Express.
+- Templating controller and service files.
+- Media storage integration I (documenting how to develop).
+
+**Week 2 [Mar 11-17]:** Easy tasks to gradually get in through development. More on functionalities.
+- Home Page (as it only needs to fetch the user’s owner and its friends posts then sort it to recent)
+- Owner’s friend list (also easy fetching and crud operations)
+- Side Menu Bar - Basic functionalities. Mainly working on search.
+- Notification Modal Window (to complement the menu bar)
+- Owner’s Post Page I - more for data retrieval and not media storage fetching.
+- The needed controller and service files for these functions.
+
+**Week 3 [Mar 18- 24]**: Developing the harder parts.
+- Owner’s Profile page I  (Finish edit profile, add friend, and link to friend list)
+- Media storage integration II (implementation)
+- Owner’s Post Page II (should be complete with media integration. Will also reflect on homepage)
+- Side Scheduling Bar I (Finish upcoming walks, plan forms and past walk with dropdown features)
+- Login page and functionality through persistent storage integration
+- Dog Modal Window I (Display needed data in a window)
+- The needed controller and service files for these functions
+
+**Week 4 [Mar 25 - 31]:** We should probably be nearly done at this point. Design stage.
+- Owner’s profile page II (finish this)
+- Scheduling Bar II (finish this)
+- Dog Modal Window II (finish this)
+- Styling
+
+**April 1 - 5:** Extra buffer days to catch up with pitfalls. Other than that: fix bugs, tasks, and more styling.
 
 ## Website Main Features Breakdown
 
