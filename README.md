@@ -32,9 +32,9 @@ The project is a social platform that manages outdoor, dog walking activities. T
 >- Axios (http request from node.js)
 >- Cors (for Connect/Express middleware)
 
-## Timeline and task/breakdown
+## Task/breakdown
 
-This section will first have the development checklist per member, in which the division of task was chosen to be end-to-end. Below it are the descriptions of the features needed for the application. This can be seen in the _milestone 3.pdf_ as well.
+This section will first have the development checklist per member, in which the division of task was chosen to be end-to-end. Below it are the timeline and descriptions of the features needed for the application. This can be seen in the _milestone 3.pdf_ as well.
 
 **Frontend Development**
 
