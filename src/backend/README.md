@@ -231,7 +231,7 @@ async function insertToR(a, b, c) {
     // Start transaction
     await client.query("BEGIN");
 
-    const R_1InsertQuery = "INSERT INTO R_1 (a) VALUES ($1) RETURNING ID"; // RETURNING ID gets the ID for R_1 to use. Do this is needed.
+    const R_1InsertQuery = "INSERT INTO R_1 (a) VALUES ($1) RETURNING ID"; // RETURNING ID gets the ID for R_1 to use. Do this if needed.
     const R_1InsertValues = [a];
     const R_1Result = await client.query(R_1InsertQuery, R_1InsertValues);
     const ID = R_1Result.rows[0].ID;
