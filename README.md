@@ -1,4 +1,17 @@
 
+### **_Group Log (3/13/2024)_
+Approved react-setup to main merge 
+
+FYI Branch Naming Conventions 
+
+- For a back-end service or controller -> service/branch-name
+- For a front-end feature -> feature/branch-name
+
+
+<br>
+
+
+
 ### **_Group Log (3/11/2024)_
 Please review frontend setup 1 pull request. I reorganized the directory.
 
