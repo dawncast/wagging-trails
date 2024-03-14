@@ -32,9 +32,19 @@ router.post("/insert-post", async (req, res) => {
 });
 
 // function to get all the data necessary for post page.
-router.get("/post-for-post-page", async (req, res) => {
-  const tableContent = await fetchDataForPostPage();
-  res.json({ data: tableContent });
+router.get("/:postID", async (req, res) => {
+  try {
+    const postID = req.params.postID;
+    const tableContent = await fetchDataForPostPage();
+    if (!tableContent) {
+      res.status(404).json({ error: "Post not found" });
+      return;
+    }
+    res.json({ data: tableContent });
+  } catch (err) {
+    console.error("Error retrieving post:", err);
+    res.status(500).json({ err: "Internal server error" });
+  }
 });
 
 export default router;

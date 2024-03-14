@@ -113,6 +113,11 @@ async function insertPost(walkID, content, tag) {
 async function fetchDataForPostPage() {
   try {
     const client = await pool.connect();
+    const query = `
+    SELECT
+    FROM
+    
+    `;
     const result = await client.query("");
     client.release();
     return result.rows;
