@@ -66,4 +66,43 @@ async function checkWalkTableExists() {
   }
 }
 
-export { walkSetup, checkWalkTableExists };
+async function insertWalk(location, date, distance) {
+  let client;
+  try {
+    client = await pool.connect();
+
+    // Start transaction
+    await client.query("BEGIN");
+
+    const walkInsertQuery =
+      "INSERT INTO Walk (location) VALUES ($1) RETURNING walkID";
+    const walkInsertValues = [location];
+    const walkResult = await client.query(walkInsertQuery, walkInsertValues);
+    const walkID = walkResult.rows[0].walkID;
+
+    const dateInsertQuery =
+      "INSERT INTO Walk_Date (walkID, date) VALUES ($1, $2)";
+    const dateInsertValues = [walkID, date];
+    await client.query(dateInsertQuery, dateInsertValues);
+
+    const distInsertQuery =
+      "INSERT INTO Walk_Dist (walkID, distance) VALUES ($1, $2)";
+    const distInsertValues = [walkID, distance];
+    await client.query(distInsertQuery, distInsertValues);
+
+    // Commit the transaction
+    await client.query("COMMIT");
+    return true;
+  } catch (error) {
+    // Rollback the transaction in case of error
+    await client.query("ROLLBACK");
+    console.error("Error inserting walk:", error);
+    throw error;
+  } finally {
+    if (client) {
+      client.release();
+    }
+  }
+}
+
+export { walkSetup, checkWalkTableExists, insertWalk };
