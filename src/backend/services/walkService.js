@@ -2,8 +2,9 @@ import pool from "./databaseService.js";
 
 async function walkSetup() {
   try {
+    // use this if there is a dependency.
     // const dependencyTableExist = await dependencyTableExists();
-    // if (!dependencyTableExist) await walkSetup();
+    // if (!dependencyTableExist) await dependencySetup();
 
     const validity = await initiateWalk();
     return validity;
