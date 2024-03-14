@@ -1,13 +1,13 @@
-import logo from "./logo.svg";
-import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import DisplayOwner from "./pages/DisplayOwner";
 import AddOwner from "./pages/AddOwner";
 import UpdateOwner from "./pages/UpdateOwner";
+import HomePage from "./pages/HomePage";
 
 function App() {
   return (
-    <div className="App">
+    <div>
+       <HomePage></HomePage>
       <BrowserRouter>
         <Routes>
           <Route path="/owners" element={<DisplayOwner />}></Route>
