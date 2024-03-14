@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import databaseController from "./controllers/databaseController.js";
 import ownerController from "./controllers/ownerController.js";
+import friendListController from "./controllers/friendListController.js";
 
 const app = express();
 const PORT = 8800; // adjust later
@@ -17,6 +18,7 @@ app.use(cors());
 // when creating a new entity. Don't forget to import.
 app.use("/", databaseController);
 app.use("/owner", ownerController);
+app.use("/friendList", friendListController);
 
 // Starting the server
 app.listen(PORT, () => {
