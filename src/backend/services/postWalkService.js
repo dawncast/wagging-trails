@@ -95,4 +95,31 @@ async function insertPost(walkID, content, tag) {
   }
 }
 
-export { postWalkSetup, insertPost };
+/**
+ * Fetches data from Owns_Dog(dogID, ownerID*), WentFor(dogID*, walkID*).
+ * On_Meetup(meetupID, walkID*), TaggedIn(dogID*, postID*),
+ * Post_Walk(content, tag) and Post_Media(postID*)
+ *
+ * To get:
+ * - photo or video
+ * - location
+ * - date
+ * - type (walk or meetup)
+ * - post content
+ * - tag
+ *
+ * @returns results
+ */
+async function fetchDataForPostPage() {
+  try {
+    const client = await pool.connect();
+    const result = await client.query("");
+    client.release();
+    return result.rows;
+  } catch (error) {
+    console.error("Error fetching data for post from the database:", error);
+    throw error;
+  }
+}
+
+export { postWalkSetup, insertPost, fetchDataForPostPage };

@@ -1,6 +1,10 @@
 import express from "express";
 
-import { postWalkSetup, insertPost } from "../services/postWalkService.js";
+import {
+  postWalkSetup,
+  insertPost,
+  fetchDataForPostPage,
+} from "../services/postWalkService.js";
 
 const router = express.Router();
 
@@ -25,6 +29,12 @@ router.post("/insert-post", async (req, res) => {
   } else {
     res.status(500).json({ success: false });
   }
+});
+
+// function to get all the data necessary for post page.
+router.get("/post-for-post-page", async (req, res) => {
+  const tableContent = await fetchDataForPostPage();
+  res.json({ data: tableContent });
 });
 
 export default router;
