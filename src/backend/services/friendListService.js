@@ -43,7 +43,7 @@ async function initiateOwners() {
     }
     }
 
-async function insertFriendship(ownerID1, ownerID2, date) {
+async function insertFriendship(ownerid1, ownerid2, dateoffriendship) {
     let client;
     try {
         client = await pool.connect();
@@ -53,8 +53,8 @@ async function insertFriendship(ownerID1, ownerID2, date) {
     
     
         const friendListInsertQuery =
-        "INSERT INTO Friendship (ownerID1, ownerID2, date) VALUES ($1, $2, $3)";
-        const friendListInsertValues = [ownerID1, ownerID2, date];
+        "INSERT INTO friendship (ownerid1, ownerid2, dateoffriendship) VALUES ($1, $2, $3)";
+        const friendListInsertValues = [ownerid1, ownerid2, dateoffriendship];
         await client.query(friendListInsertQuery, friendListInsertValues);
     
         // Commit the transaction

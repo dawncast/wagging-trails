@@ -18,7 +18,7 @@ app.use(cors());
 // when creating a new entity. Don't forget to import.
 app.use("/", databaseController);
 app.use("/owner", ownerController);
-app.use("/friendList", friendListController);
+app.use("/friend-list", friendListController);
 
 // Starting the server
 app.listen(PORT, () => {

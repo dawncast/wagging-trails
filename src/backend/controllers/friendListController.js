@@ -26,11 +26,11 @@ router.post("/initiate-owners", async (req, res) => {
     });
 
 router.post("/insert-friendship", async (req, res) => {
-    const { ownerID1, ownerID2, date } = req.body;
+    const { ownerid1, ownerid2, dateoffriendship } = req.body;
     const insertResult = await insertFriendship(
-        ownerID1,
-        ownerID2,
-        date
+        ownerid1,
+        ownerid2,
+        dateoffriendship
     );
     if (insertResult) {
         res.json({ success: true });
