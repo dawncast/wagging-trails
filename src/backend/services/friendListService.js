@@ -72,10 +72,40 @@ async function insertFriendship(ownerid1, ownerid2, dateoffriendship) {
     }
     }
 
+
+async function deleteFriendship(ownerid1, ownerid2) {
+    let client;
+    try {
+        client = await pool.connect();
+    
+        // Start transaction
+        await client.query("BEGIN");
+    
+    
+        const friendListDeleteQuery =
+        "DELETE FROM friendship WHERE ownerid1 = $1 AND ownerid2 = $2";
+        const friendListDeleteValues = [ownerid1, ownerid2];
+        await client.query(friendListDeleteQuery, friendListDeleteValues);
+    
+        // Commit the transaction
+        await client.query("COMMIT");
+        return true;
+    } catch (error) {
+        // Rollback the transaction in case of error
+        await client.query("ROLLBACK");
+        console.error("Error deleting friendship:", error);
+        throw error;
+    } finally {
+        if (client) {
+        client.release();
+        }
+    }
+    }   
+
     export {
         fetchFriendListFromDB,
         initiateOwners,
         insertFriendship,
-        //deleteFriendship,
+        deleteFriendship,
     }
     

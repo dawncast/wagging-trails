@@ -3,7 +3,7 @@ import {
   fetchFriendListFromDB,
   initiateOwners,
   insertFriendship,
-  //deleteFriendship,
+  deleteFriendship,
 
 } from "../services/friendListService.js";
 
@@ -33,6 +33,19 @@ router.post("/insert-friendship", async (req, res) => {
         dateoffriendship
     );
     if (insertResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+    });
+
+router.delete("/delete-friendship", async (req, res) => {
+    const { ownerid1, ownerid2} = req.body;
+    const deleteResult = await deleteFriendship(
+        ownerid1,
+        ownerid2,
+    );
+    if (deleteResult) {
         res.json({ success: true });
     } else {
         res.status(500).json({ success: false });
