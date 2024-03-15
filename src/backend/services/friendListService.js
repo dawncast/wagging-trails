@@ -52,10 +52,15 @@ async function insertFriendship(ownerid1, ownerid2, dateoffriendship) {
         await client.query("BEGIN");
     
     
-        const friendListInsertQuery =
+        const friendListInsertQuery1 =
         "INSERT INTO friendship (ownerid1, ownerid2, dateoffriendship) VALUES ($1, $2, $3)";
-        const friendListInsertValues = [ownerid1, ownerid2, dateoffriendship];
-        await client.query(friendListInsertQuery, friendListInsertValues);
+        const friendListInsertValues1 = [ownerid1, ownerid2, dateoffriendship];
+        await client.query(friendListInsertQuery1, friendListInsertValues1);
+
+        const friendListInsertQuery2 =
+        "INSERT INTO friendship (ownerid1, ownerid2, dateoffriendship) VALUES ($2, $1, $3)";
+        const friendListInsertValues2 = [ownerid1, ownerid2, dateoffriendship];
+        await client.query(friendListInsertQuery2, friendListInsertValues2);
     
         // Commit the transaction
         await client.query("COMMIT");
@@ -82,10 +87,15 @@ async function deleteFriendship(ownerid1, ownerid2) {
         await client.query("BEGIN");
     
     
-        const friendListDeleteQuery =
+        const friendListDeleteQuery1 =
         "DELETE FROM friendship WHERE ownerid1 = $1 AND ownerid2 = $2";
-        const friendListDeleteValues = [ownerid1, ownerid2];
-        await client.query(friendListDeleteQuery, friendListDeleteValues);
+        const friendListDeleteValues1 = [ownerid1, ownerid2];
+        await client.query(friendListDeleteQuery1, friendListDeleteValues1);
+
+        const friendListDeleteQuery2 =
+        "DELETE FROM friendship WHERE ownerid1 = $2 AND ownerid2 = $1";
+        const friendListDeleteValues2 = [ownerid1, ownerid2];
+        await client.query(friendListDeleteQuery2, friendListDeleteValues2);
     
         // Commit the transaction
         await client.query("COMMIT");
