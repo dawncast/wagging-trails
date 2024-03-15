@@ -1,49 +1,19 @@
-
-### **_Group Log (3/13/2024)_
-Approved merge from react-setup into main 
-
-FYI Branch Naming Conventions:
-
-- For a back-end service or controller -> service/branch-name
-- For a front-end feature -> feature/branch-name
-
-
-<br>
-
-
-
-### **_Group Log (3/11/2024)_
-Please review frontend setup 1 pull request. I reorganized the directory.
-
-Please note before merging, save your .env files for the backend and place it in _src/backend_. This is to separate node modules for the backend and the front end.
-
-Also, please install dependencies:
-
-```
-npm install
-
-```
-In both _src/backend_ and _src/client_.
-
-React will be deployed in localhost:3000, while fetching the data in localhost:8800.
-
-<br>
-
 # Wagging Trails: _project_f6o6r_o4l8z_z1f3s_
 
 A 304 Project by Delsther James Edralin, Sangita Dutta, and Aman Johal.
 For are more expanded breakdown of this README, see _milestone 3.pdf_.
 
 ## Project Description
+
 The project is a social platform that manages outdoor, dog walking activities. The domain of this project focuses on **pet wellbeing**, which relates to pet care, recreation, and health. This mainly caters for people that are dog owners and want to guarantee their dogs to receive consistent stimulation by regular walks.
 
 ### Stack and Libraries Used
->**Backend:** Node.js, Express, PostgreSQL<br><br>
->**Frontend:** React Native, JavaScript<br><br>
->**Other Libraries/Packages needed:**
->- Nodemon (prototyping)
->- Axios (http request from node.js)
->- Cors (for Connect/Express middleware)
+
+> **Backend:** Node.js, Express, PostgreSQL<br><br> >**Frontend:** React Native, JavaScript<br><br> >**Other Libraries/Packages needed:**
+>
+> - Nodemon (prototyping)
+> - Axios (http request from node.js)
+> - Cors (for Connect/Express middleware)
 
 ## Task/breakdown
 
@@ -51,44 +21,45 @@ This section will first have the development checklist per member, in which the 
 
 **Frontend Development**
 
-| Aman             | Sangita        | James           |
-|------------------------|-------------------|-------------------------|
-|<ul><li>[ ] Owner’s Friend List Page | <ul><li>[ ] Home/Newsfeed  | <ul><li>[ ] Owner’s Profile Page    |
-|<ul><li>[ ] Dog Modal Window       | <ul><li>[ ] Login Page        | <ul><li>[ ] Owner’s Post Page       |
-|  | <ul><li>[ ] Side Menu Bar     | <ul><li>[ ] Side Scheduling Bar     |
-|   | <ul><li>[ ] Notification Modal Window |   |
-
+| Aman                                 | Sangita                               | James                            |
+| ------------------------------------ | ------------------------------------- | -------------------------------- |
+| <ul><li>[ ] Owner’s Friend List Page | <ul><li>[ ] Home/Newsfeed             | <ul><li>[ ] Owner’s Profile Page |
+| <ul><li>[ ] Dog Modal Window         | <ul><li>[ ] Login Page                | <ul><li>[ ] Owner’s Post Page    |
+|                                      | <ul><li>[ ] Side Menu Bar             | <ul><li>[ ] Side Scheduling Bar  |
+|                                      | <ul><li>[ ] Notification Modal Window |                                  |
 
 **Backend Entity Functions Development**
 
-| Aman             | Sangita        | James           |
-|------------------------|-------------------|-------------------------|
-|<ul><li>[ ] `Owner` - for friend list       |<ul><li>[ ] `Owner` - for login and search      |<ul><li>[ ] `Owner` - for profile page     |
-|<ul><li>[ ] `Friendship` - for friend list |<ul><li>[ ] `Walk` - for scheduling bar and post |<ul><li>[ ] `Owns_Dog` - for profile page |
-|<ul><li>[ ] `Owns_Dog` - for dog window     |<ul><li>[ ] `Post_Walk` - for post              |<ul><li>[ ] `Walk` - for scheduling bar and post  |
-|<ul><li>[ ] `Walk` - for dog window         |<ul><li>[ ] `Friendship` - for posts              |<ul><li>[ ] `Post_Walk` - for scheduling bar and post   |
-|<ul><li>[ ] `Post_Walk` - for dog window |<ul><li>[ ] `Receives_Notifications` - for notification window  |<ul><li>[ ] `On_MeetUp` - for scheduling bar and post   |
-|<ul><li>[ ] `WentFor` - for dog window |<ul><li>[ ] `FriendPost` - for posts  |<ul><li>[ ] `Schedules` - for scheduling bar  |
-|<ul><li>[ ] `On_MeetUp` - for dog window |  |<ul><li>[ ] `TaggedIn` - for post |
-|<ul><li>[ ] `Post_Media`, `Video`, `Photo` - for dog window |  |<ul><li>[ ] `Post_Media`, `Video`, `Photo` - for post     |
-|<ul><li>[ ] `TaggedIn` - for dog window |  |<ul><li>[ ] `Logs` - for scheduling  |
-
+| Aman                                                        | Sangita                                                        | James                                                 |
+| ----------------------------------------------------------- | -------------------------------------------------------------- | ----------------------------------------------------- |
+| <ul><li>[ ] `Owner` - for friend list                       | <ul><li>[ ] `Owner` - for login and search                     | <ul><li>[ ] `Owner` - for profile page                |
+| <ul><li>[ ] `Friendship` - for friend list                  | <ul><li>[ ] `Walk` - for scheduling bar and post               | <ul><li>[ ] `Owns_Dog` - for profile page             |
+| <ul><li>[ ] `Owns_Dog` - for dog window                     | <ul><li>[ ] `Post_Walk` - for post                             | <ul><li>[ ] `Walk` - for scheduling bar and post      |
+| <ul><li>[ ] `Walk` - for dog window                         | <ul><li>[ ] `Friendship` - for posts                           | <ul><li>[ ] `Post_Walk` - for scheduling bar and post |
+| <ul><li>[ ] `Post_Walk` - for dog window                    | <ul><li>[ ] `Receives_Notifications` - for notification window | <ul><li>[ ] `On_MeetUp` - for scheduling bar and post |
+| <ul><li>[ ] `WentFor` - for dog window                      | <ul><li>[ ] `FriendPost` - for posts                           | <ul><li>[ ] `Schedules` - for scheduling bar          |
+| <ul><li>[ ] `On_MeetUp` - for dog window                    |                                                                | <ul><li>[ ] `TaggedIn` - for post                     |
+| <ul><li>[ ] `Post_Media`, `Video`, `Photo` - for dog window |                                                                | <ul><li>[ ] `Post_Media`, `Video`, `Photo` - for post |
+| <ul><li>[ ] `TaggedIn` - for dog window                     |                                                                | <ul><li>[ ] `Logs` - for scheduling                   |
 
 **Misc. Checklist**
 
-| Aman             | Sangita        | James           |
-|------------------------|-------------------|-------------------------|
-| | <ul><li>[x] Service rerouting to PostgreSQL  | <ul><li>[x] Server, controller, and service file setup and documentation    |
-| | <ul><li>[ ] Frontend/Tailwind Layouting        | <ul><li>[x] Frontend setup   |
-|  | <ul><li>[ ] Persistent Storage Integration    | <ul><li>[ ] Media Storage Integration    |
+| Aman | Sangita                                     | James                                                                    |
+| ---- | ------------------------------------------- | ------------------------------------------------------------------------ |
+|      | <ul><li>[x] Service rerouting to PostgreSQL | <ul><li>[x] Server, controller, and service file setup and documentation |
+|      | <ul><li>[ ] Frontend/Tailwind Layouting     | <ul><li>[x] Frontend setup                                               |
+|      | <ul><li>[ ] Persistent Storage Integration  | <ul><li>[ ] Media Storage Integration                                    |
 
 ## Timeline
+
 **Week 1 [Mar 4 - 10]:** Setting up the code base.
+
 - Initial setup of PostgreSQL and React. Integration of the database to Node.js and Express.
 - Templating controller and service files.
 - Media storage integration I (documenting how to develop).
 
 **Week 2 [Mar 11-17]:** Easy tasks to gradually get in through development. More on functionalities.
+
 - Home Page (as it only needs to fetch the user’s owner and its friends posts then sort it to recent)
 - Owner’s friend list (also easy fetching and crud operations)
 - Side Menu Bar - Basic functionalities. Mainly working on search.
@@ -97,7 +68,8 @@ This section will first have the development checklist per member, in which the 
 - The needed controller and service files for these functions.
 
 **Week 3 [Mar 18- 24]**: Developing the harder parts.
-- Owner’s Profile page I  (Finish edit profile, add friend, and link to friend list)
+
+- Owner’s Profile page I (Finish edit profile, add friend, and link to friend list)
 - Media storage integration II (implementation)
 - Owner’s Post Page II (should be complete with media integration. Will also reflect on homepage)
 - Side Scheduling Bar I (Finish upcoming walks, plan forms and past walk with dropdown features)
@@ -106,6 +78,7 @@ This section will first have the development checklist per member, in which the 
 - The needed controller and service files for these functions
 
 **Week 4 [Mar 25 - 31]:** We should probably be nearly done at this point. Design stage.
+
 - Owner’s profile page II (finish this)
 - Scheduling Bar II (finish this)
 - Dog Modal Window II (finish this)
@@ -119,53 +92,61 @@ This section will first have the development checklist per member, in which the 
 
 **Owner’s Profile Page**
 
-The URL  will be based on the owner’s ID. Whether the user is the owner or not.
+The URL will be based on the owner’s ID. Whether the user is the owner or not.
 
 Example URL: _http://localhost:8800/owner/23_ where 23 is the ownerID of Owner.
+
 - Shows an owner’s name and contact details
 - Edit profile button - edits name and contact. Hidden when the user is not the owner.
 - Add friend button - automatically creates a friendID. Hidden when the profile page is the user’s.
-- Friend List - shows  6 friends with a button that directs to the friends page to view more.
+- Friend List - shows 6 friends with a button that directs to the friends page to view more.
 - Dog display - shows a few dogs’ names and icons the owner owns. Once a dog is clicked, it will show a modal window. (See Dog Modal Window component below).
 - Owner’s posts - shows either media or walk details via a card shaped component sorted by most recent date. Which when clicked, will go to the link of the post. (See Owner’s Post Page)
-<br>
+  <br>
 
 **Owner’s Friend List**
 
 The URL will also be based on ownerID.
 
 Example URL: _http://localhost:8800/owner/friend-list/23_ where 23 is the ownerID.
-- Shows the list of friends, date where they became friends,  and how many meetups they had together (we can use meetup IDs for this. If they have the same meetupID, it will be noted via count.)
+
+- Shows the list of friends, date where they became friends, and how many meetups they had together (we can use meetup IDs for this. If they have the same meetupID, it will be noted via count.)
 - Hyperlinks of these friends, to go to their profile pages.
 - If the user is the owner in the friend list, they can unfriend them (Should also remove the friend’s friendship with the user. Eg. Friendship(1,2,DATE) is removed, then Friendship(2,1,DATE) is also removed.)
 - Sorted by the most recent friend. If possible maybe add a sort selection feature.
+
 ```
-Example: 
+Example:
 {John Doe	1/11/23	Meetups: 5	[unfriend][view profile]}
 ```
+
 Where the view profile button is a link to his page and the unfriend button is shown if it’s the user’s friend list.
 <br>
 
 **Home/Newsfeed**
 
 URL: _http://localhost:8800/_
+
 - Shows a list of the owner’s (the user’s owner in particular), and their friends’ posts sorted in most recent.
 - If there is no user logged in, it should redirect to the Login Page.
->Note that it should not redirect to the log-in page if the link was not the home’s URL. (A non-logged-in user should be able to check post pages, friend list, and profile pages).
-<br>
+  > Note that it should not redirect to the log-in page if the link was not the home’s URL. (A non-logged-in user should be able to check post pages, friend list, and profile pages).
+  > <br>
 
 **Login Page**
 URL: _http://localhost:8800/log-in-sign-up/_
+
 - Users should fill up their email, name, and phone number (allowed to be null) if they do not have an account. Otherwise, login.
-<br>
+  <br>
 
 **Owner’s Post Page**
 
 Example: _http://localhost:8800/owner/post/12/_ where 12 is the postID from Post_Walk entity.
+
 - Shows the Post with the media, content, and tags.
-- Shows the Walk’s (or MeetUp’s)  details particular to that post (time, location, date, dog, etc.)
+- Shows the Walk’s (or MeetUp’s) details particular to that post (time, location, date, dog, etc.)
 - If the user is the owner of the post, they can edit and delete this page.
 - Once deleted, it should redirect back to the user’s profile page.
+
 ```
 Example:
 {                         [x]
@@ -173,10 +154,11 @@ Example:
 Alberta Pond
 10/25/23
 
-Walked with Peggers.
+Walked with Peggy.
 Went to the pond today with this doggers right here.
 #pond #doggers						}
 ```
+
 <br>
 
 ### Panels/Components
@@ -196,30 +178,37 @@ Went to the pond today with this doggers right here.
 - Only shown when the URL is at the home page. (Right side). Also in order.
 - User’s upcoming walks or meetups - will show a maximum of 4 with a dropdown toggle. Sorted in the closest upcoming walk with a brief description of each.
 - Delete and Edit button beside. They can also remove or edit a walk if they want.
+
 ```
-  Example: {Walk with Peggers. 10/11/24}
+  Example: {Walk with Peggy. 10/11/24}
   	   {MeetUp with Perry and Peggy. 10/23/24}
       {Walk with Edgar. 5.0 km goal!}
   	   	{[see more]}
 ```
+
 - Schedule Button - provides a dropdown form once the schedule button is clicked..
+
 ```
 Example of the form:
 Location*: [Pond in Alberta]		Date: [DD:MM:YY]
-Dogs Participating*: [Peggers] [Jake]	Owners Participating: [---------]
+Dogs Participating*: [Peggy] [Jake]	Owners Participating: [---------]
 Time: [--:--:--]				Distance Goal: [---------]
 
 [submit][cancel]
 ```
+
 - Past walks/meetup list (also max. 4 with a see more button), shows a brief description of each
-If the walk/meetup was posted, it shows a [VIEW] button that hyperlinks to the post URL.
+  If the walk/meetup was posted, it shows a [VIEW] button that hyperlinks to the post URL.
+
 ```
 Example:
-{Walk with Peggers. 3/11/24 [view]}
-{Walk with Peggers. 3/11/24 [post]}
+{Walk with Peggy. 3/11/24 [view]}
+{Walk with Peggy. 3/11/24 [post]}
 	{[see more]}
 ```
+
 - If the walk/meetup was not posted, it shows a [POST] button which provides a form.
+
 ```
 Example of the form:
 Post your previous walk with Peggers.
@@ -229,23 +218,28 @@ Content: [---------]
 Tags: [---------]
 [submit][cancel]
 ```
+
 - The post should always be connected to some WalkID.
 - See Media Storage for details on media uploading.
 
-
 **Notification Modal Window**
+
 - Shows notifications that are either walks or meetups (unclickables), and friend posts (links the user to the post url).
+
 ```
 Example:
-{It’s time to walk Peggers!}
+{It’s time to walk Peggy!}
 {Janice just shared her recent walk.}
 ```
+
 - Has an exit button which will slide the window to the left to hide.
-<br>
+  <br>
 
 **Dog Modal Window**
+
 - A window when a user clicks a dog icon in some owner’s profile page. Shows their walk histories. Users will be able to edit the dog’s details.
 - Dog’s are shown through pre-built icons.
+
 ```
 	Example:
 	[icon clicked]
@@ -254,7 +248,8 @@ Example:
 	Pug
 	[photo1][photo2][photo3][photo4]}
 ```
->Note that the photo will come from the media from the post that is connected to the walkID and dogID. There would be some algebra to get it, but not too hard.
+
+> Note that the photo will come from the media from the post that is connected to the walkID and dogID. There would be some algebra to get it, but not too hard.
 
 ## Other Features
 
@@ -269,6 +264,5 @@ Example:
 We will be using PostgreSQL, instead of the planned DBMS MySQL. It was changed due to an authentication bug from version 8.1.0. It will be integrated using Node.js and Express with React as the frontend framework.
 
 Each entity from our milestone 1/2 will have their own controller and service .js file to connect to the database. The functions that will be implemented will be based on our current needs for the features in our webpage. Current files will be in the backend folder of our repository.
-The controller file would handle the calls to the service file. 
+The controller file would handle the calls to the service file.
 The service file would send the queries to the server.
-
