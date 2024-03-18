@@ -3,6 +3,7 @@ import cors from "cors";
 import databaseController from "./controllers/databaseController.js";
 import ownerController from "./controllers/ownerController.js";
 import postWalkController from "./controllers/postWalkController.js";
+import ownsDogController from "./controllers/ownsDogController.js";
 
 const app = express();
 const PORT = 8800; // adjust later
@@ -19,6 +20,7 @@ app.use(cors());
 app.use("/", databaseController);
 app.use("/owner", ownerController);
 app.use("/posts", postWalkController);
+app.use("/dog", ownsDogController);
 
 // Starting the server
 app.listen(PORT, () => {

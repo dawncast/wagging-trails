@@ -35,7 +35,7 @@ router.post("/insert-post", async (req, res) => {
 router.get("/:postID", async (req, res) => {
   try {
     const postID = req.params.postID;
-    const tableContent = await fetchDataForPostPage();
+    const tableContent = await fetchDataForPostPage(postID);
     if (!tableContent) {
       res.status(404).json({ error: "Post not found" });
       return;

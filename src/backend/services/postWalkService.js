@@ -110,15 +110,41 @@ async function insertPost(walkID, content, tag) {
  *
  * @returns results
  */
-async function fetchDataForPostPage() {
+async function fetchDataForPostPage(postID) {
   try {
     const client = await pool.connect();
     const query = `
-    SELECT
-    FROM
+    SELECT 
+          pw.postID, 
+          od.name, 
+          own.ownerID,
+          own.firstName, 
+          own.lastName, 
+          pwc.content, 
+          w.location,
+          wd.date,
+          wdi.distance,
+          omu.time,
+          pm.url,
+          array_agg(od1.name) AS companions,
+          array_agg(ptw.tag) AS tags
+    FROM Post_Walk pw
+    JOIN Walk w ON pw.walkID = w.walkID
+    JOIN WentFor wf ON w.walkID = wf.walkID
+    JOIN Owns_Dog od ON wf.dogID = od.dogID
+    JOIN Owner_Name own ON od.ownerID = own.ownerID
     
+    LEFT JOIN Post_Walk_Content pwc ON pw.postID = pwc.postID
+    LEFT JOIN Post_Walk_Tag pwt ON pw.postID = pwt.postID
+    LEFT JOIN Walk_Date wd ON w.walkID = wd.walkID
+    LEFT JOIN Walk_Dist wdi ON w.walkID = wdi.walkID
+    LEFT JOIN On_MeetUp omu ON w.walkID = omu.walkID
+    LEFT JOIN TaggedIn ti ON pw.postID = ti.postID
+    LEFT JOIN Owns_Dog od1 ON ti.dogID = od1.dogID
+    LEFT JOIN Post_Media pm ON pw.postID = pm.postID
+    WHERE pw.postID = ${postID}
     `;
-    const result = await client.query("");
+    const result = await client.query(query);
     client.release();
     return result.rows;
   } catch (error) {

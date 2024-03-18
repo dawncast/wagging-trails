@@ -106,7 +106,7 @@ export async function initiateDB() {
     // post walk tables
     "Post_Walk (postID SERIAL PRIMARY KEY, walkID INTEGER UNIQUE NOT NULL, FOREIGN KEY (walkID) REFERENCES Walk (walkID) ON DELETE CASCADE ON UPDATE CASCADE)",
     "Post_Walk_Content (postID INTEGER PRIMARY KEY, content VARCHAR(255), FOREIGN KEY (postID) REFERENCES Post_Walk (postID) ON DELETE CASCADE)",
-    "Post_Walk_Tag (postID INTEGER PRIMARY KEY, tag VARCHAR(255), FOREIGN KEY (postID) REFERENCES Post_Walk (postID) ON DELETE CASCADE)",
+    "Post_Walk_Tag (postID INTEGER, tag VARCHAR(255), PRIMARY KEY (postID, tag), FOREIGN KEY (postID) REFERENCES Post_Walk (postID) ON DELETE CASCADE)",
 
     // meet up table
     "On_MeetUp (meetUpID SERIAL PRIMARY KEY, walkID INTEGER NOT NULL, time TIME, location VARCHAR(255), date DATE, FOREIGN KEY (walkID) REFERENCES Walk (walkID) ON DELETE NO ACTION ON UPDATE CASCADE)",
