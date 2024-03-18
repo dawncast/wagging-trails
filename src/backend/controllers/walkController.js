@@ -1,5 +1,5 @@
 import express from "express";
-import { walkSetup, insertWalk } from "../services/walkService";
+import { walkSetup, insertWalk } from "../services/walkService.js";
 
 const router = express.Router();
 

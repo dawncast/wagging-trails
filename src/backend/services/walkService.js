@@ -78,7 +78,7 @@ async function insertWalk(location, date, distance) {
       "INSERT INTO Walk (location) VALUES ($1) RETURNING walkID";
     const walkInsertValues = [location];
     const walkResult = await client.query(walkInsertQuery, walkInsertValues);
-    const walkID = walkResult.rows[0].walkID;
+    const walkID = walkResult.rows[0].walkid;
 
     const dateInsertQuery =
       "INSERT INTO Walk_Date (walkID, date) VALUES ($1, $2)";
