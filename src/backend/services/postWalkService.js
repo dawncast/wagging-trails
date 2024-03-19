@@ -134,8 +134,8 @@ async function fetchDataForPostPage(postID, ownerID) {
           wdi.distance,
           omu.time,
           pm.url,
-          array_agg(DISTINCT od1.name) AS tagged_dogs,
-          array_agg(DISTINCT CONCAT(own1.firstName, ' ', own1.lastName)) AS met_up_owners,
+          array_agg(DISTINCT CASE WHEN od1.dogID <> od.dogID THEN od1.name END) AS tagged_dogs,
+          array_agg(DISTINCT CASE WHEN own1.ownerID <> own.ownerID THEN CONCAT(own1.firstName, ' ', own1.lastName) END) AS met_up_owners,
           array_agg(DISTINCT pwt.tag) AS tags
     FROM Post_Walk pw
     JOIN Walk w ON pw.walkID = w.walkID
@@ -154,7 +154,7 @@ async function fetchDataForPostPage(postID, ownerID) {
     LEFT JOIN On_MeetUp omu ON w.walkID = omu.walkID
     LEFT JOIN Schedules s ON omu.meetUpID = s.meetUpID
     LEFT JOIN Owner_Name own1 ON s.ownerID = own1.ownerID
-    WHERE pw.postID = ${postID} AND pwo.ownerID = ${ownerID} AND own1.ownerID <> own.ownerID 
+    WHERE pw.postID = ${postID} AND pwo.ownerID = ${ownerID}
     GROUP BY pw.postID, own.ownerID, own.firstName, own.lastName, pwc.content, w.location, wd.date, wdi.distance, omu.time, pm.url;
     `;
     const result = await client.query(query);
