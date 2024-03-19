@@ -56,7 +56,7 @@ async function initiatePosts() {
   }
 }
 
-async function insertPost(walkID, content, tag) {
+async function insertPost(walkID, content, tags) {
   let client;
   try {
     client = await pool.connect();
@@ -68,17 +68,20 @@ async function insertPost(walkID, content, tag) {
       "INSERT INTO Post_Walk (walkID) VALUES ($1) RETURNING postID";
     const postInsertValues = [walkID];
     const postResult = await client.query(postInsertQuery, postInsertValues);
-    const postID = postResult.rows[0].postID;
+    const postID = postResult.rows[0].postid;
 
     const contentInsertQuery =
       "INSERT INTO Post_Walk_Content (postID, content) VALUES ($1, $2)";
     const contentInsertValues = [postID, content];
     await client.query(contentInsertQuery, contentInsertValues);
 
-    const tagInsertQuery =
-      "INSERT INTO Post_Walk_Tag (postID, tag) VALUES ($1, $2)";
-    const tagInsertValues = [postID, tag];
-    await client.query(tagInsertQuery, tagInsertValues);
+    // Insert tags using a loop
+    for (const tag of tags) {
+      const tagInsertQuery =
+        "INSERT INTO Post_Walk_Tag (postID, tag) VALUES ($1, $2)";
+      const tagInsertValues = [postID, tag];
+      await client.query(tagInsertQuery, tagInsertValues);
+    }
 
     // Commit the transaction
     await client.query("COMMIT");
@@ -110,24 +113,24 @@ async function insertPost(walkID, content, tag) {
  *
  * @returns results
  */
+// insert ownsdog, walk, postwalk, owner, wentfor done. Testing phase now.
 async function fetchDataForPostPage(postID) {
   try {
     const client = await pool.connect();
     const query = `
     SELECT 
           pw.postID, 
-          od.name, 
+          array_agg(DISTINCT od.name) AS dogs, 
           own.ownerID,
-          own.firstName, 
-          own.lastName, 
+          CONCAT(own.firstName, ' ', own.lastName) AS owner_name,
           pwc.content, 
           w.location,
           wd.date,
           wdi.distance,
           omu.time,
           pm.url,
-          array_agg(od1.name) AS companions,
-          array_agg(ptw.tag) AS tags
+          array_agg(DISTINCT od1.name) AS tagged_dogs,
+          array_agg(DISTINCT pwt.tag) AS tags
     FROM Post_Walk pw
     JOIN Walk w ON pw.walkID = w.walkID
     JOIN WentFor wf ON w.walkID = wf.walkID
@@ -143,6 +146,7 @@ async function fetchDataForPostPage(postID) {
     LEFT JOIN Owns_Dog od1 ON ti.dogID = od1.dogID
     LEFT JOIN Post_Media pm ON pw.postID = pm.postID
     WHERE pw.postID = ${postID}
+    GROUP BY pw.postID, own.ownerID, own.firstName, own.lastName, pwc.content, w.location, wd.date, wdi.distance, omu.time, pm.url;
     `;
     const result = await client.query(query);
     client.release();

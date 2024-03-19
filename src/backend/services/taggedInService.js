@@ -1,6 +1,6 @@
 import pool from "./databaseService.js";
 
-async function insertWentFor(dogID, walkID, rating) {
+async function insertTaggedDog(dogIDs, postID) {
   let client;
   try {
     client = await pool.connect();
@@ -8,10 +8,13 @@ async function insertWentFor(dogID, walkID, rating) {
     // Start transaction
     await client.query("BEGIN");
 
-    const insertQuery =
-      "INSERT INTO WentFor (dogID, walkID, rating) VALUES ($1, $2, $3)";
-    const insertValues = [dogID, walkID, rating];
-    await client.query(insertQuery, insertValues);
+    // Insert tags using a loop
+    for (const dog of dogIDs) {
+      const tagInsertQuery =
+        "INSERT INTO TaggedIn (dogID, postID) VALUES ($1, $2)";
+      const tagInsertValues = [dog, postID];
+      await client.query(tagInsertQuery, tagInsertValues);
+    }
 
     // Commit the transaction
     await client.query("COMMIT");
@@ -19,7 +22,7 @@ async function insertWentFor(dogID, walkID, rating) {
   } catch (error) {
     // Rollback the transaction in case of error
     await client.query("ROLLBACK");
-    console.error("Error inserting wentFor:", error);
+    console.error("Error inserting tagged dogs:", error);
     throw error;
   } finally {
     if (client) {
@@ -28,4 +31,4 @@ async function insertWentFor(dogID, walkID, rating) {
   }
 }
 
-export { insertWentFor };
+export { insertTaggedDog };
