@@ -22,8 +22,8 @@ router.post("/initiate-posts", async (req, res) => {
 });
 
 router.post("/insert-post", async (req, res) => {
-  const { walkID, content, tags } = req.body;
-  const insertResult = await insertPost(walkID, content, tags);
+  const { walkID, ownerID, content, tags } = req.body;
+  const insertResult = await insertPost(walkID, ownerID, content, tags);
   if (insertResult) {
     res.json({ success: true });
   } else {
@@ -32,10 +32,11 @@ router.post("/insert-post", async (req, res) => {
 });
 
 // function to get all the data necessary for post page.
-router.get("/:postID", async (req, res) => {
+router.get("/:ownerID/:postID", async (req, res) => {
   try {
     const postID = req.params.postID;
-    const tableContent = await fetchDataForPostPage(postID);
+    const ownerID = req.params.ownerID;
+    const tableContent = await fetchDataForPostPage(postID, ownerID);
     if (!tableContent) {
       res.status(404).json({ error: "Post not found" });
       return;
