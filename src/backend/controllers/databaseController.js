@@ -1,12 +1,13 @@
 import express from "express";
+import { fetchFriendListFromDB } from "../services/friendListService.js";
 
 import { initiateDB } from "../services/databaseService.js";
 
 const router = express.Router();
 
-router.get("/", (req, res) => {
-  res.json("hello there");
-});
+// router.get("/", (req, res) => {
+//   res.json("hellop there");
+// });
 
 router.post("/initiate-all", async (req, res) => {
   const initiateResult = await initiateDB();
@@ -18,3 +19,4 @@ router.post("/initiate-all", async (req, res) => {
 });
 
 export default router;
+
