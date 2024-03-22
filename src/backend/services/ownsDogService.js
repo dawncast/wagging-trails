@@ -46,4 +46,8 @@ async function insertDog(ownerID, name, breed, birthday) {
   }
 }
 
-export { fetchDogsFromDB, insertDog };
+
+
+
+
+export { fetchDogsFromDB, insertDog, updateOwnerForDog };
