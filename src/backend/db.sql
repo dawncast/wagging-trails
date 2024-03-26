@@ -1,0 +1,354 @@
+--
+-- PostgreSQL database dump
+-- Currently just copy-pasting to pgAdmin query tool, but it should work.
+-- Will populate more of it tomorrow... :(
+
+-- Use this if you want to make a new database:
+-- DROP DATABASE IF EXISTS dog-db;
+-- CREATE DATABASE dog-db
+
+---
+--- drop tables
+---
+
+DROP TABLE IF EXISTS taggedin CASCADE;
+DROP TABLE IF EXISTS photo CASCADE;
+DROP TABLE IF EXISTS video CASCADE;
+DROP TABLE IF EXISTS post_media_date CASCADE;
+DROP TABLE IF EXISTS post_media CASCADE;
+DROP TABLE IF EXISTS schedules CASCADE;
+DROP TABLE IF EXISTS on_meetup CASCADE;
+DROP TABLE IF EXISTS post_walk_tag CASCADE;
+DROP TABLE IF EXISTS post_walk_content CASCADE;
+DROP TABLE IF EXISTS post_walk_owner CASCADE;
+DROP TABLE IF EXISTS post_walk CASCADE;
+DROP TABLE IF EXISTS wentfor CASCADE;
+DROP TABLE IF EXISTS walk_dist CASCADE;
+DROP TABLE IF EXISTS walk_date CASCADE;
+DROP TABLE IF EXISTS walk CASCADE;
+DROP TABLE IF EXISTS owns_dog_birthday CASCADE;
+DROP TABLE IF EXISTS owns_dog CASCADE;
+DROP TABLE IF EXISTS logs CASCADE;
+DROP TABLE IF EXISTS organizes_walktask CASCADE;
+DROP TABLE IF EXISTS walkalert CASCADE;
+DROP TABLE IF EXISTS friendpost_name CASCADE;
+DROP TABLE IF EXISTS friendpost_link CASCADE;
+DROP TABLE IF EXISTS receives_notifications CASCADE;
+DROP TABLE IF EXISTS friendship CASCADE;
+DROP TABLE IF EXISTS owner_name CASCADE;
+DROP TABLE IF EXISTS owner_contact CASCADE;
+DROP TABLE IF EXISTS owner CASCADE;
+
+
+--
+-- drop enum types
+--
+
+DROP TYPE IF EXISTS event_type;
+DROP TYPE IF EXISTS rate_score;
+
+--
+-- create enum types
+--
+CREATE TYPE event_type AS ENUM('walk', 'run', 'hike', 'dog park');
+CREATE TYPE rate_score AS ENUM('1', '2', '3', '4', '5');
+
+--
+-- create tables
+--
+
+-- owner tables
+CREATE TABLE IF NOT EXISTS owner (
+    ownerid SERIAL PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS owner_name (
+    ownerid INTEGER PRIMARY KEY,
+    firstname VARCHAR(255) NOT NULL,
+    lastname VARCHAR(255) NOT NULL,
+    FOREIGN KEY (ownerid) REFERENCES owner (ownerid) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS owner_contact (
+    email VARCHAR(255) PRIMARY KEY,
+    phonenumber VARCHAR(255) UNIQUE,
+    FOREIGN KEY (email) REFERENCES owner (email) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- friendship table
+CREATE TABLE IF NOT EXISTS friendship (
+    ownerid1 INTEGER,
+    ownerid2 INTEGER,
+    dateoffriendship DATE NOT NULL,
+    PRIMARY KEY(ownerid1, ownerid2),
+    FOREIGN KEY (ownerid1) REFERENCES owner (ownerid) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (ownerid2) REFERENCES owner (ownerid) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- notification table
+CREATE TABLE IF NOT EXISTS receives_notifications (
+    notificationid SERIAL PRIMARY KEY,
+    ownerid INTEGER NOT NULL,
+    notifcontent VARCHAR(255),
+    FOREIGN KEY (ownerid) REFERENCES owner (ownerid) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- friend post tables
+CREATE TABLE IF NOT EXISTS friendpost_link (
+    notificationid INTEGER PRIMARY KEY,
+    postlink VARCHAR(255) UNIQUE NOT NULL,
+    FOREIGN KEY (notificationid) REFERENCES receives_notifications (notificationid) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS friendpost_name (
+    postlink VARCHAR(255) PRIMARY KEY,
+    friendname VARCHAR(255) NOT NULL,
+    FOREIGN KEY (postlink) REFERENCES friendpost_link (postlink) ON DELETE CASCADE
+);
+
+-- walk alert tables
+CREATE TABLE IF NOT EXISTS walkalert (
+    notificationid INTEGER PRIMARY KEY,
+    dogname VARCHAR(255) NOT NULL,
+    FOREIGN KEY (notificationid) REFERENCES receives_notifications (notificationid) ON DELETE CASCADE
+);
+
+-- organizes walk task tables
+CREATE TABLE IF NOT EXISTS organizes_walktask (
+    taskid SERIAL PRIMARY KEY,
+    ownerid INTEGER NOT NULL,
+    date DATE,
+    walkeventtype event_type,
+    FOREIGN KEY (ownerid) REFERENCES owner (ownerid) ON DELETE NO ACTION ON UPDATE CASCADE
+);
+
+-- log table
+CREATE TABLE IF NOT EXISTS logs (
+    notificationid INTEGER,
+    taskid INTEGER,
+    PRIMARY KEY (notificationid, taskid),
+    FOREIGN KEY (notificationid) REFERENCES receives_notifications (notificationid) ON DELETE CASCADE,
+    FOREIGN KEY (taskid) REFERENCES organizes_walktask (taskid) ON DELETE CASCADE
+);
+
+-- dog tables
+CREATE TABLE IF NOT EXISTS owns_dog (
+    dogid SERIAL PRIMARY KEY,
+    ownerid INTEGER NOT NULL,
+    name VARCHAR(255),
+    breed VARCHAR(255),
+    UNIQUE (name, ownerid, breed),
+    FOREIGN KEY (ownerid) REFERENCES owner (ownerid) ON DELETE NO ACTION ON UPDATE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS owns_dog_birthday (
+    dogid INTEGER PRIMARY KEY,
+    ownerid INTEGER NOT NULL,
+    name VARCHAR(255),
+    birthday DATE,
+    UNIQUE (name, ownerid, birthday),
+    FOREIGN KEY (dogid) REFERENCES owns_dog (dogid) ON DELETE CASCADE,
+    FOREIGN KEY (ownerid) REFERENCES owner (ownerid) ON DELETE NO ACTION ON UPDATE CASCADE
+);
+
+-- walk tables
+CREATE TABLE IF NOT EXISTS walk (
+    walkid SERIAL PRIMARY KEY,
+    location VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS walk_date (
+    walkid INTEGER PRIMARY KEY,
+    date DATE,
+    FOREIGN KEY (walkid) REFERENCES walk (walkid) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS walk_dist (
+    walkid INTEGER PRIMARY KEY,
+    distance FLOAT,
+    FOREIGN KEY (walkid) REFERENCES walk (walkid) ON DELETE CASCADE
+);
+
+-- went for table (dog-walk relationship)
+CREATE TABLE IF NOT EXISTS wentfor (
+    dogid INTEGER,
+    walkid INTEGER,
+    rating rate_score,
+    PRIMARY KEY (dogid, walkid),
+    FOREIGN KEY (dogid) REFERENCES owns_dog (dogid) ON DELETE CASCADE,
+    FOREIGN KEY (walkid) REFERENCES walk (walkid) ON DELETE CASCADE
+);
+
+-- post walk tables
+CREATE TABLE IF NOT EXISTS post_walk (
+    postid SERIAL PRIMARY KEY,
+    walkid INTEGER UNIQUE NOT NULL,
+    FOREIGN KEY (walkid) REFERENCES walk (walkid) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS post_walk_owner (
+    postid SERIAL PRIMARY KEY,
+    ownerid INTEGER NOT NULL,
+    FOREIGN KEY (ownerid) REFERENCES owner (ownerid) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS post_walk_content (
+    postid INTEGER PRIMARY KEY,
+    content VARCHAR(255),
+    FOREIGN KEY (postid) REFERENCES post_walk (postid) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS post_walk_tag (
+    postid INTEGER,
+    tag VARCHAR(255),
+    PRIMARY KEY (postid, tag),
+    FOREIGN KEY (postid) REFERENCES post_walk (postid) ON DELETE CASCADE
+);
+
+-- meet up table
+CREATE TABLE IF NOT EXISTS on_meetup (
+    meetupid SERIAL PRIMARY KEY,
+    walkid INTEGER NOT NULL,
+    time TIME,
+    location VARCHAR(255),
+    date DATE,
+    FOREIGN KEY (walkid) REFERENCES walk (walkid) ON DELETE NO ACTION ON UPDATE CASCADE
+);
+
+-- schedule table
+CREATE TABLE IF NOT EXISTS schedules (
+    meetupid INTEGER,
+    ownerid INTEGER,
+    PRIMARY KEY (meetupid, ownerid),
+    FOREIGN KEY (meetupid) REFERENCES on_meetup (meetupid),
+    FOREIGN KEY (ownerid) REFERENCES owner (ownerid) ON DELETE NO ACTION ON UPDATE CASCADE
+);
+
+-- post media tables
+CREATE TABLE IF NOT EXISTS post_media (
+    postid INTEGER,
+    mediaid SERIAL UNIQUE,
+    url VARCHAR(255) UNIQUE NOT NULL,
+    PRIMARY KEY (postid, mediaid),
+    FOREIGN KEY (postid) REFERENCES post_walk (postid) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS post_media_date (
+    url VARCHAR(255) PRIMARY KEY,
+    datecreated DATE,
+    FOREIGN KEY (url) REFERENCES post_media (url) ON DELETE CASCADE
+);
+
+-- video table
+CREATE TABLE IF NOT EXISTS video (
+    mediaid INTEGER PRIMARY KEY,
+    duration TIME,
+    FOREIGN KEY (mediaid) REFERENCES post_media (mediaid) ON DELETE CASCADE
+);
+
+-- photo table
+CREATE TABLE IF NOT EXISTS photo (
+    mediaid INTEGER PRIMARY KEY,
+    filter VARCHAR(255),
+    FOREIGN KEY (mediaid) REFERENCES post_media (mediaid) ON DELETE CASCADE
+);
+
+-- tagged in table
+CREATE TABLE IF NOT EXISTS taggedin (
+    dogid INTEGER,
+    postid INTEGER,
+    PRIMARY KEY (dogid, postid),
+    FOREIGN KEY (dogid) REFERENCES owns_dog (dogid),
+    FOREIGN KEY (postid) REFERENCES post_walk (postid)
+);
+
+
+--
+-- insertions :(
+--
+
+-- owner tables
+INSERT INTO owner (email) VALUES ('john@example.com');
+INSERT INTO owner_name (ownerid, firstname, lastname) VALUES (1, 'John', 'Doe');
+INSERT INTO owner_contact (email, phonenumber) VALUES ('john@example.com', '1234567890');
+
+INSERT INTO owner (email) VALUES ('beanstalk@example.com');
+INSERT INTO owner_name (ownerid, firstname, lastname) VALUES (2, 'Jack', 'Bean');
+INSERT INTO owner_contact (email, phonenumber) VALUES ('beanstalk@example.com', '0987654321');
+
+INSERT INTO owner (email) VALUES ('one@example.com');
+INSERT INTO owner_name (ownerid, firstname, lastname) VALUES (3, 'One', 'Three');
+INSERT INTO owner_contact (email, phonenumber) VALUES ('one@example.com', '131313131');
+
+INSERT INTO owner (email) VALUES ('null@example.com');
+INSERT INTO owner_name (ownerid, firstname, lastname) VALUES (4, 'Null', 'Ly');
+INSERT INTO owner_contact (email, phonenumber) VALUES ('null@example.com', null);
+
+INSERT INTO owner (email) VALUES ('popolice@example.com');
+INSERT INTO owner_name (ownerid, firstname, lastname) VALUES (5, 'Popo', 'Lice');
+INSERT INTO owner_contact (email, phonenumber) VALUES ('popolice@example.com', '911');
+
+-- friendship table (all (a,b) should have (b,a)).
+INSERT INTO friendship (ownerid1, ownerid2, dateoffriendship) VALUES (1, 2, '2024-03-21');
+INSERT INTO friendship (ownerid1, ownerid2, dateoffriendship) VALUES (2, 1, '2024-03-21');
+
+INSERT INTO friendship (ownerid1, ownerid2, dateoffriendship) VALUES (1, 3, '2024-03-22');
+INSERT INTO friendship (ownerid1, ownerid2, dateoffriendship) VALUES (3, 1, '2024-03-22');
+
+INSERT INTO friendship (ownerid1, ownerid2, dateoffriendship) VALUES (2, 3, '2024-02-13');
+INSERT INTO friendship (ownerid1, ownerid2, dateoffriendship) VALUES (3, 2, '2024-02-13');
+
+INSERT INTO friendship (ownerid1, ownerid2, dateoffriendship) VALUES (3, 4, '2023-01-01');
+INSERT INTO friendship (ownerid1, ownerid2, dateoffriendship) VALUES (4, 3, '2023-01-01');
+
+-- notification table
+INSERT INTO receives_notifications (ownerid, notifcontent) VALUES (1, 'New notification');
+
+-- friend post tables
+INSERT INTO friendpost_link (notificationid, postlink) VALUES (1, 'https://example.com/post');
+INSERT INTO friendpost_name (postlink, friendname) VALUES ('https://example.com/post', 'Friend Name');
+
+-- walk alert tables
+INSERT INTO walkalert (notificationid, dogname) VALUES (1, 'Rover');
+
+-- organizes walk task tables
+INSERT INTO organizes_walktask (ownerid, date, walkeventtype) VALUES (1, '2024-03-21', 'walk');
+
+-- log table
+INSERT INTO logs (notificationid, taskid) VALUES (1, 1);
+
+-- dog tables
+INSERT INTO owns_dog (ownerid, name, breed) VALUES (1, 'Rover', 'Labrador');
+INSERT INTO owns_dog_birthday (dogid, ownerid, name, birthday) VALUES (1, 1, 'Rover', '2010-01-01');
+
+-- walk tables
+INSERT INTO walk (location) VALUES ('Central Park');
+
+-- went for table (dog-walk relationship)
+INSERT INTO wentfor (dogid, walkid, rating) VALUES (1, 1, '4');
+
+-- post walk tables
+INSERT INTO post_walk (walkid) VALUES (1);
+INSERT INTO post_walk_owner (ownerid) VALUES (1);
+INSERT INTO post_walk_content (postid, content) VALUES (1, 'This is a post content');
+INSERT INTO post_walk_tag (postid, tag) VALUES (1, 'park');
+
+-- meet up table
+INSERT INTO on_meetup (walkid, time, location, date) VALUES (1, '10:00:00', 'Central Park', '2024-03-21');
+
+-- schedule table
+INSERT INTO schedules (meetupid, ownerid) VALUES (1, 1);
+
+-- post media tables
+INSERT INTO post_media (postid, url) VALUES (1, 'https://example.com/media');
+INSERT INTO post_media_date (url, datecreated) VALUES ('https://example.com/media', '2024-03-21');
+
+-- video table
+INSERT INTO video (mediaid, duration) VALUES (1, '00:10:00');
+
+-- photo table
+INSERT INTO photo (mediaid, filter) VALUES (1, 'Vintage');
+
+-- tagged in table
+INSERT INTO taggedin (dogid, postid) VALUES (1, 1);
