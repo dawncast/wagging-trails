@@ -1,5 +1,5 @@
 import express from "express";
-import { fetchDogsFromDB, insertDog } from "../services/ownsDogService.js";
+import { fetchDogsFromDB, insertDog, updateOwnerForDog } from "../services/ownsDogService.js";
 
 const router = express.Router();
 
@@ -18,10 +18,10 @@ router.post("/insert-dog", async (req, res) => {
   }
 });
 
-router.put("/:ownsDog/update-dog-owner", async (req, res) => {
+router.put("/:dogID/update-dog-owner", async (req, res) => {
   const { ownerIDNew} = req.body;
-  const ownerID1 = req.params.ownerID;
-  const updateResult = await updateOwnerForDow(ownerID1, ownerIDNew);
+  const dogID = req.params.dogID;
+  const updateResult = await updateOwnerForDog(ownerIDNew, dogID);
   if (updateResult) {
     res.json({ success: true });
   } else {

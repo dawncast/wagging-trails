@@ -46,6 +46,21 @@ async function insertDog(ownerID, name, breed, birthday) {
   }
 }
 
+async function updateOwnerForDog(ownerIDNew, dogID) {
+  try {
+    const client = await pool.connect();
+    const query =
+      "UPDATE owns_dog SET ownerid = $1 WHERE dogID = $2";
+    const values = [ownerIDNew, dogID];
+    await client.query(query, values);
+    client.release();
+    return true;
+  } catch (error) {
+    console.error("Error updating dog owner:", error);
+    throw error;
+  }
+}
+
 
 
 
