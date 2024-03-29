@@ -95,17 +95,21 @@ CREATE TABLE IF NOT EXISTS receives_notifications (
 );
 
 -- friend post tables
-CREATE TABLE IF NOT EXISTS friendpost_link (
+CREATE TABLE IF NOT EXISTS friendpost (
     notificationid INTEGER PRIMARY KEY,
-    postlink VARCHAR(255) UNIQUE NOT NULL,
+    postlink VARCHAR(255) NOT NULL,
+    friendname VARCHAR(255) NOT NULL,
+    UNIQUE (notificationid, postlink),
     FOREIGN KEY (notificationid) REFERENCES receives_notifications (notificationid) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS friendpost_name (
-    postlink VARCHAR(255) PRIMARY KEY,
-    friendname VARCHAR(255) NOT NULL,
-    FOREIGN KEY (postlink) REFERENCES friendpost_link (postlink) ON DELETE CASCADE
-);
+-- removed friendpost name
+--CREATE TABLE IF NOT EXISTS friendpost_name (
+--    postlink VARCHAR(255),
+--    friendname VARCHAR(255) NOT NULL,
+--    PRIMARY KEY (postlink, friendname),
+--    FOREIGN KEY (postlink) REFERENCES friendpost_link (postlink) ON DELETE CASCADE
+--);
 
 -- walk alert tables
 CREATE TABLE IF NOT EXISTS walkalert (
@@ -289,7 +293,7 @@ INSERT INTO owner (email) VALUES ('popolice@example.com');
 INSERT INTO owner_name (ownerid, firstname, lastname) VALUES (5, 'Popo', 'Lice');
 INSERT INTO owner_contact (email, phonenumber) VALUES ('popolice@example.com', '911');
 
--- friendship table (all (a,b) should have (b,a)).
+-- friendship table (all (a,b) should have (b,a)). Might edit this one.
 INSERT INTO friendship (ownerid1, ownerid2, dateoffriendship) VALUES (1, 2, '2024-03-21');
 INSERT INTO friendship (ownerid1, ownerid2, dateoffriendship) VALUES (2, 1, '2024-03-21');
 
@@ -302,43 +306,211 @@ INSERT INTO friendship (ownerid1, ownerid2, dateoffriendship) VALUES (3, 2, '202
 INSERT INTO friendship (ownerid1, ownerid2, dateoffriendship) VALUES (3, 4, '2023-01-01');
 INSERT INTO friendship (ownerid1, ownerid2, dateoffriendship) VALUES (4, 3, '2023-01-01');
 
+
 -- notification table
-INSERT INTO receives_notifications (ownerid, notifcontent) VALUES (1, 'New notification');
+-- John Doe has 2 friends: Jack Bean and One Three
+INSERT INTO receives_notifications (ownerid, notifcontent) VALUES (1, 'New Post from Jack Bean');
+INSERT INTO receives_notifications (ownerid, notifcontent) VALUES (1, 'New Post from One Three');
+
+-- Jack Bean has 2 friends: John Doe, One Three
+INSERT INTO receives_notifications (ownerid, notifcontent) VALUES (2, 'New Post from John Doe');
+INSERT INTO receives_notifications (ownerid, notifcontent) VALUES (2, 'New Post from One Three');
+
+-- One Three has 3 friends: John Doe, Jack Bean, and Nul Ly
+INSERT INTO receives_notifications (ownerid, notifcontent) VALUES (3, 'New Post from John Doe');
+INSERT INTO receives_notifications (ownerid, notifcontent) VALUES (3, 'New Post from Jack Bean');
+INSERT INTO receives_notifications (ownerid, notifcontent) VALUES (3, 'New Post from Nul Ly');
+
+-- Nul Ly has 1 friend: One Three
+INSERT INTO receives_notifications (ownerid, notifcontent) VALUES (4, 'New Post from One Three');
+
+-- Popo Lice has no friends.
+-- other walk notifications
+INSERT INTO receives_notifications (ownerid, notifcontent) VALUES (4, 'Time to walk Doggers!');
+INSERT INTO receives_notifications (ownerid, notifcontent) VALUES (4, 'Time to walk Arfy!');
+INSERT INTO receives_notifications (ownerid, notifcontent) VALUES (4, 'Time to walk Blanky!');
+INSERT INTO receives_notifications (ownerid, notifcontent) VALUES (4, 'Time to walk Tory!');
+INSERT INTO receives_notifications (ownerid, notifcontent) VALUES (4, 'Time to walk K92!');
 
 -- friend post tables
-INSERT INTO friendpost_link (notificationid, postlink) VALUES (1, 'https://example.com/post');
-INSERT INTO friendpost_name (postlink, friendname) VALUES ('https://example.com/post', 'Friend Name');
+INSERT INTO friendpost (notificationid, postlink, friendname) VALUES (1, 'post/2/2', 'Jack Bean');
+INSERT INTO friendpost (notificationid, postlink, friendname) VALUES (2, 'post/3/3', 'One Three');
+INSERT INTO friendpost (notificationid, postlink, friendname) VALUES (3, 'post/1/1', 'John Doe');
+INSERT INTO friendpost (notificationid, postlink, friendname) VALUES (4, 'post/3/3', 'One Three');
+INSERT INTO friendpost (notificationid, postlink, friendname) VALUES (5, 'post/1/1', 'John Doe');
+INSERT INTO friendpost (notificationid, postlink, friendname) VALUES (6, 'post/2/2', 'Jack Bean');
+INSERT INTO friendpost (notificationid, postlink, friendname) VALUES (7, 'post/4/4', 'Nul Ly');
+INSERT INTO friendpost (notificationid, postlink, friendname) VALUES (8, 'post/3/3', 'One Three');
 
 -- walk alert tables
-INSERT INTO walkalert (notificationid, dogname) VALUES (1, 'Rover');
+INSERT INTO walkalert (notificationid, dogname) VALUES (9, 'Doggers');
+INSERT INTO walkalert (notificationid, dogname) VALUES (10, 'Arfy');
+INSERT INTO walkalert (notificationid, dogname) VALUES (11, 'Blanky');
+INSERT INTO walkalert (notificationid, dogname) VALUES (12, 'Tory');
+INSERT INTO walkalert (notificationid, dogname) VALUES (13, 'K92');
 
 -- organizes walk task tables
-INSERT INTO organizes_walktask (ownerid, date, walkeventtype) VALUES (1, '2024-03-21', 'walk');
+INSERT INTO organizes_walktask (ownerid, date, walkeventtype) VALUES (1, '2024-03-23', 'walk');
+INSERT INTO organizes_walktask (ownerid, date, walkeventtype) VALUES (2, '2024-04-05', 'hike');
+INSERT INTO organizes_walktask (ownerid, date, walkeventtype) VALUES (3, '2024-03-28', 'dog park');
+INSERT INTO organizes_walktask (ownerid, date, walkeventtype) VALUES (4, '2024-04-01', 'run');
+INSERT INTO organizes_walktask (ownerid, date, walkeventtype) VALUES (5, '2024-03-15', 'walk');
 
 -- log table
-INSERT INTO logs (notificationid, taskid) VALUES (1, 1);
+INSERT INTO logs (notificationid, taskid) VALUES (9, 1);
+INSERT INTO logs (notificationid, taskid) VALUES (10, 2);
+INSERT INTO logs (notificationid, taskid) VALUES (11, 3);
+INSERT INTO logs (notificationid, taskid) VALUES (12, 4);
+INSERT INTO logs (notificationid, taskid) VALUES (13, 5);
 
 -- dog tables
-INSERT INTO owns_dog (ownerid, name, breed) VALUES (1, 'Rover', 'Labrador');
-INSERT INTO owns_dog_birthday (dogid, ownerid, name, birthday) VALUES (1, 1, 'Rover', '2010-01-01');
+INSERT INTO owns_dog (ownerid, name, breed) VALUES (1, 'Doggers', 'Labrador');
+INSERT INTO owns_dog_birthday (dogid, ownerid, name, birthday) VALUES (1, 1, 'Doggers', '2018-01-01');
+
+INSERT INTO owns_dog (ownerid, name, breed) VALUES (2, 'Arfy', 'Bull Terrier');
+INSERT INTO owns_dog_birthday (dogid, ownerid, name, birthday) VALUES (2, 2, 'Arfy', '2020-02-20');
+
+INSERT INTO owns_dog (ownerid, name, breed) VALUES (3, 'Blanky', null);
+INSERT INTO owns_dog_birthday (dogid, ownerid, name, birthday) VALUES (3, 2, 'Blanky', '2021-03-12');
+
+INSERT INTO owns_dog (ownerid, name, breed) VALUES (4, 'Tory', null);
+INSERT INTO owns_dog_birthday (dogid, ownerid, name, birthday) VALUES (4, 4, 'Tory', null);
+
+INSERT INTO owns_dog (ownerid, name, breed) VALUES (5, 'K91', 'German Sheperd');
+INSERT INTO owns_dog_birthday (dogid, ownerid, name, birthday) VALUES (5, 5, 'K91', null);
+
+INSERT INTO owns_dog (ownerid, name, breed) VALUES (5, 'K92', 'German Sheperd');
+INSERT INTO owns_dog_birthday (dogid, ownerid, name, birthday) VALUES (6, 5, 'K92', null);
 
 -- walk tables
-INSERT INTO walk (location) VALUES ('Central Park');
+-- posted walks
+INSERT INTO walk (location) VALUES ('Central Pond');
+INSERT INTO walk_date (walkid, date) VALUES (1, '2024-03-23');
+INSERT INTO walk_dist (walkid, distance) VALUES (1, 2.5);
+
+INSERT INTO walk (location) VALUES ('Beyond the sea');
+INSERT INTO walk_date (walkid, date) VALUES (2, '2024-02-20');
+
+INSERT INTO walk (location) VALUES ('Vancouver Downtown');
+INSERT INTO walk_date (walkid, date) VALUES (3, '2024-02-28');
+
+INSERT INTO walk (location) VALUES ('Long Lane Park');
+INSERT INTO walk_date (walkid, date) VALUES (4, '2024-01-14');
+INSERT INTO walk_dist (walkid, distance) VALUES (4, 60.0);
+
+INSERT INTO walk (location) VALUES ('Police Station Park');
+INSERT INTO walk_date (walkid, date) VALUES (5, '2024-01-19');
+
+INSERT INTO walk (location) VALUES ('Long Lane Park');
+INSERT INTO walk_date (walkid, date) VALUES (6, '2024-01-14');
+
+-- non posted meetups
+INSERT INTO walk (location) VALUES ('Central Pond');
+INSERT INTO walk_date (walkid, date) VALUES (7, '2024-02-28');
+
+INSERT INTO walk (location) VALUES ('Metrotown');
+INSERT INTO walk_date (walkid, date) VALUES (8, '2024-02-20');
+
+INSERT INTO walk (location) VALUES ('UBC');
+
+INSERT INTO walk (location) VALUES ('Police Station');
+INSERT INTO walk_date (walkid, date) VALUES (10, '2024-05-28');
+
+-- non posted walks
+INSERT INTO walk (location) VALUES ('Long Lane Park');
+INSERT INTO walk_date (walkid, date) VALUES (11, '2024-01-01');
+INSERT INTO walk_dist (walkid, distance) VALUES (11, 50.0);
+
+INSERT INTO walk (location) VALUES ('Central Pond');
+INSERT INTO walk_date (walkid, date) VALUES (12, '2024-02-14');
 
 -- went for table (dog-walk relationship)
 INSERT INTO wentfor (dogid, walkid, rating) VALUES (1, 1, '4');
+INSERT INTO wentfor (dogid, walkid, rating) VALUES (2, 2, '5');
+INSERT INTO wentfor (dogid, walkid, rating) VALUES (1, 3, '3'); -- doggers joined the walk/meetup
+INSERT INTO wentfor (dogid, walkid, rating) VALUES (2, 3, '3'); -- arfy joined the walk/meetup
+INSERT INTO wentfor (dogid, walkid, rating) VALUES (3, 3, '3'); -- blanky joined the walk/meetup
+INSERT INTO wentfor (dogid, walkid, rating) VALUES (4, 4, null);
+INSERT INTO wentfor (dogid, walkid, rating) VALUES (5, 5, '1');
+INSERT INTO wentfor (dogid, walkid, rating) VALUES (6, 6, null);
+
+-- non posted
+INSERT INTO wentfor (dogid, walkid, rating) VALUES (1, 7, '3'); -- doggers joined the walk/meetup
+INSERT INTO wentfor (dogid, walkid, rating) VALUES (2, 7, '3'); -- arfy joined the walk/meetup
+
+INSERT INTO wentfor (dogid, walkid, rating) VALUES (2, 8, null); -- arfy joined the walk/meetup
+INSERT INTO wentfor (dogid, walkid, rating) VALUES (3, 8, '1'); -- blanky joined the walk/meetup
+
+INSERT INTO wentfor (dogid, walkid, rating) VALUES (1, 9, '5'); -- doggers joined the walk/meetup
+INSERT INTO wentfor (dogid, walkid, rating) VALUES (3, 9, '1'); -- blanky joined the walk/meetup
+
+INSERT INTO wentfor (dogid, walkid, rating) VALUES (5, 10, null); -- K91 joined walk
+INSERT INTO wentfor (dogid, walkid, rating) VALUES (6, 10, null); -- K92 joined walk
+
+INSERT INTO wentfor (dogid, walkid, rating) VALUES (4, 11, '1');
+
+INSERT INTO wentfor (dogid, walkid, rating) VALUES (1, 12, '5');
+
 
 -- post walk tables
+-- John Doe post
 INSERT INTO post_walk (walkid) VALUES (1);
 INSERT INTO post_walk_owner (ownerid) VALUES (1);
-INSERT INTO post_walk_content (postid, content) VALUES (1, 'This is a post content');
-INSERT INTO post_walk_tag (postid, tag) VALUES (1, 'park');
+INSERT INTO post_walk_content (postid, content) VALUES (1, 'Me and my doggers walking along.');
+INSERT INTO post_walk_tag (postid, tag) VALUES (1, 'doggers');
+INSERT INTO post_walk_tag (postid, tag) VALUES (1, 'pond');
+
+-- Jack Bean post
+INSERT INTO post_walk (walkid) VALUES (2);
+INSERT INTO post_walk_owner (ownerid) VALUES (2);
+INSERT INTO post_walk_content (postid, content) VALUES (2, 'GGRRR BARK BARK WOOF GGGGRRR GRR BARKNFKFLH FMSMANBARK WOOF WOOF GR TNGFMR BARK BARL BARK BARK WOOF WOOF WOOF GGRRRR BARRKKFNBFB GRR WOMGMHMBOF GRR BARKNFKFLH BARK BARK BARK WOOF GGGGRRR GRR WOMGMHMBOF GRRR BARK BARK WOOF ARF GRRR GXNXHSJSH BRRR BARK BARK');
+INSERT INTO post_walk_tag (postid, tag) VALUES (2, 'inspirational');
+
+-- One Three post - this is a meetup
+INSERT INTO post_walk (walkid) VALUES (3);
+INSERT INTO post_walk_owner (ownerid) VALUES (3);
+INSERT INTO post_walk_content (postid, content) VALUES (3, 'Met up with the gang today.');
+INSERT INTO post_walk_tag (postid, tag) VALUES (3, 'jackAndJohn');
+INSERT INTO post_walk_tag (postid, tag) VALUES (3, 'doggers');
+
+-- Nul Ly post
+INSERT INTO post_walk (walkid) VALUES (4);
+INSERT INTO post_walk_owner (ownerid) VALUES (4);
+INSERT INTO post_walk_content (postid, content) VALUES (4, 'I ran 60 kilometers. My Tory is not surviving this.');
+INSERT INTO post_walk_tag (postid, tag) VALUES (4, 'runToryRun');
+
+-- Popo Lice post
+INSERT INTO post_walk (walkid) VALUES (5);
+INSERT INTO post_walk_owner (ownerid) VALUES (5);
+INSERT INTO post_walk_content (postid, content) VALUES (5, 'Walking our K9s today.');
+INSERT INTO post_walk_tag (postid, tag) VALUES (5, 'K9');
+INSERT INTO post_walk_tag (postid, tag) VALUES (5, '911');
+
+INSERT INTO post_walk (walkid) VALUES (6);
+INSERT INTO post_walk_owner (ownerid) VALUES (5);
+INSERT INTO post_walk_content (postid, content) VALUES (6, 'Spotted this chihuahua doing a marathon.');
+INSERT INTO post_walk_tag (postid, tag) VALUES (6, 'spotted');
+INSERT INTO post_walk_tag (postid, tag) VALUES (6, 'runToryRun');
 
 -- meet up table
-INSERT INTO on_meetup (walkid, time, location, date) VALUES (1, '10:00:00', 'Central Park', '2024-03-21');
+INSERT INTO on_meetup (walkid, time, location, date) VALUES (3, '10:00:00', 'Vancouver Downtown', '2024-02-28'); -- posted meetup
+INSERT INTO on_meetup (walkid, time, location, date) VALUES (3, '08:00:00', 'Central Pong', '2024-02-28'); -- past/nonposted
+INSERT INTO on_meetup (walkid, time, location, date) VALUES (3, '09:00:00', 'Metrotown', '2024-02-20'); -- past/nonposted
+INSERT INTO on_meetup (walkid, time, location, date) VALUES (3, '17:00:00', 'UBC', null); -- past/nonposted
 
 -- schedule table
 INSERT INTO schedules (meetupid, ownerid) VALUES (1, 1);
+INSERT INTO schedules (meetupid, ownerid) VALUES (1, 2);
+INSERT INTO schedules (meetupid, ownerid) VALUES (1, 3);
+
+INSERT INTO schedules (meetupid, ownerid) VALUES (2, 1);
+INSERT INTO schedules (meetupid, ownerid) VALUES (2, 2);
+
+INSERT INTO schedules (meetupid, ownerid) VALUES (3, 2);
+INSERT INTO schedules (meetupid, ownerid) VALUES (3, 3);
+
+INSERT INTO schedules (meetupid, ownerid) VALUES (4, 1);
+INSERT INTO schedules (meetupid, ownerid) VALUES (4, 3);
 
 -- post media tables
 INSERT INTO post_media (postid, url) VALUES (1, 'https://example.com/media');
