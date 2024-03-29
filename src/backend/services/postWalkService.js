@@ -166,4 +166,29 @@ async function fetchDataForPostPage(postID, ownerID) {
   }
 }
 
-export { postWalkSetup, insertPost, fetchDataForPostPage };
+async function fetchDataForOwnerProfilePage(ownerID) {
+  try {
+    const client = await pool.connect();
+    const query = `
+    SELECT pw.postID, pw.walkID, pwo.ownerID, pwc.content, pm.mediaID, pm.url
+    FROM Post_Walk pw 
+    JOIN Post_Walk_Owner pwo ON pw.postID = pwo.postID 
+    LEFT JOIN Post_Walk_Content pwc ON pwo.postID = pwc.postID 
+    LEFT JOIN Post_Media pm ON pwc.postID = pm.postID
+    WHERE pwo.ownerid = ${ownerID};
+    `;
+    const result = await client.query(query);
+    client.release();
+    return result.rows;
+  } catch (error) {
+    console.error("Error fetching data for post from the database:", error);
+    throw error;
+  }
+}
+
+export {
+  postWalkSetup,
+  insertPost,
+  fetchDataForPostPage,
+  fetchDataForOwnerProfilePage,
+};
