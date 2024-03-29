@@ -1,13 +1,12 @@
 import express from "express";
-import { fetchFriendListFromDB } from "../services/friendListService.js";
 
-import { initiateDB } from "../services/databaseService.js";
+import { initiateDB, fillDB } from "../services/databaseService.js";
 
 const router = express.Router();
 
-// router.get("/", (req, res) => {
-//   res.json("hellop there");
-// });
+router.get("/", (req, res) => {
+  res.json("hello there");
+});
 
 router.post("/initiate-all", async (req, res) => {
   const initiateResult = await initiateDB();
@@ -18,5 +17,13 @@ router.post("/initiate-all", async (req, res) => {
   }
 });
 
-export default router;
+router.post("/fill-all", async (req, res) => {
+  const fillResult = await fillDB();
+  if (fillResult) {
+    res.json({ success: true });
+  } else {
+    res.status(500).json({ success: false });
+  }
+});
 
+export default router;

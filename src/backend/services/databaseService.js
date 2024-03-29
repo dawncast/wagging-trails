@@ -1,6 +1,9 @@
 import path from "path";
+import { dirname } from "path";
+import { fileURLToPath } from "url";
 import dotenv from "dotenv";
 import pg from "pg";
+import fs from "fs";
 
 const { Pool } = pg;
 dotenv.config();
@@ -78,9 +81,8 @@ export async function initiateDB() {
     // notification table
     "Receives_Notifications (notificationID SERIAL PRIMARY KEY, ownerID INTEGER NOT NULL, notifContent VARCHAR(255), FOREIGN KEY (ownerID) REFERENCES Owner (ownerID) ON DELETE CASCADE ON UPDATE CASCADE)",
 
-    // friend post tables
-    "FriendPost_Link (notificationID INTEGER PRIMARY KEY, postLink VARCHAR(255) UNIQUE NOT NULL, FOREIGN KEY (notificationID) REFERENCES Receives_Notifications (notificationID) ON DELETE CASCADE)",
-    "FriendPost_Name (postLink VARCHAR(255) PRIMARY KEY, friendName VARCHAR(255) NOT NULL, FOREIGN KEY (postLink) REFERENCES FriendPost_Link (postLink) ON DELETE CASCADE)",
+    // friend post table
+    "FriendPost (notificationID INTEGER PRIMARY KEY, postLink VARCHAR(255) NOT NULL, friendName VARCHAR(255), FOREIGN KEY (notificationID) REFERENCES Receives_Notifications (notificationID) ON DELETE CASCADE)",
 
     // walk alert tables
     "WalkAlert (notificationID INTEGER PRIMARY KEY, dogName VARCHAR(255) NOT NULL, FOREIGN KEY (notificationID) REFERENCES Receives_Notifications (notificationID) ON DELETE CASCADE)",
@@ -151,8 +153,7 @@ export async function initiateDB() {
     "Logs",
     "Organizes_WalkTask",
     "WalkAlert",
-    "FriendPost_Name",
-    "FriendPost_Link",
+    "FriendPost",
     "Receives_Notifications",
     "Friendship",
     "Owner_Name",
@@ -183,6 +184,27 @@ export async function initiateDB() {
   } catch (error) {
     console.error("Error initializing database:", error);
     throw error;
+  }
+}
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const dbPath = path.join(__dirname, "../db.sql");
+const fillQuery = fs.readFileSync(dbPath, "utf8");
+
+export async function fillDB() {
+  let client;
+  try {
+    client = await pool.connect();
+    client.query(fillQuery);
+    return true;
+  } catch (error) {
+    console.error("Error filling database.", error);
+    throw error;
+  } finally {
+    if (client) {
+      client.release();
+    }
   }
 }
 

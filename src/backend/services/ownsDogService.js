@@ -16,6 +16,7 @@ async function insertDog(ownerID, name, breed, birthday) {
   let client;
   try {
     client = await pool.connect();
+    console.log(ownerID);
 
     // Start transaction
     await client.query("BEGIN");
