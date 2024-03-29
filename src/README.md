@@ -3,6 +3,7 @@
 
 ### \*\*_Group Log (3/29/2024)_
 
+**Progress:**
 - All functionalities for Owner Profile Page is done.
 - All fetches for Post Walks, and Walks (via owenrID and tag) is done.
 - Inserting and Scheduling Meetups for multiple owners done.
@@ -11,7 +12,17 @@
 
 Missing: update and delete queries for Post Walk, Walk, Meetups, Schedules, TaggedIn in progress. But templating it should make it easier to finish.
 
-Note: if your db is bugged, you can use drop.sql and create a new one. or just POST _http://localhost:8800/fill-all_.
+**NOTE: if your db is bugged, you can use drop.sql and create a new one. or just POST _http://localhost:8800/fill-all_.
+
+To test fetch fucntionalities, try these GET requests. (Must have a filled database)
+- _http://localhost:8800/walk/1_, viewing walks based on ownerID = 1
+- _http://localhost:8800/posts/5/6_, viewing a post based on ownerID = 5, postID = 6
+- _http://localhost:8800/posts/3/3_, viewing a post that is a meetup, ownerID = 3, postID = 3
+- _http://localhost:8800/posts/5/fetch-by-owner_, viewing all posts made by ownerID = 5
+- _http://localhost:8800/posts/doggers/fetch-by-tag_, viewing all posts with tag **#doggers**
+- _http://localhost:8800/notification/walk-task/4_, view lists of notications (walkTasks ONLY), based on ownerID = 4
+
+**NOTE: there currently is no all notification fetch. Prioritized the walkTask to use for the scheduling bar.
 
 <br>
 
