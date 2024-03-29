@@ -5,7 +5,7 @@
 
 **Progress:**
 - All functionalities for Owner Profile Page is done.
-- All fetches for Post Walks, and Walks (via owenrID and tag) is done.
+- All fetches for Post Walks and Walks (via ownerID and tag) is done.
 - Inserting and Scheduling Meetups for multiple owners done.
 - Inserting tagged dogs in Posts is done.
 - Initialization of .sql file 90% done. Missing Media insertions as it needs to know URLs. But you can already use it to prototype and develop different files in the backend and frontend.
