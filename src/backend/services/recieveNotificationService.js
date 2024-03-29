@@ -3,7 +3,7 @@ import pool from "./databaseService.js";
 async function fetchNotificationsFromDB() {
   try {
     const client = await pool.connect();
-    const result = await client.query("SELECT * FROM recieves_notifications");
+    const result = await client.query("SELECT * FROM receives_notifications");
     client.release();
     return result.rows;
   } catch (error) {
@@ -12,7 +12,7 @@ async function fetchNotificationsFromDB() {
   }
 }
 
-async function insertNotification(ownerID, notificationID, notifContent) {
+async function insertNotification(ownerId, notificationId, notifContent) {
     let client;
     try {
       client = await pool.connect();
@@ -21,8 +21,8 @@ async function insertNotification(ownerID, notificationID, notifContent) {
       await client.query("BEGIN");
 
       const notifInsertQuery =
-        "INSERT INTO recieves_notifications (ownerId, notificationId, notifContent) VALUES ($1, $2, $3)";
-      const notifInsertValues = [ownerID, notificationID, notifContent];
+        "INSERT INTO receives_notifications (ownerId, notificationId, notifContent) VALUES ($1, $2, $3)";
+      const notifInsertValues = [ownerId, notificationId, notifContent];
       const notifResult = await client.query(notifInsertQuery, notifInsertValues);
   
       // Commit the transaction
@@ -49,10 +49,10 @@ async function insertNotification(ownerID, notificationID, notifContent) {
         await client.query("BEGIN");
 
         const deleteQuery =
-            "DELETE FROM recieves_notifications WHERE notificationId = $1";
+            "DELETE FROM receives_notifications WHERE notificationId = $1";
         const deleteValues = [notificationID];
         const deleteResult = await client.query(deleteQuery, deleteValues);
-        console.log("Deleted notification:", deleteResult);
+        console.log("Deleted notification:", deleteResult.rowCount);
 
         // Commit the transaction
         await client.query("COMMIT");

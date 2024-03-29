@@ -1,22 +1,23 @@
 import express from "express";
-import {
-  fetchNotificationsFromDB,
+import { 
   insertNotification,
-  deleteNotification,
-} from "../services/recieveNotificationService";
+  fetchNotificationsFromDB,
+  deleteNotification
+} from "../services/recieveNotificationService.js";
+
 
 const router = express.Router();
 
-router.get("/get-notifs", async (req, res) => {
+router.get("/", async (req, res) => {
   const tableContent = await fetchNotificationsFromDB();
   res.json({ data: tableContent });
 });
 
 router.post("/insert-notif", async (req, res) => {
-  const { ownerID, notificationID, notifContent } = req.body;
+  const { ownerId, notificationId, notifContent } = req.body;
   const insertResult = await insertNotification(
-    ownerID,
-    notificationID,
+    ownerId,
+    notificationId,
     notifContent
   );
   if (insertResult) {
