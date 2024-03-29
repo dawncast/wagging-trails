@@ -430,7 +430,8 @@ INSERT INTO wentfor (dogid, walkid, rating) VALUES (1, 3, '3'); -- doggers joine
 INSERT INTO wentfor (dogid, walkid, rating) VALUES (2, 3, '3'); -- arfy joined the walk/meetup
 INSERT INTO wentfor (dogid, walkid, rating) VALUES (3, 3, '3'); -- blanky joined the walk/meetup
 INSERT INTO wentfor (dogid, walkid, rating) VALUES (4, 4, null);
-INSERT INTO wentfor (dogid, walkid, rating) VALUES (5, 5, '1');
+INSERT INTO wentfor (dogid, walkid, rating) VALUES (5, 5, '1'); -- K91 joined the walk
+INSERT INTO wentfor (dogid, walkid, rating) VALUES (6, 5, '1'); -- K92 joined the walk
 INSERT INTO wentfor (dogid, walkid, rating) VALUES (6, 6, null);
 
 -- non posted
