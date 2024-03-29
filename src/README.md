@@ -14,7 +14,7 @@ Missing: update and delete queries for Post Walk, Walk, Meetups, Schedules, Tagg
 
 **NOTE: if your db is bugged, you can use drop.sql and create a new one. or just POST _http://localhost:8800/fill-all_.
 
-To test fetch fucntionalities, try these GET requests. (Must have a filled database)
+To test fetch functionalities, try these GET requests. (Must have a filled database)
 - _http://localhost:8800/walk/1_, viewing walks based on ownerID = 1
 - _http://localhost:8800/posts/5/6_, viewing a post based on ownerID = 5, postID = 6
 - _http://localhost:8800/posts/3/3_, viewing a post that is a meetup, ownerID = 3, postID = 3
