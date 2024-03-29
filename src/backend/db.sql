@@ -31,8 +31,7 @@ DROP TABLE IF EXISTS owns_dog CASCADE;
 DROP TABLE IF EXISTS logs CASCADE;
 DROP TABLE IF EXISTS organizes_walktask CASCADE;
 DROP TABLE IF EXISTS walkalert CASCADE;
-DROP TABLE IF EXISTS friendpost_name CASCADE;
-DROP TABLE IF EXISTS friendpost_link CASCADE;
+DROP TABLE IF EXISTS friendpost CASCADE;
 DROP TABLE IF EXISTS receives_notifications CASCADE;
 DROP TABLE IF EXISTS friendship CASCADE;
 DROP TABLE IF EXISTS owner_name CASCADE;
@@ -513,14 +512,14 @@ INSERT INTO schedules (meetupid, ownerid) VALUES (4, 1);
 INSERT INTO schedules (meetupid, ownerid) VALUES (4, 3);
 
 -- post media tables
-INSERT INTO post_media (postid, url) VALUES (1, 'https://example.com/media');
-INSERT INTO post_media_date (url, datecreated) VALUES ('https://example.com/media', '2024-03-21');
+--INSERT INTO post_media (postid, url) VALUES (1, 'https://example.com/media');
+--INSERT INTO post_media_date (url, datecreated) VALUES ('https://example.com/media', '2024-03-21');
 
 -- video table
-INSERT INTO video (mediaid, duration) VALUES (1, '00:10:00');
+--INSERT INTO video (mediaid, duration) VALUES (1, '00:10:00');
 
 -- photo table
-INSERT INTO photo (mediaid, filter) VALUES (1, 'Vintage');
+--INSERT INTO photo (mediaid, filter) VALUES (1, 'Vintage');
 
 -- tagged in table
-INSERT INTO taggedin (dogid, postid) VALUES (1, 1);
+--INSERT INTO taggedin (dogid, postid) VALUES (1, 1);
