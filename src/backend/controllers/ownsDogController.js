@@ -1,5 +1,5 @@
 import express from "express";
-import { deleteDog, dogsForOwner, fetchDogsFromDB, insertDog, updateDogName, updateOwnerForDog } from "../services/ownsDogService.js";
+import { deleteDog, dogsForOwner, fetchDogsFromDB, insertDog, updateDogBreed, updateDogName, updateOwnerForDog } from "../services/ownsDogService.js";
 
 const router = express.Router();
 
@@ -68,4 +68,14 @@ router.delete("/delete-dog", async (req, res) => {
     }
 });
 
+router.put("/:dogid/update-dog-breed", async (req,res) => {
+  const { dogbreed } = req.body;
+  const dogid = req.params.dogid;
+  const updateResult = await updateDogBreed(dogid, dogbreed);
+  if (updateResult) {
+    res.json({success : true});
+  } else {
+    res.status(500).json({ success: false});
+  }
+});
 export default router;

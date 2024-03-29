@@ -154,6 +154,22 @@ async function updateDogName(dogid, newDogName) {
   }
 }
 
+//updates dog breed for a given dogID
+async function updateDogBreed(dogid, newDogBreed) {
+  try {
+    const client = await pool.connect();
+    const query1 =
+    "UPDATE owns_dog SET breed = $1 where dogid = $2"
+    const queryValues = [newDogBreed, dogid];
+    await client.query(query1,queryValues);
+    
+    client.release();
+    return true;
+  } catch (error) {
+    console.error("Error updating dog breed:", error);
+    throw error;
+  } 
+}
 
 
 
@@ -161,4 +177,4 @@ async function updateDogName(dogid, newDogName) {
 
 
 
-export { fetchDogsFromDB, insertDog, updateOwnerForDog, deleteDog, dogsForOwner, updateDogName };
+export { fetchDogsFromDB, insertDog, updateOwnerForDog, deleteDog, dogsForOwner, updateDogName, updateDogBreed };
