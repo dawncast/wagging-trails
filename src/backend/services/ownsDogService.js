@@ -171,10 +171,25 @@ async function updateDogBreed(dogid, newDogBreed) {
   } 
 }
 
+async function updateDogBday(dogid, newDogBday) {
+  try {
+    const client = await pool.connect();
+    const query1 =
+    "UPDATE owns_dog_birthday SET birthday = $1 where dogid = $2"
+    const queryValues = [newDogBday, dogid];
+    await client.query(query1,queryValues);
+    
+    client.release();
+    return true;
+  } catch (error) {
+    console.error("Error updating dog birthday:", error);
+    throw error;
+  } 
+}
 
 
 
 
 
 
-export { fetchDogsFromDB, insertDog, updateOwnerForDog, deleteDog, dogsForOwner, updateDogName, updateDogBreed };
+export { fetchDogsFromDB, insertDog, updateOwnerForDog, deleteDog, dogsForOwner, updateDogName, updateDogBreed, updateDogBday };
