@@ -523,4 +523,5 @@ INSERT INTO schedules (meetupid, ownerid) VALUES (4, 3);
 --INSERT INTO photo (mediaid, filter) VALUES (1, 'Vintage');
 
 -- tagged in table
---INSERT INTO taggedin (dogid, postid) VALUES (1, 1);
+INSERT INTO taggedin (dogid, postid) VALUES (1, 3);
+INSERT INTO taggedin (dogid, postid) VALUES (4, 6);

@@ -4,6 +4,7 @@ import {
   postWalkSetup,
   insertPost,
   fetchDataForPostPage,
+  fetchDataForOwnerProfilePage,
 } from "../services/postWalkService.js";
 
 const router = express.Router();
@@ -28,6 +29,22 @@ router.post("/insert-post", async (req, res) => {
     res.json({ success: true });
   } else {
     res.status(500).json({ success: false });
+  }
+});
+
+// for fetching ALL posts made by a single owner
+router.get("/:ownerID/fetch-posts", async (req, res) => {
+  try {
+    const ownerID = req.params.ownerID;
+    const tableContent = await fetchDataForOwnerProfilePage(ownerID);
+    if (!tableContent) {
+      res.status(404).json({ error: "Post not found" });
+      return;
+    }
+    res.json({ data: tableContent });
+  } catch (err) {
+    console.error("Error retrieving owner posts:", err);
+    res.status(500).json({ err: "Internal server error" });
   }
 });
 
