@@ -1,8 +1,5 @@
 import express from "express";
 import cors from "cors";
-import multer from "multer";
-import ejs from "ejs";
-import path from "path";
 import databaseController from "./controllers/databaseController.js";
 import ownerController from "./controllers/ownerController.js";
 import friendListController from "./controllers/friendListController.js";
@@ -24,13 +21,6 @@ const PORT = 8800; // adjust later
 // app.use(express.static("public")); // Serve static files from the 'public' directory
 app.use(express.json());
 app.use(cors());
-
-// for media queries
-// app.set("view engine", "ejs");
-// app.use(express.static("./images"));
-// app.get("/upload", (req, res) => {
-//   res.render("index");
-// });
 
 // Router mounting
 // Notes: add a new app.use("/{entity-name}", {entity-nameController}) here
