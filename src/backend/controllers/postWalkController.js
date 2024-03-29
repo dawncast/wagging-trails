@@ -5,6 +5,7 @@ import {
   insertPost,
   fetchDataForPostPage,
   fetchDataForOwnerProfilePage,
+  fetchDataByTag,
 } from "../services/postWalkService.js";
 
 const router = express.Router();
@@ -32,8 +33,24 @@ router.post("/insert-post", async (req, res) => {
   }
 });
 
+// function to get all the post based on a tag.
+router.get("/:tag/fetch-by-tag", async (req, res) => {
+  try {
+    const tag = req.params.tag;
+    const tableContent = await fetchDataByTag(tag);
+    if (!tableContent) {
+      res.status(404).json({ error: "Posts not found" });
+      return;
+    }
+    res.json({ data: tableContent });
+  } catch (err) {
+    console.error("Error retrieving posts:", err);
+    res.status(500).json({ err: "Internal server error" });
+  }
+});
+
 // for fetching ALL posts made by a single owner
-router.get("/:ownerID/fetch-posts", async (req, res) => {
+router.get("/:ownerID/fetch-by-owner", async (req, res) => {
   try {
     const ownerID = req.params.ownerID;
     const tableContent = await fetchDataForOwnerProfilePage(ownerID);
