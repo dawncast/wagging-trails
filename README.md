@@ -34,7 +34,7 @@ This section will first have the development checklist per member, in which the 
 | ----------------------------------------------------------- | -------------------------------------------------------------- | ----------------------------------------------------- |
 | <ul><li>[X] `Owner` - for friend list                       | <ul><li>[ ] `Owner` - for login and search                     | <ul><li>[X] `Owner` - for profile page                |
 | <ul><li>[X] `Friendship` - for friend list                  | <ul><li>[ ] `Walk` - for scheduling bar and post               | <ul><li>[X] `Owns_Dog` - for profile page             |
-| <ul><li>[ ] `Owns_Dog` - for dog window                     | <ul><li>[ ] `Post_Walk` - for post                             | <ul><li>[ ] `Walk` - for scheduling bar and post      |
+| <ul><li>[X] `Owns_Dog` - for dog window                     | <ul><li>[ ] `Post_Walk` - for post                             | <ul><li>[ ] `Walk` - for scheduling bar and post      |
 | <ul><li>[ ] `Walk` - for dog window                         | <ul><li>[ ] `Friendship` - for posts                           | <ul><li>[ ] `Post_Walk` - for scheduling bar and post |
 | <ul><li>[ ] `Post_Walk` - for dog window                    | <ul><li>[ ] `Receives_Notifications` - for notification window | <ul><li>[X] `On_MeetUp` - for scheduling bar and post |
 | <ul><li>[ ] `WentFor` - for dog window                      | <ul><li>[ ] `FriendPost` - for posts                           | <ul><li>[ ] `Schedules` - for scheduling bar          |
