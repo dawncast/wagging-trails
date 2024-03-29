@@ -49,12 +49,20 @@ async function insertDog(ownerID, name, breed, birthday) {
 
 async function updateOwnerForDog(ownerIDNew, dogID) {
   try {
+
     const client = await pool.connect();
-    const query =
+    await client.query("BEGIN");
+    const query1 =
       "UPDATE owns_dog SET ownerid = $1 WHERE dogID = $2";
     const values = [ownerIDNew, dogID];
-    await client.query(query, values);
-    client.release();
+    await client.query(query1, values);
+
+    const query2 =
+      "UPDATE owns_dog_birthday SET ownerid =$1 WHERE dogID = $2";
+      const bday_values = [ownerIDNew, dogID];
+      await client.query(query2, bday_values);
+
+    await client.query("COMMIT");
     return true;
   } catch (error) {
     console.error("Error updating dog owner:", error);
