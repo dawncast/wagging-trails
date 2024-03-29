@@ -2,15 +2,15 @@ import express from "express";
 import cors from "cors";
 import databaseController from "./controllers/databaseController.js";
 import ownerController from "./controllers/ownerController.js";
-
 import friendListController from "./controllers/friendListController.js";
-
 import postWalkController from "./controllers/postWalkController.js";
 import ownsDogController from "./controllers/ownsDogController.js";
 import walkController from "./controllers/walkController.js";
 import wentForController from "./controllers/wentForController.js";
 import taggedInController from "./controllers/taggedInController.js";
-
+import notificationController from "./controllers/notificationController.js";
+import schedulesController from "./controllers/schedulesController.js";
+import onMeetupController from "./controllers/onMeetupController.js";
 
 const app = express();
 const PORT = 8800; // adjust later
@@ -34,7 +34,9 @@ app.use("/dog", ownsDogController);
 app.use("/walk", walkController);
 app.use("/went-for", wentForController);
 app.use("/tagged-in", taggedInController);
-
+app.use("/notification", notificationController);
+app.use("/schedules", schedulesController);
+app.use("/meetup", onMeetupController);
 
 // Starting the server
 app.listen(PORT, () => {

@@ -105,4 +105,35 @@ async function insertWalk(location, date, distance) {
   }
 }
 
-export { walkSetup, checkWalkTableExists, insertWalk };
+// should retrieve walkID, dogID, dogName, and date of walk.
+// if postID is null, we can provide a chance for the owner to
+// create the post for the said walk.
+// also check if it's a meetup walk.
+async function fetchAllWalks(ownerID) {
+  try {
+    const client = await pool.connect();
+    const query = {
+      text: `
+      SELECT w.walkID, od.dogID, od.name, wd.date, wdi.distance, om.meetupID, pw.postID
+      FROM Walk w 
+      JOIN WentFor wf ON w.walkID = wf.walkID
+      JOIN Owns_Dog od ON wf.dogID = od.dogID
+      LEFT JOIN Walk_Date wd ON w.walkID = wd.walkID
+      LEFT JOIN Walk_Dist wdi ON w.walkID = wdi.walkID 
+      LEFT JOIN Post_Walk pw ON w.walkID = pw.walkID
+      LEFT JOIN On_MeetUp om ON w.walkID = om.walkID
+      WHERE od.ownerID = $1
+      ORDER BY wd.date DESC NULLS LAST;
+    `,
+      values: [ownerID],
+    };
+    const result = await client.query(query);
+    client.release();
+    return result.rows;
+  } catch (error) {
+    console.error("Error fetching data for post from the database:", error);
+    throw error;
+  }
+}
+
+export { walkSetup, checkWalkTableExists, insertWalk, fetchAllWalks };
