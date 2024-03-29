@@ -1,3 +1,40 @@
 import pool from "./databaseService.js";
 
-export {};
+async function insertMeetup(walkID, time, location, date, ownerID) {
+  let client;
+  try {
+    client = await pool.connect();
+
+    // Start transaction
+    await client.query("BEGIN");
+
+    const meetupInsertQuery =
+      "INSERT INTO On_Meetup (walkID, time, location, date) VALUES ($1, $2, $3, $4) RETURNING meetupID";
+    const meetupInsertValues = [walkID, time, location, date];
+    const meetupResult = await client.query(
+      meetupInsertQuery,
+      meetupInsertValues
+    );
+    const meetupID = meetupResult.rows[0].meetupid;
+
+    const scheduleInsertQuery =
+      "INSERT INTO schedules (meetupID, ownerID) VALUES ($1, $2)";
+    const scheduleInsertValues = [meetupID, ownerID];
+    await client.query(scheduleInsertQuery, scheduleInsertValues);
+
+    // Commit the transaction
+    await client.query("COMMIT");
+    return true;
+  } catch (error) {
+    // Rollback the transaction in case of error
+    await client.query("ROLLBACK");
+    console.error("Error inserting meetup or schedule:", error);
+    throw error;
+  } finally {
+    if (client) {
+      client.release();
+    }
+  }
+}
+
+export { insertMeetup };
