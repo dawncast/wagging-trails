@@ -96,6 +96,30 @@ async function deleteDog(dogID) {
   }
 }
 
+async function dogsForOwner(ownerid) {
+  let client;
+  try{
+    client = await pool.connect();
+    await client.query("BEGIN");
+
+    const getDog=
+    "SELECT * from owns_dog where ownerid = $1";
+    const getDogValues=[ownerid];
+    const results = await client.query(getDog,getDogValues);
+
+    await client.query("COMMIT");
+    return results.rows;
+  }  catch (error) {
+    // Rollback the transaction in case of error
+    await client.query("ROLLBACK");
+    console.error("Error retrieving dogs:", error);
+    throw error;
+  } finally {
+    if (client) {
+    client.release();
+    }
+  }
+}
 
 
 
@@ -103,4 +127,5 @@ async function deleteDog(dogID) {
 
 
 
-export { fetchDogsFromDB, insertDog, updateOwnerForDog, deleteDog };
+
+export { fetchDogsFromDB, insertDog, updateOwnerForDog, deleteDog, dogsForOwner };
