@@ -116,6 +116,7 @@ async function deleteFriendship(ownerid1, ownerid2) {
         insertFriendship,
         deleteFriendship,
     }
+<<<<<<< HEAD
     import pool from "./databaseService.js";
 
 
@@ -254,3 +255,6 @@ export {
   deleteFriendship,
   fetchFriendsForProfilePage,
 };
+=======
+    
+>>>>>>> 3997beb (wip)
