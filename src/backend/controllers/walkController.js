@@ -1,5 +1,9 @@
 import express from "express";
-import { walkSetup, insertWalk } from "../services/walkService.js";
+import {
+  walkSetup,
+  insertWalk,
+  fetchAllWalks,
+} from "../services/walkService.js";
 
 const router = express.Router();
 
@@ -23,6 +27,22 @@ router.post("/insert-walk", async (req, res) => {
     res.json({ success: true });
   } else {
     res.status(500).json({ success: false });
+  }
+});
+
+// for side scheduling bar. Fetches all walks. UPCOMING WALKS WILL BE MANAGED BY WALK TASK.
+router.get("/:ownerID", async (req, res) => {
+  try {
+    const ownerID = req.params.ownerID;
+    const tableContent = await fetchAllWalks(ownerID);
+    if (!tableContent) {
+      res.status(404).json({ error: "Walks not found" });
+      return;
+    }
+    res.json({ data: tableContent });
+  } catch (err) {
+    console.error("Error retrieving walks:", err);
+    res.status(500).json({ err: "Internal server error" });
   }
 });
 
