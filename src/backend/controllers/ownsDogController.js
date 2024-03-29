@@ -1,5 +1,5 @@
 import express from "express";
-import { deleteDog, dogsForOwner, fetchDogsFromDB, insertDog, updateOwnerForDog } from "../services/ownsDogService.js";
+import { deleteDog, dogsForOwner, fetchDogsFromDB, insertDog, updateDogName, updateOwnerForDog } from "../services/ownsDogService.js";
 
 const router = express.Router();
 
@@ -56,5 +56,16 @@ router.delete("/delete-dog", async (req, res) => {
       res.status(500).json({err: "Internal server error"});
     }
   });
+
+  router.put("/:dogid/update-dog-name", async (req,res) => {
+    const { dogname } = req.body;
+    const dogid = req.params.dogid;
+    const updateResult = await updateDogName(dogid, dogname);
+    if (updateResult) {
+      res.json({success : true});
+    } else {
+      res.status(500).json({ success: false});
+    }
+});
 
 export default router;
