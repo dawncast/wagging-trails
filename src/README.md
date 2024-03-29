@@ -1,5 +1,20 @@
 # Group Log README
 
+
+### \*\*_Group Log (3/29/2024)_
+
+- All functionalities for Owner Profile Page is done.
+- All fetches for Post Walks, and Walks (via owenrID and tag) is done.
+- Inserting and Scheduling Meetups for multiple owners done.
+- Inserting tagged dogs in Posts is done.
+- Initialization of .sql file 90% done. Missing Media insertions as it needs to know URLs. But you can already use it to prototype and develop different files in the backend and frontend.
+
+Missing: update and delete queries for Post Walk, Walk, Meetups, Schedules, TaggedIn in progress. But templating it should make it easier to finish.
+
+Note: if your db is bugged, you can use drop.sql and create a new one. or just POST _http://localhost:8800/fill-all_.
+
+<br>
+
 ### \*\*_Group Log (3/14/2024)_
 
 service/post-walk WIP.
