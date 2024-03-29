@@ -10,7 +10,7 @@ import ownsDogController from "./controllers/ownsDogController.js";
 import walkController from "./controllers/walkController.js";
 import wentForController from "./controllers/wentForController.js";
 import taggedInController from "./controllers/taggedInController.js";
-
+import notificationController from "./controllers/notificationController.js";
 
 const app = express();
 const PORT = 8800; // adjust later
@@ -34,7 +34,7 @@ app.use("/dog", ownsDogController);
 app.use("/walk", walkController);
 app.use("/went-for", wentForController);
 app.use("/tagged-in", taggedInController);
-
+app.use("/notification", notificationController);
 
 // Starting the server
 app.listen(PORT, () => {

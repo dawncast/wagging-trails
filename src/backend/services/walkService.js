@@ -113,13 +113,15 @@ async function fetchAllWalks(ownerID) {
     const client = await pool.connect();
     const query = {
       text: `
-      SELECT w.walkID, od.dogID, od.name, wd.date, pw.postID
+      SELECT w.walkID, od.dogID, od.name, wd.date, wdi.distance, pw.postID
       FROM Walk w 
-      JOIN Walk_Date wd ON w.walkID = wd.walkID 
-      JOIN WentFor wf ON wd.walkID = wf.walkID
+      JOIN WentFor wf ON w.walkID = wf.walkID
       JOIN Owns_Dog od ON wf.dogID = od.dogID
+      LEFT JOIN Walk_Date wd ON w.walkID = wd.walkID
+      LEFT JOIN Walk_Dist wdi ON w.walkID = wdi.walkID 
       LEFT JOIN Post_Walk pw ON w.walkID = pw.walkID
-      WHERE od.ownerID = $1;
+      WHERE od.ownerID = $1
+      ORDER BY wd.date DESC NULLS LAST;
     `,
       values: [ownerID],
     };
