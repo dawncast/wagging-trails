@@ -494,9 +494,9 @@ INSERT INTO post_walk_tag (postid, tag) VALUES (6, 'runToryRun');
 
 -- meet up table
 INSERT INTO on_meetup (walkid, time, location, date) VALUES (3, '10:00:00', 'Vancouver Downtown', '2024-02-28'); -- posted meetup
-INSERT INTO on_meetup (walkid, time, location, date) VALUES (3, '08:00:00', 'Central Pong', '2024-02-28'); -- past/nonposted
-INSERT INTO on_meetup (walkid, time, location, date) VALUES (3, '09:00:00', 'Metrotown', '2024-02-20'); -- past/nonposted
-INSERT INTO on_meetup (walkid, time, location, date) VALUES (3, '17:00:00', 'UBC', null); -- past/nonposted
+INSERT INTO on_meetup (walkid, time, location, date) VALUES (7, '08:00:00', 'Central Pong', '2024-02-28'); -- past/nonposted
+INSERT INTO on_meetup (walkid, time, location, date) VALUES (8, '09:00:00', 'Metrotown', '2024-02-20'); -- past/nonposted
+INSERT INTO on_meetup (walkid, time, location, date) VALUES (9, '17:00:00', 'UBC', null); -- past/nonposted
 
 -- schedule table
 INSERT INTO schedules (meetupid, ownerid) VALUES (1, 1);
