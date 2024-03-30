@@ -11,7 +11,9 @@ import taggedInController from "./controllers/taggedInController.js";
 import notificationController from "./controllers/notificationController.js";
 import schedulesController from "./controllers/schedulesController.js";
 import onMeetupController from "./controllers/onMeetupController.js";
+import postMediaController from "./controllers/postMediaController.js";
 import recievesNotifController from "./controllers/recievesNotificationController.js";
+
 
 const app = express();
 const PORT = 8800; // adjust later
@@ -27,9 +29,7 @@ app.use(cors());
 // when creating a new entity. Don't forget to import.
 app.use("/", databaseController);
 app.use("/owner", ownerController);
-
 app.use("/friend-list", friendListController);
-
 app.use("/posts", postWalkController);
 app.use("/dog", ownsDogController);
 app.use("/walk", walkController);
@@ -38,7 +38,9 @@ app.use("/tagged-in", taggedInController);
 app.use("/notification", notificationController);
 app.use("/schedules", schedulesController);
 app.use("/meetup", onMeetupController);
+app.use("/media", postMediaController);
 app.use("/recieves-notif", recievesNotifController);
+
 
 // Starting the server
 app.listen(PORT, () => {
