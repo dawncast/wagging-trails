@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import axios from "axios";
 
 function CreatePost() {
+  // placeholders
   const walkID = 12;
   const ownerID = 1;
+
   const [file, setFile] = useState(null);
   const [content, setContent] = useState("");
   const [tags, setTags] = useState([]);
