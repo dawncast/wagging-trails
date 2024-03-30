@@ -34,6 +34,7 @@ async function insertMedia(fileName, date, mediaType, postID) {
     // Start transaction
     await client.query("BEGIN");
 
+
     const mediaInsertQuery =
       "INSERT INTO Post_Media (postID, url) VALUES ($1, $2) RETURNING mediaID";
     const mediaInsertValues = [postID, fileName];
@@ -51,7 +52,7 @@ async function insertMedia(fileName, date, mediaType, postID) {
         : "INSERT INTO Video (mediaID, duration) VALUES ($1, $2)";
     const subInsertValues = [mediaID, null];
     await client.query(subInsertQuery, subInsertValues);
-
+    
     // Commit the transaction
     await client.query("COMMIT");
     return true;

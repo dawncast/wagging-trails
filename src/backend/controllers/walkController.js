@@ -3,6 +3,10 @@ import {
   walkSetup,
   insertWalk,
   fetchAllWalks,
+  deleteWalk,
+  updateWalkLocaton,
+  updateWalkDate,
+  updateWalkDistance,
 } from "../services/walkService.js";
 
 const router = express.Router();
@@ -45,5 +49,51 @@ router.get("/:ownerID", async (req, res) => {
     res.status(500).json({ err: "Internal server error" });
   }
 });
+
+
+router.delete("/delete-walk", async (req, res) => {
+  const { walkid } = req.body;
+  const deleteResult = await deleteWalk(walkid);
+  if (deleteResult) {
+      res.json({ success: true });
+  } else {
+      res.status(500).json({ success: false });
+  }
+  });
+
+
+  router.put("/:walkid/update-walk-location", async (req,res) => {
+    const { walklocation } = req.body;
+    const walkid = req.params.walkid;
+    const updateResult = await updateWalkLocaton(walkid, walklocation);
+    if (updateResult) {
+      res.json({success : true});
+    } else {
+      res.status(500).json({ success: false});
+    }
+  });
+
+  router.put("/:walkid/update-walk-date", async (req,res) => {
+    const { walkdate} = req.body;
+    const walkid = req.params.walkid;
+    const updateResult = await updateWalkDate(walkid, walkdate);
+    if (updateResult) {
+      res.json({success : true});
+    } else {
+      res.status(500).json({ success: false});
+    }
+  });
+
+  router.put("/:walkid/update-walk-distance", async (req,res) => {
+    const { walkdistance} = req.body;
+    const walkid = req.params.walkid;
+    const updateResult = await updateWalkDistance(walkid, walkdistance);
+    if (updateResult) {
+      res.json({success : true});
+    } else {
+      res.status(500).json({ success: false});
+    }
+  });
+
 
 export default router;
