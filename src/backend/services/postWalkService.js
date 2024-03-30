@@ -23,39 +23,6 @@ async function postWalkSetup() {
   }
 }
 
-// /**
-//  * Initializes three normalized, post_walk tables.
-//  * Drops existing tables to have a fresh set of tables.
-//  *
-//  * @returns true or error message.
-//  */
-// async function initiatePosts() {
-//   // Add the tables you want to create.
-//   const createTableQueries = [
-//     "Post_Walk (postID SERIAL PRIMARY KEY, walkID INTEGER UNIQUE NOT NULL, FOREIGN KEY (walkID) REFERENCES Walk (walkID) ON DELETE CASCADE ON UPDATE CASCADE)",
-//     "Post_Walk_Content (postID INTEGER PRIMARY KEY, content VARCHAR(255), FOREIGN KEY (postID) REFERENCES Post_Walk (postID) ON DELETE CASCADE)",
-//     "Post_Walk_Tag (postID INTEGER PRIMARY KEY, tag VARCHAR(255), FOREIGN KEY (postID) REFERENCES Post_Walk (postID) ON DELETE CASCADE)",
-//   ];
-
-//   // Add the table names that should be dropped. Should be the same tables on createTableQueries.
-//   const dropTables = ["Post_Walk_Content", "Post_Walk_Tag", "Post_Walk"]; // Make sure the order is Dependent->Source. Remove tables that depends on another table.
-
-//   try {
-//     const client = await pool.connect();
-//     for (const table of dropTables) {
-//       await client.query(`DROP TABLE IF EXISTS ${table}`);
-//     }
-//     for (const query of createTableQueries) {
-//       await client.query(`CREATE TABLE IF NOT EXISTS ${query}`);
-//     }
-//     client.release();
-//     return true;
-//   } catch (error) {
-//     console.error("Error initializing owners:", error);
-//     throw error;
-//   }
-// }
-
 async function insertPost(walkID, ownerID, content, tags) {
   let client;
   try {
@@ -136,7 +103,14 @@ async function fetchDataForPostPage(postID, ownerID) {
           array_agg(DISTINCT pm.url) AS urls,
           array_agg(DISTINCT CASE WHEN od1.dogID <> od.dogID THEN od1.name END) AS tagged_dogs,
           array_agg(DISTINCT CASE WHEN own1.ownerID <> own.ownerID THEN CONCAT(own1.firstName, ' ', own1.lastName) END) AS met_up_owners,
-          array_agg(DISTINCT pwt.tag) AS tags
+          array_agg(DISTINCT pwt.tag) AS tags,
+          CAST(AVG
+            (CASE wf.rating WHEN '1' THEN 1 
+                            WHEN '2' THEN 2 
+                            WHEN '3' THEN 3 
+                            WHEN '4' THEN 4 
+                            WHEN '5' THEN 5 
+                            ELSE NULL END) AS INT) AS rating
     FROM Post_Walk pw
     JOIN Walk w ON pw.walkID = w.walkID
     JOIN WentFor wf ON w.walkID = wf.walkID
@@ -217,3 +191,38 @@ export {
   fetchDataForOwnerProfilePage,
   fetchDataByTag,
 };
+
+// unused functions
+
+// /**
+//  * Initializes three normalized, post_walk tables.
+//  * Drops existing tables to have a fresh set of tables.
+//  *
+//  * @returns true or error message.
+//  */
+// async function initiatePosts() {
+//   // Add the tables you want to create.
+//   const createTableQueries = [
+//     "Post_Walk (postID SERIAL PRIMARY KEY, walkID INTEGER UNIQUE NOT NULL, FOREIGN KEY (walkID) REFERENCES Walk (walkID) ON DELETE CASCADE ON UPDATE CASCADE)",
+//     "Post_Walk_Content (postID INTEGER PRIMARY KEY, content VARCHAR(255), FOREIGN KEY (postID) REFERENCES Post_Walk (postID) ON DELETE CASCADE)",
+//     "Post_Walk_Tag (postID INTEGER PRIMARY KEY, tag VARCHAR(255), FOREIGN KEY (postID) REFERENCES Post_Walk (postID) ON DELETE CASCADE)",
+//   ];
+
+//   // Add the table names that should be dropped. Should be the same tables on createTableQueries.
+//   const dropTables = ["Post_Walk_Content", "Post_Walk_Tag", "Post_Walk"]; // Make sure the order is Dependent->Source. Remove tables that depends on another table.
+
+//   try {
+//     const client = await pool.connect();
+//     for (const table of dropTables) {
+//       await client.query(`DROP TABLE IF EXISTS ${table}`);
+//     }
+//     for (const query of createTableQueries) {
+//       await client.query(`CREATE TABLE IF NOT EXISTS ${query}`);
+//     }
+//     client.release();
+//     return true;
+//   } catch (error) {
+//     console.error("Error initializing owners:", error);
+//     throw error;
+//   }
+// }

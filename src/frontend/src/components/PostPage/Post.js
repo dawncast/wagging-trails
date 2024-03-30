@@ -167,16 +167,16 @@ export default function Post({ data }) {
               {data.owner_name}
             </h2>
 
-            {/* Post Review */}
+            {/* Walk Rating */}
             <div className="mt-3">
-              <h3 className="sr-only">Reviews</h3>
+              <h3 className="sr-only">Walk Rating</h3>
               <div className="flex items-center">
                 <div className="flex items-center">
                   {[0, 1, 2, 3, 4].map((rating) => (
                     <StarIcon
                       key={rating}
                       className={classNames(
-                        post.rating > rating
+                        data.rating > rating
                           ? "text-indigo-500"
                           : "text-gray-300",
                         "h-5 w-5 flex-shrink-0"
