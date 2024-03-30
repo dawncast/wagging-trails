@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import path from "path";
 import databaseController from "./controllers/databaseController.js";
 import ownerController from "./controllers/ownerController.js";
 import friendListController from "./controllers/friendListController.js";
@@ -14,7 +15,6 @@ import onMeetupController from "./controllers/onMeetupController.js";
 import postMediaController from "./controllers/postMediaController.js";
 import recievesNotifController from "./controllers/recievesNotificationController.js";
 import friendPostsController from "./controllers/friendPostsController.js";
-
 
 
 const app = express();
@@ -44,6 +44,8 @@ app.use("/media", postMediaController);
 app.use("/recieves-notif", recievesNotifController);
 app.use("/friend-posts", friendPostsController);
 
+app.use("/images", express.static(path.resolve("uploads", "images")));
+app.use("/videos", express.static(path.resolve("uploads", "videos")));
 
 // Starting the server
 app.listen(PORT, () => {
