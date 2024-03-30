@@ -162,4 +162,20 @@ async function deleteWalk(walkid) {
   }
 }
 
-export { walkSetup, checkWalkTableExists, insertWalk, fetchAllWalks, deleteWalk };
+async function updateWalkLocaton(walkid, newLocation) {
+  try {
+    const client = await pool.connect();
+    const query1 =
+    "UPDATE walk SET location = $1 where walkid = $2"
+    const queryValues = [newLocation, walkid];
+    await client.query(query1,queryValues);
+
+    client.release();
+    return true;
+  } catch (error) {
+    console.error("Error updating walk location:", error);
+    throw error;
+  } 
+}
+
+export { walkSetup, checkWalkTableExists, insertWalk, fetchAllWalks, deleteWalk, updateWalkLocaton };

@@ -4,6 +4,7 @@ import {
   insertWalk,
   fetchAllWalks,
   deleteWalk,
+  updateWalkLocaton,
 } from "../services/walkService.js";
 
 const router = express.Router();
@@ -56,6 +57,18 @@ router.delete("/delete-walk", async (req, res) => {
   } else {
       res.status(500).json({ success: false });
   }
+  });
+
+
+  router.put("/:walkid/update-walk-location", async (req,res) => {
+    const { walklocation } = req.body;
+    const walkid = req.params.walkid;
+    const updateResult = await updateWalkLocaton(walkid, walklocation);
+    if (updateResult) {
+      res.json({success : true});
+    } else {
+      res.status(500).json({ success: false});
+    }
   });
 
 
