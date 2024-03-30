@@ -4,6 +4,7 @@ import AddOwner from "./pages/AddOwner";
 import UpdateOwner from "./pages/UpdateOwner";
 import HomePage from "./pages/HomePage";
 import CreatePost from "./components/SchedulingBar/NewPostForm";
+import PostPage from "./pages/PostPage";
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/home" element={<HomePage />}></Route>
+          <Route path="/post/:ownerID/:postID" element={<PostPage />}></Route>
           <Route path="/owners" element={<DisplayOwner />}></Route>
           <Route path="/add-owner" element={<AddOwner />}></Route>
           <Route path="/update-owner" element={<UpdateOwner />}></Route>
