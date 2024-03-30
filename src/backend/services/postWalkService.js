@@ -90,7 +90,7 @@ async function insertPost(walkID, ownerID, content, tags) {
 
     // Commit the transaction
     await client.query("COMMIT");
-    return true;
+    return postID;
   } catch (error) {
     // Rollback the transaction in case of error
     await client.query("ROLLBACK");
