@@ -178,4 +178,20 @@ async function updateWalkLocaton(walkid, newLocation) {
   } 
 }
 
-export { walkSetup, checkWalkTableExists, insertWalk, fetchAllWalks, deleteWalk, updateWalkLocaton };
+async function updateWalkDate(walkid, newDate) {
+  try {
+    const client = await pool.connect();
+    const query1 =
+    "UPDATE walk_date SET date = $1 where walkid = $2"
+    const queryValues = [newDate, walkid];
+    await client.query(query1,queryValues);
+
+    client.release();
+    return true;
+  } catch (error) {
+    console.error("Error updating walk date:", error);
+    throw error;
+  } 
+}
+
+export { walkSetup, checkWalkTableExists, insertWalk, fetchAllWalks, deleteWalk, updateWalkLocaton, updateWalkDate };
