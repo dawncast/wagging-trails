@@ -13,6 +13,8 @@ import schedulesController from "./controllers/schedulesController.js";
 import onMeetupController from "./controllers/onMeetupController.js";
 import postMediaController from "./controllers/postMediaController.js";
 import recievesNotifController from "./controllers/recievesNotificationController.js";
+import friendPostsController from "./controllers/friendPostsController.js";
+
 
 
 const app = express();
@@ -40,6 +42,7 @@ app.use("/schedules", schedulesController);
 app.use("/meetup", onMeetupController);
 app.use("/media", postMediaController);
 app.use("/recieves-notif", recievesNotifController);
+app.use("/friend-posts", friendPostsController);
 
 
 // Starting the server
