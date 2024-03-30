@@ -6,6 +6,7 @@ import {
   deleteWalk,
   updateWalkLocaton,
   updateWalkDate,
+  updateWalkDistance,
 } from "../services/walkService.js";
 
 const router = express.Router();
@@ -76,6 +77,17 @@ router.delete("/delete-walk", async (req, res) => {
     const { walkdate} = req.body;
     const walkid = req.params.walkid;
     const updateResult = await updateWalkDate(walkid, walkdate);
+    if (updateResult) {
+      res.json({success : true});
+    } else {
+      res.status(500).json({ success: false});
+    }
+  });
+
+  router.put("/:walkid/update-walk-distance", async (req,res) => {
+    const { walkdistance} = req.body;
+    const walkid = req.params.walkid;
+    const updateResult = await updateWalkDistance(walkid, walkdistance);
     if (updateResult) {
       res.json({success : true});
     } else {
