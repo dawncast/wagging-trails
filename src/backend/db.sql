@@ -370,7 +370,7 @@ INSERT INTO owns_dog (ownerid, name, breed) VALUES (2, 'Arfy', 'Bull Terrier');
 INSERT INTO owns_dog_birthday (dogid, ownerid, name, birthday) VALUES (2, 2, 'Arfy', '2020-02-20');
 
 INSERT INTO owns_dog (ownerid, name, breed) VALUES (3, 'Blanky', null);
-INSERT INTO owns_dog_birthday (dogid, ownerid, name, birthday) VALUES (3, 2, 'Blanky', '2021-03-12');
+INSERT INTO owns_dog_birthday (dogid, ownerid, name, birthday) VALUES (3, 3, 'Blanky', '2021-03-12');
 
 INSERT INTO owns_dog (ownerid, name, breed) VALUES (4, 'Tory', null);
 INSERT INTO owns_dog_birthday (dogid, ownerid, name, birthday) VALUES (4, 4, 'Tory', null);

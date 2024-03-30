@@ -1,5 +1,5 @@
 import express from "express";
-import { fetchDogsFromDB, insertDog } from "../services/ownsDogService.js";
+import { deleteDog, dogsForOwner, fetchDogsFromDB, insertDog, updateDogBday, updateDogBreed, updateDogName, updateOwnerForDog } from "../services/ownsDogService.js";
 
 const router = express.Router();
 
@@ -17,5 +17,78 @@ router.post("/insert-dog", async (req, res) => {
     res.status(500).json({ success: false });
   }
 });
+
+router.put("/:dogID/update-dog-owner", async (req, res) => {
+  const { ownerIDNew} = req.body;
+  const dogID = req.params.dogID;
+  const updateResult = await updateOwnerForDog(ownerIDNew, dogID);
+  if (updateResult) {
+    res.json({ success: true });
+  } else {
+    res.status(500).json({ success: false });
+  }
+});
+
+router.delete("/delete-dog", async (req, res) => {
+  const { dogID} = req.body;
+  const deleteResult = await deleteDog(
+      dogID
+  );
+  if (deleteResult) {
+      res.json({ success: true });
+  } else {
+      res.status(500).json({ success: false });
+  }
+  });
+
+  router.get("/:ownerid/get-dog-for", async (req, res) => {
+    try {
+      const ownerid = req.params.ownerid;
+      const tableContent = await dogsForOwner(ownerid);
+      if (!tableContent) {
+        res.status(404).json({error: "Owner not found"});
+        return;
+      }
+      res.json({data: tableContent});
+  
+    } catch (err) {
+      console.error("Error retrieving dogs for owner: ", err);
+      res.status(500).json({err: "Internal server error"});
+    }
+  });
+
+  router.put("/:dogid/update-dog-name", async (req,res) => {
+    const { dogname } = req.body;
+    const dogid = req.params.dogid;
+    const updateResult = await updateDogName(dogid, dogname);
+    if (updateResult) {
+      res.json({success : true});
+    } else {
+      res.status(500).json({ success: false});
+    }
+});
+
+router.put("/:dogid/update-dog-breed", async (req,res) => {
+  const { dogbreed } = req.body;
+  const dogid = req.params.dogid;
+  const updateResult = await updateDogBreed(dogid, dogbreed);
+  if (updateResult) {
+    res.json({success : true});
+  } else {
+    res.status(500).json({ success: false});
+  }
+});
+
+router.put("/:dogid/update-dog-bday", async (req,res) => {
+  const { dogbday } = req.body;
+  const dogid = req.params.dogid;
+  const updateResult = await updateDogBday(dogid, dogbday);
+  if (updateResult) {
+    res.json({success : true});
+  } else {
+    res.status(500).json({ success: false});
+  }
+});
+
 
 export default router;

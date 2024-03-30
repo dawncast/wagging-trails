@@ -4,7 +4,7 @@ import {
   initiateOwners,
   insertFriendship,
   deleteFriendship,
-  fetchFriendsForProfilePage,
+  // fetchFriendsForProfilePage,
 } from "../services/friendListService.js";
 
 const router = express.Router();
