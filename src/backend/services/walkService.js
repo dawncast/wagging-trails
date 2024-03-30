@@ -136,4 +136,79 @@ async function fetchAllWalks(ownerID) {
   }
 }
 
-export { walkSetup, checkWalkTableExists, insertWalk, fetchAllWalks };
+async function deleteWalk(walkid) {
+  let client;
+  try{
+    client = await pool.connect();
+
+    await client.query("BEGIN");
+
+    const deleteWalk=
+    "DELETE from walk WHERE walkid = $1";
+    const deleteWalkValues = [walkid];
+    await client.query(deleteWalk, deleteWalkValues);
+
+    await client.query("COMMIT");
+    return true;
+  } catch (error) {
+    // Rollback the transaction in case of error
+    await client.query("ROLLBACK");
+    console.error("Error deleting walk:", error);
+    throw error;
+  } finally {
+    if (client) {
+    client.release();
+    }
+  }
+}
+
+async function updateWalkLocaton(walkid, newLocation) {
+  try {
+    const client = await pool.connect();
+    const query1 =
+    "UPDATE walk SET location = $1 where walkid = $2"
+    const queryValues = [newLocation, walkid];
+    await client.query(query1,queryValues);
+
+    client.release();
+    return true;
+  } catch (error) {
+    console.error("Error updating walk location:", error);
+    throw error;
+  } 
+}
+
+async function updateWalkDate(walkid, newDate) {
+  try {
+    const client = await pool.connect();
+    const query1 =
+    "UPDATE walk_date SET date = $1 where walkid = $2"
+    const queryValues = [newDate, walkid];
+    await client.query(query1,queryValues);
+
+    client.release();
+    return true;
+  } catch (error) {
+    console.error("Error updating walk date:", error);
+    throw error;
+  } 
+}
+
+
+async function updateWalkDistance(walkid, newDistance) {
+  try {
+    const client = await pool.connect();
+    const query1 =
+    "UPDATE walk_dist SET distance = $1 where walkid = $2"
+    const queryValues = [newDistance, walkid];
+    await client.query(query1,queryValues);
+
+    client.release();
+    return true;
+  } catch (error) {
+    console.error("Error updating walk distance:", error);
+    throw error;
+  } 
+}
+
+export { walkSetup, checkWalkTableExists, insertWalk, fetchAllWalks, deleteWalk, updateWalkLocaton, updateWalkDate, updateWalkDistance };
