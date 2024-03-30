@@ -6,6 +6,8 @@ import {
   fetchDataForPostPage,
   fetchDataForOwnerProfilePage,
   fetchDataByTag,
+  updatePostContent,
+  deletePost,
 } from "../services/postWalkService.js";
 
 const router = express.Router();
@@ -25,11 +27,12 @@ router.post("/initiate-posts", async (req, res) => {
 
 router.post("/insert-post", async (req, res) => {
   const { walkID, ownerID, content, tags } = req.body;
-  const insertResult = await insertPost(walkID, ownerID, content, tags);
-  if (insertResult) {
-    res.json({ success: true });
+  const postID = await insertPost(walkID, ownerID, content, tags);
+  console.log(postID);
+  if (postID) {
+    res.json({ success: true, postID: postID });
   } else {
-    res.status(500).json({ success: false });
+    res.status(500).json({ success: false, postID: postID });
   }
 });
 
@@ -81,5 +84,28 @@ router.get("/:ownerID/:postID", async (req, res) => {
     res.status(500).json({ err: "Internal server error" });
   }
 });
+
+router.put("/:postid/update-post-content", async (req,res) => {
+  const { content } = req.body;
+  const postid = req.params.postid;
+  const updateResult = await updatePostContent(postid, content);
+  if (updateResult) {
+    res.json({success : true});
+  } else {
+    res.status(500).json({ success: false});
+  }
+});
+
+router.delete("/delete-post", async (req, res) => {
+  const { postid } = req.body;
+  const deleteResult = await deletePost(
+      postid
+  );
+  if (deleteResult) {
+      res.json({ success: true });
+  } else {
+      res.status(500).json({ success: false });
+  }
+  });
 
 export default router;
