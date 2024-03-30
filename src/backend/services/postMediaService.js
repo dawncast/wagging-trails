@@ -26,7 +26,7 @@ const upload = multer({ storage: storage });
 // Query functions here
 // ----------------------------------------------------------------
 
-async function insertMedia(fileName, date, mediaType) {
+async function insertMedia(fileName, date, mediaType, postID) {
   let client;
   try {
     client = await pool.connect();
@@ -34,21 +34,23 @@ async function insertMedia(fileName, date, mediaType) {
     // Start transaction
     await client.query("BEGIN");
 
-    const ownerInsertQuery =
-      "INSERT INTO Owner (email) VALUES ($1) RETURNING ownerID"; // RETURNING ownerID gets the ownerID for Owner_Name to use.
-    const ownerInsertValues = [email];
-    const ownerResult = await client.query(ownerInsertQuery, ownerInsertValues);
-    const ownerID = ownerResult.rows[0].ownerid;
+    const mediaInsertQuery =
+      "INSERT INTO Post_Media (postID, url) VALUES ($1, $2) RETURNING mediaID";
+    const mediaInsertValues = [postID, fileName];
+    const mediaResult = await client.query(mediaInsertQuery, mediaInsertValues);
+    const mediaID = mediaResult.rows[0].mediaid;
 
-    const nameInsertQuery =
-      "INSERT INTO Owner_Name (ownerID, firstName, lastName) VALUES ($1, $2, $3)";
-    const nameInsertValues = [ownerID, firstName, lastName];
-    await client.query(nameInsertQuery, nameInsertValues);
+    const dateInsertQuery =
+      "INSERT INTO Post_Media_Date (url, dateCreated) VALUES ($1, $2)";
+    const dateInsertValues = [fileName, date];
+    const dateResult = await client.query(dateInsertQuery, dateInsertValues);
 
-    const contactInsertQuery =
-      "INSERT INTO Owner_Contact (email, phoneNumber) VALUES ($1, $2)";
-    const contactInsertValues = [email, phoneNumber];
-    await client.query(contactInsertQuery, contactInsertValues);
+    const subInsertQuery =
+      mediaType == "image"
+        ? "INSERT INTO Photo (mediaID, filter) VALUES ($1, $2)"
+        : "INSERT INTO Video (mediaID, duration) VALUES ($1, $2)";
+    const subInsertValues = [mediaID, null];
+    await client.query(subInsertQuery, subInsertValues);
 
     // Commit the transaction
     await client.query("COMMIT");
@@ -56,7 +58,7 @@ async function insertMedia(fileName, date, mediaType) {
   } catch (error) {
     // Rollback the transaction in case of error
     await client.query("ROLLBACK");
-    console.error("Error inserting owner:", error);
+    console.error("Error inserting media:", error);
     throw error;
   } finally {
     if (client) {

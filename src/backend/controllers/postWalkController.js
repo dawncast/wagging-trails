@@ -25,11 +25,12 @@ router.post("/initiate-posts", async (req, res) => {
 
 router.post("/insert-post", async (req, res) => {
   const { walkID, ownerID, content, tags } = req.body;
-  const insertResult = await insertPost(walkID, ownerID, content, tags);
-  if (insertResult) {
-    res.json({ success: true });
+  const postID = await insertPost(walkID, ownerID, content, tags);
+  console.log(postID);
+  if (postID) {
+    res.json({ success: true, postID: postID });
   } else {
-    res.status(500).json({ success: false });
+    res.status(500).json({ success: false, postID: postID });
   }
 });
 
