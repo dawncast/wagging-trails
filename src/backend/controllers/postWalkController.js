@@ -6,6 +6,7 @@ import {
   fetchDataForPostPage,
   fetchDataForOwnerProfilePage,
   fetchDataByTag,
+  updatePostContent,
 } from "../services/postWalkService.js";
 
 const router = express.Router();
@@ -79,6 +80,17 @@ router.get("/:ownerID/:postID", async (req, res) => {
   } catch (err) {
     console.error("Error retrieving post:", err);
     res.status(500).json({ err: "Internal server error" });
+  }
+});
+
+router.put("/:postid/update-post-content", async (req,res) => {
+  const { content } = req.body;
+  const postid = req.params.postid;
+  const updateResult = await updatePostContent(postid, content);
+  if (updateResult) {
+    res.json({success : true});
+  } else {
+    res.status(500).json({ success: false});
   }
 });
 

@@ -210,10 +210,27 @@ async function fetchDataByTag(tag) {
   }
 }
 
+async function updatePostContent(postid, content) {
+  try {
+    const client = await pool.connect();
+    const query1 =
+    "UPDATE post_walk_content SET content = $1 where postid = $2"
+    const queryValues = [content, postid];
+    await client.query(query1,queryValues);
+    
+    client.release();
+    return true;
+  } catch (error) {
+    console.error("Error updating content for post:", error);
+    throw error;
+  } 
+}
+
 export {
   postWalkSetup,
   insertPost,
   fetchDataForPostPage,
   fetchDataForOwnerProfilePage,
   fetchDataByTag,
+  updatePostContent,
 };
