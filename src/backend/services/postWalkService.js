@@ -101,8 +101,13 @@ async function fetchDataForPostPage(postID, ownerID) {
           wdi.distance,
           omu.time,
           array_agg(DISTINCT pm.url) AS urls,
-          array_agg(DISTINCT CASE WHEN od1.dogID <> od.dogID THEN od1.name END) AS tagged_dogs,
-          array_agg(DISTINCT CASE WHEN own1.ownerID <> own.ownerID THEN CONCAT(own1.firstName, ' ', own1.lastName) END) AS met_up_owners,
+          array_agg(DISTINCT od1.name) 
+            FILTER (WHERE od1.name IS NOT NULL) 
+              AS tagged_dogs,
+          array_agg(DISTINCT CONCAT(own1.firstName, ' ', own1.lastName)) 
+            FILTER (WHERE CONCAT(own1.firstName, ' ', own1.lastName) IS NOT NULL 
+            AND own1.ownerID <> own.ownerID) 
+              AS met_up_owners,
           array_agg(DISTINCT pwt.tag) AS tags,
           CAST(AVG
             (CASE wf.rating WHEN '1' THEN 1 

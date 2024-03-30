@@ -1,30 +1,6 @@
-import { useState, React } from "react";
-import { Disclosure, RadioGroup, Tab } from "@headlessui/react";
+import { React } from "react";
+import { Tab } from "@headlessui/react";
 import { StarIcon } from "@heroicons/react/20/solid";
-import { HeartIcon, MinusIcon, PlusIcon } from "@heroicons/react/24/outline";
-
-const post = {
-  title: "Beach Stroll",
-  rating: 4,
-  images: [
-    {
-      id: 1,
-      name: "Angled view",
-      src: "walkingdog.jpeg",
-    },
-    // More images...
-  ],
-  description: `
-    <p>good sunny day, foraged a seashell</p>
-  `,
-  comments: [
-    {
-      name: "Comments",
-      items: ["comment1", "comment2"],
-    },
-    // More sections...
-  ],
-};
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -152,19 +128,43 @@ export default function Post({ data }) {
           <div className="mt-10 px-4 sm:mt-16 sm:px-0 lg:mt-0">
             {/* Post Title */}
             <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-              Trailing with{" "}
-              {data.dogs.map((dog, index) => (
-                <span key={index}>
-                  {dog}
-                  {index !== data.dogs.length - 1 && ", "}{" "}
-                  {/* Add comma if not the last item */}
-                </span>
-              ))}
+              {data.met_up_owners && data.met_up_owners.length > 0 ? (
+                <>
+                  <div>
+                    Met up with{" "}
+                    {data.met_up_owners.map((owner, index) => (
+                      <span key={index}>
+                        {owner}
+                        {index !== data.met_up_owners.length - 1 && ", "}{" "}
+                      </span>
+                    ))}
+                  </div>
+                  <span className="mt-4 text-xl font-semibold text-gray-800">
+                    Along by{" "}
+                    {data.dogs.map((dog, index) => (
+                      <span key={index}>
+                        {dog}
+                        {index !== data.dogs.length - 1 && ", "}{" "}
+                      </span>
+                    ))}
+                  </span>
+                </>
+              ) : (
+                <div>
+                  Trailing with{" "}
+                  {data.dogs.map((dog, index) => (
+                    <span key={index}>
+                      {dog}
+                      {index !== data.dogs.length - 1 && ", "}{" "}
+                    </span>
+                  ))}
+                </div>
+              )}
             </h1>
 
             {/* Post Owner */}
-            <h2 className="text-xl tracking-tight text-gray-700">
-              {data.owner_name}
+            <h2 className="text-lg mt-1 tracking-tight text-gray-700">
+              Post by {data.owner_name}
             </h2>
 
             {/* Walk Rating */}
@@ -185,18 +185,45 @@ export default function Post({ data }) {
                     />
                   ))}
                 </div>
-                <p className="sr-only">{post.rating} out of 5 stars</p>
+                <p className="sr-only">{data.rating} out of 5 stars</p>
               </div>
             </div>
 
+            {/* Walk Details */}
             <div className="mt-6">
               <span>{data.location}</span>
-              <h3 className="sr-only">Captions</h3>
-
+              <br />
+              {data.date && (
+                <span>{new Date(data.date).toLocaleDateString()}</span>
+              )}{" "}
+              {data.time && <span>{data.time}</span>}
+              <br />
+              {data.distance && <span>{data.distance} kilometers</span>}
+              <h3 className="sr-only">Post Content</h3>
               <div
-                className="space-y-6 text-base text-gray-700"
+                className="space-y-6 mt-6 py-4 text-base text-gray-700"
                 dangerouslySetInnerHTML={{ __html: data.content }}
               />
+              {/* Dog Tags*/}
+              <div className="mt-4">
+                {data.tagged_dogs && data.tagged_dogs.length > 0 && (
+                  <>
+                    <span>Spotted Dogs: </span>
+                    {data.tagged_dogs.map((dog, index) => (
+                      <span key={index}>
+                        {dog}
+                        {index < data.tagged_dogs.length - 1 && ", "}{" "}
+                      </span>
+                    ))}
+                  </>
+                )}
+              </div>
+              {/* Post Tags */}
+              <div className="mt-4">
+                {data.tags.map((tag, index) => (
+                  <span key={index}>#{tag} </span>
+                ))}
+              </div>
             </div>
           </div>
         </div>
