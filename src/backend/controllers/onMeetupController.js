@@ -1,5 +1,5 @@
 import express from "express";
-import { insertMeetup } from "../services/onMeetupService.js";
+import { deleteMeetup, insertMeetup, updateMeetupDate, updateMeetupLocation, updateMeetupTime } from "../services/onMeetupService.js";
 
 const router = express.Router();
 
@@ -25,5 +25,50 @@ router.post("/insert-meetup", async (req, res) => {
     res.status(500).json({ success: false });
   }
 });
+
+router.put("/:meetupid/update-meetup-time", async (req,res) => {
+  const { time } = req.body;
+  const meetupid = req.params.meetupid;
+  const updateResult = await updateMeetupTime(meetupid, time);
+  if (updateResult) {
+    res.json({success : true});
+  } else {
+    res.status(500).json({ success: false});
+  }
+});
+
+router.put("/:meetupid/update-meetup-location", async (req,res) => {
+  const { location } = req.body;
+  const meetupid = req.params.meetupid;
+  const updateResult = await updateMeetupLocation(meetupid, location);
+  if (updateResult) {
+    res.json({success : true});
+  } else {
+    res.status(500).json({ success: false});
+  }
+});
+
+router.put("/:meetupid/update-meetup-date", async (req,res) => {
+  const { date } = req.body;
+  const meetupid = req.params.meetupid;
+  const updateResult = await updateMeetupDate(meetupid, date);
+  if (updateResult) {
+    res.json({success : true});
+  } else {
+    res.status(500).json({ success: false});
+  }
+});
+
+router.delete("/delete-meetup", async (req, res) => {
+  const { meetupid } = req.body;
+  const deleteResult = await deleteMeetup(
+      meetupid
+  );
+  if (deleteResult) {
+      res.json({ success: true });
+  } else {
+      res.status(500).json({ success: false });
+  }
+  });
 
 export default router;
