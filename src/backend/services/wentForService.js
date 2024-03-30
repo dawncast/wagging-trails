@@ -28,4 +28,20 @@ async function insertWentFor(dogID, walkID, rating) {
   }
 }
 
-export { insertWentFor };
+async function updateWentFor(walkid, newRating) {
+  try {
+    const client = await pool.connect();
+    const query1 =
+    "UPDATE wentfor SET rating = $1 where walkid = $2"
+    const queryValues = [newRating, walkid];
+    await client.query(query1,queryValues);
+    
+    client.release();
+    return true;
+  } catch (error) {
+    console.error("Error updating walk rating:", error);
+    throw error;
+  } 
+}
+
+export { insertWentFor, updateWentFor };
