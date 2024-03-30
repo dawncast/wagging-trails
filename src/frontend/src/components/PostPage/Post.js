@@ -30,57 +30,124 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
+// Function to check if URL is an image
+function isImage(url) {
+  const extension = url.split(".").pop().toLowerCase();
+  return ["jpg", "jpeg", "png", "gif", "bmp"].includes(extension);
+}
+
 export default function Post({ data }) {
   return (
     <div className="bg-white">
       <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
         <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-8">
           {/* Image gallery */}
-          <Tab.Group as="div" className="flex flex-col-reverse">
-            {/* Image selector */}
-            <div className="mx-auto mt-6 hidden w-full max-w-2xl sm:block lg:max-w-none">
-              <Tab.List className="grid grid-cols-4 gap-6">
-                {post.images.map((image) => (
-                  <Tab
-                    key={image.id}
-                    className="relative flex h-24 cursor-pointer items-center justify-center rounded-md bg-white text-sm font-medium uppercase text-gray-900 hover:bg-gray-50 focus:outline-none focus:ring focus:ring-opacity-50 focus:ring-offset-4"
-                  >
-                    {({ selected }) => (
-                      <>
-                        <span className="sr-only">{image.name}</span>
-                        <span className="absolute inset-0 overflow-hidden rounded-md">
-                          <img
-                            src={image.src}
-                            alt=""
-                            className="h-full w-full object-cover object-center"
+          {data.urls.every((url) => !url) ? (
+            // Placeholder for no media
+            <img
+              src="/walkingdog.jpeg"
+              alt="Placeholder"
+              className="h-full w-full object-cover object-center rounded-lg"
+              style={{ height: "500px", width: "600px" }}
+            />
+          ) : data.urls.filter((url) => url).length === 1 ? (
+            // One media: render the media without a gallery
+            <>
+              {isImage(data.urls[0]) ? (
+                // Image
+                <img
+                  src={`http://localhost:8800/images/${data.urls[0]}`}
+                  alt=""
+                  className="h-full w-full object-cover object-center rounded-lg"
+                  style={{ height: "500px", width: "600px" }}
+                />
+              ) : (
+                // Video
+                <video
+                  src={`http://localhost:8800/videos/${data.urls[0]}`}
+                  alt=""
+                  className="h-full w-full object-cover object-center rounded-lg"
+                  style={{ height: "500px", width: "600px" }}
+                  controls
+                />
+              )}
+            </>
+          ) : (
+            <Tab.Group as="div" className="flex flex-col-reverse">
+              {/* Image selector */}
+              <div className="mx-auto mt-6 hidden w-full max-w-2xl sm:block lg:max-w-none">
+                <Tab.List className="grid grid-cols-4 gap-6">
+                  {data.urls.map((url, index) => (
+                    <Tab
+                      key={index}
+                      className="relative flex h-24 cursor-pointer items-center justify-center rounded-md bg-white text-sm font-medium uppercase text-gray-900 hover:bg-gray-50 focus:outline-none focus:ring focus:ring-opacity-50 focus:ring-offset-4"
+                    >
+                      {({ selected }) => (
+                        <>
+                          <span className="sr-only">{`Media ${
+                            index + 1
+                          }`}</span>
+                          <span className="absolute inset-0 overflow-hidden rounded-md">
+                            {isImage(url) ? (
+                              // Image
+                              <img
+                                src={`http://localhost:8800/images/${url}`}
+                                alt={`Media ${index + 1}`}
+                                className="h-full w-full object-cover object-center"
+                              />
+                            ) : (
+                              // Video
+                              <div className="h-full w-full relative">
+                                <video
+                                  src={`http://localhost:8800/videos/${url}`}
+                                  alt={`Media ${index + 1}`}
+                                  className="h-full w-full object-cover object-center rounded-lg"
+                                  controls
+                                />
+                                <div className="absolute inset-0 bg-transparent"></div>
+                              </div>
+                            )}
+                          </span>
+                          <span
+                            className={classNames(
+                              selected ? "ring-indigo-500" : "ring-transparent",
+                              "pointer-events-none absolute inset-0 rounded-md ring-2 ring-offset-2"
+                            )}
+                            aria-hidden="true"
                           />
-                        </span>
-                        <span
-                          className={classNames(
-                            selected ? "ring-indigo-500" : "ring-transparent",
-                            "pointer-events-none absolute inset-0 rounded-md ring-2 ring-offset-2"
-                          )}
-                          aria-hidden="true"
-                        />
-                      </>
-                    )}
-                  </Tab>
-                ))}
-              </Tab.List>
-            </div>
+                        </>
+                      )}
+                    </Tab>
+                  ))}
+                </Tab.List>
+              </div>
 
-            <Tab.Panels className="aspect-h-1 aspect-w-1 w-full">
-              {post.images.map((image) => (
-                <Tab.Panel key={image.id}>
-                  <img
-                    src={image.src}
-                    alt={image.alt}
-                    className="h-32 w-32 sm:h-full sm:w-full object-cover object-center sm:rounded-lg"
-                  />
-                </Tab.Panel>
-              ))}
-            </Tab.Panels>
-          </Tab.Group>
+              <Tab.Panels className="aspect-h-1 aspect-w-1 w-full">
+                {data.urls.map((url, index) => (
+                  <Tab.Panel key={index}>
+                    {isImage(url) ? (
+                      // Image
+                      <img
+                        src={`http://localhost:8800/images/${url}`}
+                        alt={`Media ${index + 1}`}
+                        className="h-full w-full object-cover object-center rounded-lg"
+                        style={{ height: "500px", width: "600px" }}
+                      />
+                    ) : (
+                      // Video
+                      <video
+                        src={`http://localhost:8800/videos/${url}`}
+                        alt={`Media ${index + 1}`}
+                        className="h-full w-full object-cover object-center rounded-lg"
+                        style={{ height: "500px", width: "600px" }}
+                        controls
+                      />
+                    )}
+                  </Tab.Panel>
+                ))}
+              </Tab.Panels>
+            </Tab.Group>
+          )}
 
           <div className="mt-10 px-4 sm:mt-16 sm:px-0 lg:mt-0">
             {/* Post Title */}
