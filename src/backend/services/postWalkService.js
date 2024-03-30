@@ -226,6 +226,38 @@ async function updatePostContent(postid, content) {
   } 
 }
 
+async function deletePost(postid) {
+  let client;
+  try{
+    client = await pool.connect();
+
+    await client.query("BEGIN");
+
+    const deletePostQuery=
+    "DELETE from post_walk WHERE postid = $1";
+    const deletePostValues1 = [postid];
+    await client.query(deletePostQuery, deletePostValues1);
+
+    const deletePostQuery2=
+    "DELETE from post_walk_owner WHERE postid = $1";
+    const deletePostValues2 = [postid];
+    await client.query(deletePostQuery2, deletePostValues2);
+
+    await client.query("COMMIT");
+    return true;
+  } catch (error) {
+    // Rollback the transaction in case of error
+    await client.query("ROLLBACK");
+    console.error("Error deleting post:", error);
+    throw error;
+  } finally {
+    if (client) {
+    client.release();
+    }
+  }
+}
+
+
 export {
   postWalkSetup,
   insertPost,
@@ -233,4 +265,5 @@ export {
   fetchDataForOwnerProfilePage,
   fetchDataByTag,
   updatePostContent,
+  deletePost,
 };

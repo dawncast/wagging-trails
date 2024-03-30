@@ -7,6 +7,7 @@ import {
   fetchDataForOwnerProfilePage,
   fetchDataByTag,
   updatePostContent,
+  deletePost,
 } from "../services/postWalkService.js";
 
 const router = express.Router();
@@ -93,5 +94,17 @@ router.put("/:postid/update-post-content", async (req,res) => {
     res.status(500).json({ success: false});
   }
 });
+
+router.delete("/delete-post", async (req, res) => {
+  const { postid } = req.body;
+  const deleteResult = await deletePost(
+      postid
+  );
+  if (deleteResult) {
+      res.json({ success: true });
+  } else {
+      res.status(500).json({ success: false });
+  }
+  });
 
 export default router;
