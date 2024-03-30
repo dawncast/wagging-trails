@@ -3,6 +3,7 @@ import {
   walkSetup,
   insertWalk,
   fetchAllWalks,
+  deleteWalk,
 } from "../services/walkService.js";
 
 const router = express.Router();
@@ -45,5 +46,17 @@ router.get("/:ownerID", async (req, res) => {
     res.status(500).json({ err: "Internal server error" });
   }
 });
+
+
+router.delete("/delete-walk", async (req, res) => {
+  const { walkid } = req.body;
+  const deleteResult = await deleteWalk(walkid);
+  if (deleteResult) {
+      res.json({ success: true });
+  } else {
+      res.status(500).json({ success: false });
+  }
+  });
+
 
 export default router;

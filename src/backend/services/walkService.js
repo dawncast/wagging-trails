@@ -136,4 +136,30 @@ async function fetchAllWalks(ownerID) {
   }
 }
 
-export { walkSetup, checkWalkTableExists, insertWalk, fetchAllWalks };
+async function deleteWalk(walkid) {
+  let client;
+  try{
+    client = await pool.connect();
+
+    await client.query("BEGIN");
+
+    const deleteWalk=
+    "DELETE from walk WHERE walkid = $1";
+    const deleteWalkValues = [walkid];
+    await client.query(deleteWalk, deleteWalkValues);
+
+    await client.query("COMMIT");
+    return true;
+  } catch (error) {
+    // Rollback the transaction in case of error
+    await client.query("ROLLBACK");
+    console.error("Error deleting walk:", error);
+    throw error;
+  } finally {
+    if (client) {
+    client.release();
+    }
+  }
+}
+
+export { walkSetup, checkWalkTableExists, insertWalk, fetchAllWalks, deleteWalk };
