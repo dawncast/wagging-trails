@@ -34,22 +34,6 @@ async function insertMedia(fileName, date, mediaType) {
     // Start transaction
     await client.query("BEGIN");
 
-    const ownerInsertQuery =
-      "INSERT INTO Owner (email) VALUES ($1) RETURNING ownerID"; // RETURNING ownerID gets the ownerID for Owner_Name to use.
-    const ownerInsertValues = [email];
-    const ownerResult = await client.query(ownerInsertQuery, ownerInsertValues);
-    const ownerID = ownerResult.rows[0].ownerid;
-
-    const nameInsertQuery =
-      "INSERT INTO Owner_Name (ownerID, firstName, lastName) VALUES ($1, $2, $3)";
-    const nameInsertValues = [ownerID, firstName, lastName];
-    await client.query(nameInsertQuery, nameInsertValues);
-
-    const contactInsertQuery =
-      "INSERT INTO Owner_Contact (email, phoneNumber) VALUES ($1, $2)";
-    const contactInsertValues = [email, phoneNumber];
-    await client.query(contactInsertQuery, contactInsertValues);
-
     // Commit the transaction
     await client.query("COMMIT");
     return true;
