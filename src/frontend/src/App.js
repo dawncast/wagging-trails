@@ -3,7 +3,7 @@ import DisplayOwner from "./pages/DisplayOwner";
 import AddOwner from "./pages/AddOwner";
 import UpdateOwner from "./pages/UpdateOwner";
 import HomePage from "./pages/HomePage";
-import Upload from "./components/SchedulingBar/UploadMedia";
+import CreatePost from "./components/SchedulingBar/NewPostForm";
 
 function App() {
   return (
@@ -14,7 +14,7 @@ function App() {
           <Route path="/owners" element={<DisplayOwner />}></Route>
           <Route path="/add-owner" element={<AddOwner />}></Route>
           <Route path="/update-owner" element={<UpdateOwner />}></Route>
-          <Route path="/file-upload" element={<Upload />}></Route>
+          <Route path="/create-post" element={<CreatePost />}></Route>
         </Routes>
       </BrowserRouter>
     </div>

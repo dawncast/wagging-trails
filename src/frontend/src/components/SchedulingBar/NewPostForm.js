@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-function Upload() {
+function CreatePost() {
   const [file, setFile] = useState(null);
+  const [postId, setPostId] = useState("");
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -40,4 +41,4 @@ function Upload() {
   );
 }
 
-export default Upload;
+export default CreatePost;
