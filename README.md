@@ -36,8 +36,8 @@ This section will first have the development checklist per member, in which the 
 | <ul><li>[X] `Friendship` - for friend list                  | <ul><li>[ ] `Walk` - for scheduling bar and post               | <ul><li>[X] `Owns_Dog` - for profile page             |
 | <ul><li>[X] `Owns_Dog` - for dog window                     | <ul><li>[ ] `Post_Walk` - for post                             | <ul><li>[ ] `Walk` - for scheduling bar and post      |
 | <ul><li>[X] `Walk` - for dog window                         | <ul><li>[ ] `Friendship` - for posts                           | <ul><li>[ ] `Post_Walk` - for scheduling bar and post |
-| <ul><li>[ ] `Post_Walk` - for dog window                    | <ul><li>[ ] `Receives_Notifications` - for notification window | <ul><li>[X] `On_MeetUp` - for scheduling bar and post |
-| <ul><li>[ ] `WentFor` - for dog window                      | <ul><li>[ ] `FriendPost` - for posts                           | <ul><li>[ ] `Schedules` - for scheduling bar          |
+| <ul><li>[X] `Post_Walk` - for dog window                    | <ul><li>[X] `Receives_Notifications` - for notification window | <ul><li>[X] `On_MeetUp` - for scheduling bar and post |
+| <ul><li>[X] `WentFor` - for dog window                      | <ul><li>[ ] `FriendPost` - for posts                           | <ul><li>[ ] `Schedules` - for scheduling bar          |
 | <ul><li>[ ] `On_MeetUp` - for dog window                    |                                                                | <ul><li>[X] `TaggedIn` - for post                     |
 | <ul><li>[ ] `Post_Media`, `Video`, `Photo` - for dog window |                                                                | <ul><li>[ ] `Post_Media`, `Video`, `Photo` - for post |
 | <ul><li>[ ] `TaggedIn` - for dog window                     |                                                                | <ul><li>[ ] `Logs` - for scheduling                   |
@@ -48,7 +48,7 @@ This section will first have the development checklist per member, in which the 
 | ---- | ------------------------------------------- | ------------------------------------------------------------------------ |
 |      | <ul><li>[x] Service rerouting to PostgreSQL | <ul><li>[x] Server, controller, and service file setup and documentation |
 |      | <ul><li>[ ] Frontend/Tailwind Layouting     | <ul><li>[x] Frontend setup                                               |
-|      | <ul><li>[ ] Persistent Storage Integration  | <ul><li>[ ] Media Storage Integration                                    |
+|      | <ul><li>[ ] Persistent Storage Integration  | <ul><li>[x] Media Storage Integration                                    |
 
 ## Timeline
 

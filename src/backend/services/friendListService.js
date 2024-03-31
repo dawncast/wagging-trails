@@ -110,6 +110,8 @@ async function deleteFriendship(ownerid1, ownerid2) {
     }
     }   
 
+     
+
     export {
         fetchFriendListFromDB,
         initiateOwners,
