@@ -143,6 +143,16 @@ async function deleteWalk(walkid) {
 
     await client.query("BEGIN");
 
+    const deleteWalk1=
+    "DELETE from schedules where meetupid = (SELECT meetupid from on_meetup WHERE walkid = $1)";
+    const deleteWalkValues1 = [walkid];
+    await client.query(deleteWalk1, deleteWalkValues1);
+
+    const deleteWalk2=
+    "DELETE from taggedin where postid = (SELECT postid from post_walk WHERE walkid = $1)";
+    const deleteWalkValues2 = [walkid];
+    await client.query(deleteWalk2, deleteWalkValues2);
+
     const deleteWalk=
     "DELETE from walk WHERE walkid = $1";
     const deleteWalkValues = [walkid];

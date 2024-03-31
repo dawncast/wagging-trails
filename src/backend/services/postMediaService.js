@@ -67,4 +67,30 @@ async function insertMedia(fileName, date, mediaType, postID) {
   }
 }
 
-export { upload, insertMedia };
+async function deletePhoto(mediaid) {
+  let client;
+  try{
+    client = await pool.connect();
+
+    await client.query("BEGIN");
+
+    const deletePhotoQuery1=
+    "DELETE from photo WHERE mediaid = $1";
+    const deletePhotoValue = [mediaid];
+    await client.query(deletePhotoQuery1, deletePhotoValue);
+
+    await client.query("COMMIT");
+    return true;
+  } catch (error) {
+    // Rollback the transaction in case of error
+    await client.query("ROLLBACK");
+    console.error("Error deleting photo:", error);
+    throw error;
+  } finally {
+    if (client) {
+    client.release();
+    }
+  }
+}
+
+export { upload, insertMedia, deletePhoto };
