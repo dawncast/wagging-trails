@@ -2,9 +2,9 @@ import express from "express";
 import { upload, insertMedia } from "../services/postMediaService.js";
 const router = express.Router();
 
-router.post("/upload", upload.single("file"), async (req, res, next) => {
+router.post("/upload", upload.array("files", 10), async (req, res, next) => {
   try {
-    if (!req.file) {
+    if (!req.files || req.files.length === 0) {
       return res
         .status(400)
         .json({ success: false, message: "No file uploaded." });
@@ -16,18 +16,23 @@ router.post("/upload", upload.single("file"), async (req, res, next) => {
         .status(400)
         .json({ success: false, message: "postID is required." });
     }
-    const fileName = req.file.filename;
-    const date = new Date().toISOString().split("T")[0];
-    const mediaType = req.file.mimetype.startsWith("image/")
-      ? "image"
-      : "video";
+    const files = req.files;
+    const insertPromises = [];
 
-    const initiateResult = await insertMedia(fileName, date, mediaType, postID);
+    for (const file of files) {
+      const fileName = file.filename;
+      const date = new Date().toISOString().split("T")[0];
+      const mediaType = file.mimetype.startsWith("image/") ? "image" : "video";
+      insertPromises.push(insertMedia(fileName, date, mediaType, postID));
+    }
 
-    if (initiateResult) {
+    const results = await Promise.all(insertPromises);
+    const success = results.every((result) => result);
+
+    if (success) {
       res.status(200).json({
         success: true,
-        message: "File uploaded and saved successfully.",
+        message: "Files uploaded and saved successfully.",
       });
     } else {
       res

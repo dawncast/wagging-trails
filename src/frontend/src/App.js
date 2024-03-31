@@ -7,6 +7,8 @@ import CreatePost from "./components/SchedulingBar/NewPostForm";
 import Login from "./components/Login/LoginForm";
 import Register from "./components/Login/RegisterForm";
 import PostPage from "./pages/PostPage";
+import FeedPage from "./pages/FeedPage";
+import TagPage from "./pages/TagPage";
 
 
 function App() {
@@ -14,10 +16,11 @@ function App() {
     <div>
       <BrowserRouter>
         <Routes>
+          <Route path="/home" element={<FeedPage />}></Route>
          <Route path="/login" element={<Login />}></Route>
          <Route path="/register" element={<Register />}></Route>
-          <Route path="/home" element={<HomePage />}></Route>
           <Route path="/post/:ownerID/:postID" element={<PostPage />}></Route>
+          <Route path="/post/:tag" element={<TagPage />}></Route>
           <Route path="/owners" element={<DisplayOwner />}></Route>
           <Route path="/add-owner" element={<AddOwner />}></Route>
           <Route path="/update-owner" element={<UpdateOwner />}></Route>

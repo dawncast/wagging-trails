@@ -6,12 +6,12 @@ function CreatePost() {
   const walkID = 12;
   const ownerID = 1;
 
-  const [file, setFile] = useState(null);
+  const [files, setFiles] = useState([]);
   const [content, setContent] = useState("");
   const [tags, setTags] = useState([]);
 
   const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
+    setFiles(e.target.files);
   };
 
   const handleContentChange = (e) => {
@@ -45,10 +45,12 @@ function CreatePost() {
         throw new Error("postID is null or undefined");
       }
       const fileFormData = new FormData();
-      fileFormData.append("file", file);
+      for (const file of files) {
+        fileFormData.append("files", file);
+      }
       fileFormData.append("postID", postID); // Append postID here
 
-      console.log(file);
+      console.log(files);
       const uploadResponse = await axios.post(
         "http://localhost:8800/media/upload",
         fileFormData,
@@ -60,7 +62,7 @@ function CreatePost() {
       );
       console.log("File uploaded:", uploadResponse.data);
       // reset
-      setFile(null);
+      setFiles([]);
       setContent("");
       setTags([]);
     } catch (error) {
@@ -72,7 +74,7 @@ function CreatePost() {
     <div>
       <h2>Create Post</h2>
       <form onSubmit={handleSubmit}>
-        <input type="file" onChange={handleFileChange} />
+        <input type="file" multiple onChange={handleFileChange} />
         <input
           type="text"
           placeholder="Content"

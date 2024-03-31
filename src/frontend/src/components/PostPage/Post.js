@@ -24,7 +24,7 @@ export default function Post({ data }) {
               src="/walkingdog.jpeg"
               alt="Placeholder"
               className="h-full w-full object-cover object-center rounded-lg"
-              style={{ height: "500px", width: "600px" }}
+              style={{ aspectRatio: "4/3", width: "100%" }}
             />
           ) : data.urls.filter((url) => url).length === 1 ? (
             // One media: render the media without a gallery
@@ -35,7 +35,7 @@ export default function Post({ data }) {
                   src={`http://localhost:8800/images/${data.urls[0]}`}
                   alt=""
                   className="h-full w-full object-cover object-center rounded-lg"
-                  style={{ height: "500px", width: "600px" }}
+                  style={{ aspectRatio: "4/3", width: "100%" }}
                 />
               ) : (
                 // Video
@@ -43,7 +43,7 @@ export default function Post({ data }) {
                   src={`http://localhost:8800/videos/${data.urls[0]}`}
                   alt=""
                   className="h-full w-full object-cover object-center rounded-lg"
-                  style={{ height: "500px", width: "600px" }}
+                  style={{ aspectRatio: "4/3", width: "100%" }}
                   controls
                 />
               )}
@@ -107,7 +107,10 @@ export default function Post({ data }) {
                         src={`http://localhost:8800/images/${url}`}
                         alt={`Media ${index + 1}`}
                         className="h-full w-full object-cover object-center rounded-lg"
-                        style={{ height: "500px", width: "600px" }}
+                        style={{
+                          aspectRatio: "4/3",
+                          width: "100%",
+                        }}
                       />
                     ) : (
                       // Video
@@ -115,7 +118,7 @@ export default function Post({ data }) {
                         src={`http://localhost:8800/videos/${url}`}
                         alt={`Media ${index + 1}`}
                         className="h-full w-full object-cover object-center rounded-lg"
-                        style={{ height: "500px", width: "600px" }}
+                        style={{ aspectRatio: "4/3", width: "100%" }}
                         controls
                       />
                     )}
@@ -219,9 +222,15 @@ export default function Post({ data }) {
                 )}
               </div>
               {/* Post Tags */}
-              <div className="mt-4">
+              <div className="mt-0 lg:mt-32">
                 {data.tags.map((tag, index) => (
-                  <span key={index}>#{tag} </span>
+                  <a
+                    href={`http://localhost:3000/post/${tag}`}
+                    key={index}
+                    className="bg-stone-200 text-stone-900 rounded-lg px-2 py-1 mr-2 mt-1"
+                  >
+                    {tag}
+                  </a>
                 ))}
               </div>
             </div>
