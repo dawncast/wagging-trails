@@ -22,7 +22,7 @@ function FeedPage() {
     <div>
       <SideBarEdit
         mainFeed={post.data.map((postData) => (
-          <PostCard data={postData} />
+          <PostCard key={postData.postid} data={postData} />
         ))}
       />
     </div>

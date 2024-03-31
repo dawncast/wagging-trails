@@ -109,18 +109,20 @@ async function insertWalk(location, date, distance) {
 // if postID is null, we can provide a chance for the owner to
 // create the post for the said walk.
 // also check if it's a meetup walk.
+// get ownerID if they made a post
 async function fetchAllWalks(ownerID) {
   try {
     const client = await pool.connect();
     const query = {
       text: `
-      SELECT w.walkID, od.dogID, od.name, wd.date, wdi.distance, om.meetupID, pw.postID
+      SELECT w.walkID, od.dogID, od.name, wd.date, wdi.distance, om.meetupID, pw.postID, pwo.ownerID
       FROM Walk w 
       JOIN WentFor wf ON w.walkID = wf.walkID
       JOIN Owns_Dog od ON wf.dogID = od.dogID
       LEFT JOIN Walk_Date wd ON w.walkID = wd.walkID
       LEFT JOIN Walk_Dist wdi ON w.walkID = wdi.walkID 
       LEFT JOIN Post_Walk pw ON w.walkID = pw.walkID
+      LEFT JOIN Post_Walk_Owner pwo ON pw.postID = pwo.postID
       LEFT JOIN On_MeetUp om ON w.walkID = om.walkID
       WHERE od.ownerID = $1
       ORDER BY wd.date DESC NULLS LAST;
@@ -138,23 +140,22 @@ async function fetchAllWalks(ownerID) {
 
 async function deleteWalk(walkid) {
   let client;
-  try{
+  try {
     client = await pool.connect();
 
     await client.query("BEGIN");
 
-    const deleteWalk1=
-    "DELETE from schedules where meetupid = (SELECT meetupid from on_meetup WHERE walkid = $1)";
+    const deleteWalk1 =
+      "DELETE from schedules where meetupid = (SELECT meetupid from on_meetup WHERE walkid = $1)";
     const deleteWalkValues1 = [walkid];
     await client.query(deleteWalk1, deleteWalkValues1);
 
-    const deleteWalk2=
-    "DELETE from taggedin where postid = (SELECT postid from post_walk WHERE walkid = $1)";
+    const deleteWalk2 =
+      "DELETE from taggedin where postid = (SELECT postid from post_walk WHERE walkid = $1)";
     const deleteWalkValues2 = [walkid];
     await client.query(deleteWalk2, deleteWalkValues2);
 
-    const deleteWalk=
-    "DELETE from walk WHERE walkid = $1";
+    const deleteWalk = "DELETE from walk WHERE walkid = $1";
     const deleteWalkValues = [walkid];
     await client.query(deleteWalk, deleteWalkValues);
 
@@ -167,7 +168,7 @@ async function deleteWalk(walkid) {
     throw error;
   } finally {
     if (client) {
-    client.release();
+      client.release();
     }
   }
 }
@@ -175,50 +176,55 @@ async function deleteWalk(walkid) {
 async function updateWalkLocaton(walkid, newLocation) {
   try {
     const client = await pool.connect();
-    const query1 =
-    "UPDATE walk SET location = $1 where walkid = $2"
+    const query1 = "UPDATE walk SET location = $1 where walkid = $2";
     const queryValues = [newLocation, walkid];
-    await client.query(query1,queryValues);
+    await client.query(query1, queryValues);
 
     client.release();
     return true;
   } catch (error) {
     console.error("Error updating walk location:", error);
     throw error;
-  } 
+  }
 }
 
 async function updateWalkDate(walkid, newDate) {
   try {
     const client = await pool.connect();
-    const query1 =
-    "UPDATE walk_date SET date = $1 where walkid = $2"
+    const query1 = "UPDATE walk_date SET date = $1 where walkid = $2";
     const queryValues = [newDate, walkid];
-    await client.query(query1,queryValues);
+    await client.query(query1, queryValues);
 
     client.release();
     return true;
   } catch (error) {
     console.error("Error updating walk date:", error);
     throw error;
-  } 
+  }
 }
-
 
 async function updateWalkDistance(walkid, newDistance) {
   try {
     const client = await pool.connect();
-    const query1 =
-    "UPDATE walk_dist SET distance = $1 where walkid = $2"
+    const query1 = "UPDATE walk_dist SET distance = $1 where walkid = $2";
     const queryValues = [newDistance, walkid];
-    await client.query(query1,queryValues);
+    await client.query(query1, queryValues);
 
     client.release();
     return true;
   } catch (error) {
     console.error("Error updating walk distance:", error);
     throw error;
-  } 
+  }
 }
 
-export { walkSetup, checkWalkTableExists, insertWalk, fetchAllWalks, deleteWalk, updateWalkLocaton, updateWalkDate, updateWalkDistance };
+export {
+  walkSetup,
+  checkWalkTableExists,
+  insertWalk,
+  fetchAllWalks,
+  deleteWalk,
+  updateWalkLocaton,
+  updateWalkDate,
+  updateWalkDistance,
+};
