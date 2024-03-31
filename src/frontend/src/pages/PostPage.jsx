@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import SideBar from "../components/HomePage/Sidebar";
 import Post from "../components/PostPage/Post";
+import SideBarEdit from "../components/HomePage/SidebarEdit";
 
 function PostPage() {
   const { ownerID, postID } = useParams();
@@ -21,7 +22,7 @@ function PostPage() {
   console.log("Post state:", post);
   return (
     <div>
-      <SideBar mainFeed={<Post data={post.data[0]} />} />
+      <SideBarEdit mainFeed={<Post data={post.data[0]} />} />
     </div>
   );
 }
