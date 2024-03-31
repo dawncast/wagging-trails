@@ -30,7 +30,11 @@ export default function PreviousWalks() {
         {walks.data.map((walk) => (
           <li key={walk.walkid}>
             <a
-              href={`#walk-${walk.walkid}`}
+              href={
+                walk.postid !== null
+                  ? `/post/${walk.ownerid}/${walk.postid}`
+                  : `#walk-${walk.walkid}`
+              }
               className={classNames(
                 "text-indigo-200 hover:text-white hover:bg-indigo-700",
                 "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
@@ -58,19 +62,12 @@ export default function PreviousWalks() {
               )}
               {/*check if it has a post already*/}
               {walk.postid !== null ? (
-                <a
-                  href={`/post/${walk.ownerid}/${walk.postid}`}
-                  className="ml-auto"
-                >
-                  <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-0 px-2 text-xs rounded">
-                    View
-                  </button>
-                </a>
+                <div className="ml-auto hover:text-gray-100 text-gray-300 font-bold py-1 px-2 text-xs">
+                  View
+                </div>
               ) : (
-                <div className="ml-auto">
-                  <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-0 px-2 text-xs rounded">
-                    Post
-                  </button>
+                <div className="ml-auto hover:text-gray-100 text-gray-300 font-bold py-1 px-2 text-xs">
+                  Post
                 </div>
               )}
             </a>

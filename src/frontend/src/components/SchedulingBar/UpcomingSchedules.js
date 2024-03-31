@@ -1,49 +1,60 @@
-import {
-  Bars3Icon,
-  BellIcon,
-  CalendarIcon,
-  ChartPieIcon,
-  Cog6ToothIcon,
-  DocumentDuplicateIcon,
-  FolderIcon,
-  HomeIcon,
-  UserGroupIcon,
-  UserIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
-
-const myDogs = [
-  { id: 1, name: "dog1", href: "#", initial: "H", current: false },
-  { id: 2, name: "dog2", href: "#", initial: "T", current: false },
-  { id: 3, name: "dog3", href: "#", initial: "W", current: false },
-];
+import { useState, useEffect } from "react";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
 export default function UpcomingSchedules() {
+  const ownerID = 1;
+  const [schedules, setSchedules] = useState(null);
+
+  useEffect(() => {
+    fetch(`http://localhost:8800/notification/walk-task/${ownerID}`)
+      .then((response) => response.json())
+      .then((data) => setSchedules(data))
+      .catch((error) => console.error("Error fetching post:", error));
+  }, [ownerID]);
+
+  if (!schedules) {
+    return <div>Loading...</div>;
+  }
+
+  console.log("Schedules state:", schedules);
+
   return (
     <li>
       <div className="text-sm font-semibold leading-6 text-indigo-200">
-        Upcoming Schedules
+        Upcoming Tasks
       </div>
       <ul className="-mx-2 mt-2 space-y-1">
-        {myDogs.map((team) => (
-          <li key={team.name}>
+        {schedules.data.map((walk) => (
+          <li key={walk.taskid}>
             <a
-              href={team.href}
+              href={`#task-${walk.taskid}`}
               className={classNames(
-                team.current
-                  ? "bg-indigo-700 text-white"
-                  : "text-indigo-200 hover:text-white hover:bg-indigo-700",
+                "text-indigo-200 hover:text-white hover:bg-indigo-700",
                 "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
               )}
             >
               <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-indigo-400 bg-indigo-500 text-[0.625rem] font-medium text-white">
-                {team.initial}
+                {walk.dogname[0].toUpperCase()}
               </span>
-              <span className="truncate">{team.name}</span>
+
+              {walk.walkeventtype !== null ? (
+                <span>
+                  {walk.walkeventtype} with {walk.dogname}
+                </span>
+              ) : (
+                <span>Schedule with {walk.dogname}</span>
+              )}
+              {walk.date !== null ? (
+                <span className="truncate">
+                  {new Date(walk.date).toLocaleDateString("en-US", {
+                    month: "2-digit",
+                    day: "2-digit",
+                  })}{" "}
+                </span>
+              ) : null}
             </a>
           </li>
         ))}

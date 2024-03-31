@@ -94,7 +94,7 @@ CREATE TABLE IF NOT EXISTS receives_notifications (
 );
 
 -- friend post tables
-CREATE TABLE IF NOT EXISTS friendpost (
+CREATE TABLE IF NOT EXISTS friendpost ( 
     notificationid INTEGER PRIMARY KEY,
     postlink VARCHAR(255) NOT NULL,
     friendname VARCHAR(255) NOT NULL,
