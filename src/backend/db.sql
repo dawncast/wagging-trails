@@ -513,14 +513,56 @@ INSERT INTO schedules (meetupid, ownerid) VALUES (4, 1);
 INSERT INTO schedules (meetupid, ownerid) VALUES (4, 3);
 
 -- post media tables
---INSERT INTO post_media (postid, url) VALUES (1, 'https://example.com/media');
---INSERT INTO post_media_date (url, datecreated) VALUES ('https://example.com/media', '2024-03-21');
+-- post 1
+INSERT INTO post_media (postid, url) VALUES (1, 'photo (1).jpg');
+INSERT INTO post_media_date (url, datecreated) VALUES ('photo (1).jpg', '2024-03-21');
 
--- video table
---INSERT INTO video (mediaid, duration) VALUES (1, '00:10:00');
+INSERT INTO post_media (postid, url) VALUES (1, 'photo (1).webp');
+INSERT INTO post_media_date (url, datecreated) VALUES ('photo (1).webp', '2024-03-21');
+
+INSERT INTO post_media (postid, url) VALUES (1, 'video (1).mp4');
+INSERT INTO post_media_date (url, datecreated) VALUES ('video (1).mp4', '2024-03-21');
+
+-- post 2
+INSERT INTO post_media (postid, url) VALUES (2, 'photo (10).jpg');
+INSERT INTO post_media_date (url, datecreated) VALUES ('photo (10).jpg', '2024-03-22');
+
+INSERT INTO post_media (postid, url) VALUES (2, 'video (6).mp4');
+INSERT INTO post_media_date (url, datecreated) VALUES ('video (6).mp4', '2024-03-24');
+
+-- post 3
+INSERT INTO post_media (postid, url) VALUES (3, 'photo (3).jpg');
+INSERT INTO post_media_date (url, datecreated) VALUES ('photo (3).jpg', '2024-03-23');
+
+INSERT INTO post_media (postid, url) VALUES (3, 'photo (9).jpg');
+INSERT INTO post_media_date (url, datecreated) VALUES ('photo (9).jpg', '2024-03-23');
+
+INSERT INTO post_media (postid, url) VALUES (3, 'video (2).mp4');
+INSERT INTO post_media_date (url, datecreated) VALUES ('video (2).mp4', '2024-03-23');
+
+-- post 4 no media for place holder purposes
+
+-- post 5
+INSERT INTO post_media (postid, url) VALUES (5, 'video (4).mp4');
+INSERT INTO post_media_date (url, datecreated) VALUES ('video (4).mp4', '2024-03-24');
+
+-- post 6
+INSERT INTO post_media (postid, url) VALUES (6, 'video (5).mp4');
+INSERT INTO post_media_date (url, datecreated) VALUES ('video (5).mp4', '2024-03-24');
 
 -- photo table
---INSERT INTO photo (mediaid, filter) VALUES (1, 'Vintage');
+INSERT INTO photo (mediaid, filter) VALUES (1, 'Vintage');
+INSERT INTO photo (mediaid, filter) VALUES (2, 'Normal');
+INSERT INTO photo (mediaid, filter) VALUES (4, 'Sepia');
+INSERT INTO photo (mediaid, filter) VALUES (6, null);
+INSERT INTO photo (mediaid, filter) VALUES (7, null);
+
+-- video table
+INSERT INTO video (mediaid, duration) VALUES (3, '00:00:15');
+INSERT INTO video (mediaid, duration) VALUES (5, '00:00:10');
+INSERT INTO video (mediaid, duration) VALUES (8, null);
+INSERT INTO video (mediaid, duration) VALUES (9, '00:00:11');
+INSERT INTO video (mediaid, duration) VALUES (10, null);
 
 -- tagged in table
 INSERT INTO taggedin (dogid, postid) VALUES (1, 3);

@@ -9,7 +9,7 @@ function classNames(...classes) {
 // Function to check if URL is an image
 function isImage(url) {
   const extension = url.split(".").pop().toLowerCase();
-  return ["jpg", "jpeg", "png", "gif", "bmp"].includes(extension);
+  return ["jpg", "jpeg", "png", "gif", "bmp", "webp"].includes(extension);
 }
 
 export default function Post({ data }) {
@@ -222,7 +222,7 @@ export default function Post({ data }) {
                 )}
               </div>
               {/* Post Tags */}
-              <div className="mt-0 lg:mt-32">
+              <div className="mt-0 lg:mt-12">
                 {data.tags.map((tag, index) => (
                   <a
                     href={`http://localhost:3000/post/${tag}`}
