@@ -4,7 +4,7 @@ import {
   initiateOwners,
   insertFriendship,
   deleteFriendship,
-  // fetchFriendsForProfilePage,
+  fetchFriendsForProfilePage,
 } from "../services/friendListService.js";
 
 const router = express.Router();
@@ -55,7 +55,6 @@ router.get("/:ownerID/fetch-friendship", async (req, res) => {
     const tableContent = await fetchFriendsForProfilePage(ownerID);
     if (!tableContent) {
       res.status(404).json({ error: "Friends not found" });
-      return;
     }
     res.json({ data: tableContent });
   } catch (err) {

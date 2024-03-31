@@ -5,6 +5,7 @@ import {
   insertOwner,
   updateOwnerName,
   updateOwnerContact,
+  fetchOwnerProfilePage,
 } from "../services/ownerService.js";
 
 const router = express.Router();
@@ -80,6 +81,22 @@ router.put("/:ownerID/update-contact", async (req, res) => {
     res.json({ success: true });
   } else {
     res.status(500).json({ success: false });
+  }
+});
+
+// for fetching ALL details needed in Owner Profile Page
+router.get("/:ownerID", async (req, res) => {
+  try {
+    const ownerID = req.params.ownerID;
+    const tableContent = await fetchOwnerProfilePage(ownerID);
+    if (!tableContent) {
+      res.status(404).json({ error: "Profile not found" });
+      return;
+    }
+    res.json({ data: tableContent });
+  } catch (err) {
+    console.error("Error retrieving owner profile:", err);
+    res.status(500).json({ err: "Internal server error" });
   }
 });
 

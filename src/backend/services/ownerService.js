@@ -24,6 +24,8 @@ async function fetchOwnersFromDB() {
   }
 }
 
+async function fetchOwnerProfilePage(ownerID) {}
+
 /**
  * Initializes three normalized, owner tables.
  * Drops existing tables to have a fresh set of tables.
@@ -175,4 +177,5 @@ export {
   insertOwner,
   updateOwnerName,
   updateOwnerContact,
+  fetchOwnerProfilePage,
 };
