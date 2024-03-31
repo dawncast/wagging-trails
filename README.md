@@ -24,7 +24,7 @@ This section will first have the development checklist per member, in which the 
 | Aman                                 | Sangita                               | James                            |
 | ------------------------------------ | ------------------------------------- | -------------------------------- |
 | <ul><li>[ ] Owner’s Friend List Page | <ul><li>[ ] Home/Newsfeed             | <ul><li>[ ] Owner’s Profile Page |
-| <ul><li>[ ] Dog Modal Window         | <ul><li>[ ] Login Page                | <ul><li>[ ] Owner’s Post Page    |
+| <ul><li>[ ] Dog Modal Window         | <ul><li>[ ] Login Page                | <ul><li>[x] Owner’s Post Page    |
 |                                      | <ul><li>[ ] Side Menu Bar             | <ul><li>[ ] Side Scheduling Bar  |
 |                                      | <ul><li>[ ] Notification Modal Window |                                  |
 
@@ -39,7 +39,7 @@ This section will first have the development checklist per member, in which the 
 | <ul><li>[X] `Post_Walk` - for dog window                    | <ul><li>[X] `Receives_Notifications` - for notification window | <ul><li>[X] `On_MeetUp` - for scheduling bar and post |
 | <ul><li>[X] `WentFor` - for dog window                      | <ul><li>[ ] `FriendPost` - for posts                           | <ul><li>[ ] `Schedules` - for scheduling bar          |
 | <ul><li>[ ] `On_MeetUp` - for dog window                    |                                                                | <ul><li>[X] `TaggedIn` - for post                     |
-| <ul><li>[ ] `Post_Media`, `Video`, `Photo` - for dog window |                                                                | <ul><li>[ ] `Post_Media`, `Video`, `Photo` - for post |
+| <ul><li>[ ] `Post_Media`, `Video`, `Photo` - for dog window |                                                                | <ul><li>[x] `Post_Media`, `Video`, `Photo` - for post |
 | <ul><li>[ ] `TaggedIn` - for dog window                     |                                                                | <ul><li>[ ] `Logs` - for scheduling                   |
 
 **Misc. Checklist**
