@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import SideBar from "../components/HomePage/Sidebar";
-import Post from "../components/PostPage/Post";
+import Profile from "../components/Profile/Profile";
 
 function ProfilePage() {
   const { ownerID } = useParams();
@@ -40,7 +40,13 @@ function ProfilePage() {
   console.log("Post state:", posts);
   console.log("Friend state:", friends);
   console.log("Dog state:", dogs);
-  return <div></div>;
+  return (
+    <div>
+      <SideBar
+        mainFeed={<Profile posts={posts} friends={friends} dogs={dogs} />}
+      />
+    </div>
+  );
 }
 
 export default ProfilePage;
