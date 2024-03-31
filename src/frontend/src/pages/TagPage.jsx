@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import SideBar from "../components/HomePage/Sidebar";
 import PostCard from "../components/HomePage/Feed";
+import SideBarEdit from "../components/HomePage/SidebarEdit";
 
 function TagPage() {
   const { tag } = useParams();
@@ -21,7 +22,7 @@ function TagPage() {
   console.log("Post state:", post);
   return (
     <div>
-      <SideBar
+      <SideBarEdit
         mainFeed={post.data.map((postData) => (
           <PostCard data={postData} />
         ))}
