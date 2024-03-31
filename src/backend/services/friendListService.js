@@ -55,67 +55,85 @@ async function insertFriendship(ownerid1, ownerid2, dateoffriendship) {
     const friendListInsertValues1 = [ownerid1, ownerid2, dateoffriendship];
     await client.query(friendListInsertQuery1, friendListInsertValues1);
 
-        const friendListInsertQuery2 =
-        "INSERT INTO friendship (ownerid1, ownerid2, dateoffriendship) VALUES ($2, $1, $3)";
-        const friendListInsertValues2 = [ownerid1, ownerid2, dateoffriendship];
-        await client.query(friendListInsertQuery2, friendListInsertValues2);
-    
-        // Commit the transaction
-        await client.query("COMMIT");
-        return true;
-    } catch (error) {
-        // Rollback the transaction in case of error
-        await client.query("ROLLBACK");
-        console.error("Error inserting friendship:", error);
-        throw error;
-    } finally {
-        if (client) {
-        client.release();
-        }
-    }
-    }
+    const friendListInsertQuery2 =
+      "INSERT INTO friendship (ownerid1, ownerid2, dateoffriendship) VALUES ($2, $1, $3)";
+    const friendListInsertValues2 = [ownerid1, ownerid2, dateoffriendship];
+    await client.query(friendListInsertQuery2, friendListInsertValues2);
 
+    // Commit the transaction
+    await client.query("COMMIT");
+    return true;
+  } catch (error) {
+    // Rollback the transaction in case of error
+    await client.query("ROLLBACK");
+    console.error("Error inserting friendship:", error);
+    throw error;
+  } finally {
+    if (client) {
+      client.release();
+    }
+  }
+}
 
 async function deleteFriendship(ownerid1, ownerid2) {
-    let client;
-    try {
-        client = await pool.connect();
-    
-        // Start transaction
-        await client.query("BEGIN");
-    
-    
-        const friendListDeleteQuery1 =
-        "DELETE FROM friendship WHERE ownerid1 = $1 AND ownerid2 = $2";
-        const friendListDeleteValues1 = [ownerid1, ownerid2];
-        await client.query(friendListDeleteQuery1, friendListDeleteValues1);
+  let client;
+  try {
+    client = await pool.connect();
 
-        const friendListDeleteQuery2 =
-        "DELETE FROM friendship WHERE ownerid1 = $2 AND ownerid2 = $1";
-        const friendListDeleteValues2 = [ownerid1, ownerid2];
-        await client.query(friendListDeleteQuery2, friendListDeleteValues2);
-    
-        // Commit the transaction
-        await client.query("COMMIT");
-        return true;
-    } catch (error) {
-        // Rollback the transaction in case of error
-        await client.query("ROLLBACK");
-        console.error("Error deleting friendship:", error);
-        throw error;
-    } finally {
-        if (client) {
-        client.release();
-        }
+    // Start transaction
+    await client.query("BEGIN");
+
+    const friendListDeleteQuery1 =
+      "DELETE FROM friendship WHERE ownerid1 = $1 AND ownerid2 = $2";
+    const friendListDeleteValues1 = [ownerid1, ownerid2];
+    await client.query(friendListDeleteQuery1, friendListDeleteValues1);
+
+    const friendListDeleteQuery2 =
+      "DELETE FROM friendship WHERE ownerid1 = $2 AND ownerid2 = $1";
+    const friendListDeleteValues2 = [ownerid1, ownerid2];
+    await client.query(friendListDeleteQuery2, friendListDeleteValues2);
+
+    // Commit the transaction
+    await client.query("COMMIT");
+    return true;
+  } catch (error) {
+    // Rollback the transaction in case of error
+    await client.query("ROLLBACK");
+    console.error("Error deleting friendship:", error);
+    throw error;
+  } finally {
+    if (client) {
+      client.release();
     }
-    }   
+  }
+}
 
-     
+// fetches names and ownerIDs of friends of the owner
+async function fetchFriendsForProfilePage(ownerID) {
+  try {
+    const client = await pool.connect();
+    const query = {
+      text: `
+          SELECT f.ownerid2, CONCAT(own.firstName, ' ', own.lastName) AS owner_name
+          FROM Friendship f 
+          JOIN Owner_Name own ON own.ownerid = f.ownerid2
+          WHERE f.ownerid1 = $1
+    `,
+      values: [ownerID],
+    };
+    const result = await client.query(query);
+    client.release();
+    return result.rows;
+  } catch (error) {
+    console.error("Error fetching data for post from the database:", error);
+    throw error;
+  }
+}
 
-    export {
-        fetchFriendListFromDB,
-        initiateOwners,
-        insertFriendship,
-        deleteFriendship,
-    }
-
+export {
+  fetchFriendListFromDB,
+  initiateOwners,
+  insertFriendship,
+  deleteFriendship,
+  fetchFriendsForProfilePage,
+};

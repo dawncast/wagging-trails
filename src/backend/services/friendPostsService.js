@@ -12,8 +12,4 @@ async function fetchAllFriendPosts() {
   }
 }
 
-
-export {
-  fetchAllFriendPosts
-}
-
+export { fetchAllFriendPosts };
