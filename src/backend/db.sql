@@ -216,7 +216,7 @@ CREATE TABLE IF NOT EXISTS on_meetup (
     time TIME,
     location VARCHAR(255),
     date DATE,
-    FOREIGN KEY (walkid) REFERENCES walk (walkid) ON DELETE NO ACTION ON UPDATE CASCADE
+    FOREIGN KEY (walkid) REFERENCES walk (walkid) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- schedule table
