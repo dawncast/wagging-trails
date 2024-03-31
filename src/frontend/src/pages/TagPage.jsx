@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import SideBar from "../components/HomePage/Sidebar";
 import PostCard from "../components/HomePage/Feed";
 
-function FeedPage() {
+function TagPage() {
+  const { tag } = useParams();
   const [post, setPost] = useState(null);
 
   useEffect(() => {
-    fetch(`http://localhost:8800/posts/all`)
+    fetch(`http://localhost:8800/posts/${tag}/fetch-by-tag`)
       .then((response) => response.json())
       .then((data) => setPost(data))
       .catch((error) => console.error("Error fetching post:", error));
-  }, []);
+  }, [tag]);
 
   if (!post) {
     return <div>Loading...</div>;
@@ -28,4 +30,4 @@ function FeedPage() {
   );
 }
 
-export default FeedPage;
+export default TagPage;

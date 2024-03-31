@@ -222,9 +222,15 @@ export default function Post({ data }) {
                 )}
               </div>
               {/* Post Tags */}
-              <div className="mt-4">
+              <div className="mt-0 lg:mt-32">
                 {data.tags.map((tag, index) => (
-                  <span key={index}>#{tag} </span>
+                  <a
+                    href={`http://localhost:3000/post/${tag}`}
+                    key={index}
+                    className="bg-stone-200 text-stone-900 rounded-lg px-2 py-1 mr-2 mt-1"
+                  >
+                    {tag}
+                  </a>
                 ))}
               </div>
             </div>

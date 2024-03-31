@@ -6,6 +6,7 @@ import HomePage from "./pages/HomePage";
 import CreatePost from "./components/SchedulingBar/NewPostForm";
 import PostPage from "./pages/PostPage";
 import FeedPage from "./pages/FeedPage";
+import TagPage from "./pages/TagPage";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Routes>
           <Route path="/home" element={<FeedPage />}></Route>
           <Route path="/post/:ownerID/:postID" element={<PostPage />}></Route>
+          <Route path="/post/:tag" element={<TagPage />}></Route>
           <Route path="/owners" element={<DisplayOwner />}></Route>
           <Route path="/add-owner" element={<AddOwner />}></Route>
           <Route path="/update-owner" element={<UpdateOwner />}></Route>

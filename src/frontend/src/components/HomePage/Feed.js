@@ -38,13 +38,21 @@ export default function PostCard({ data }) {
               </div>
             ) : (
               // Video
-              <video
-                src={`http://localhost:8800/videos/${data.urls[0]}`}
-                alt=""
-                className="h-full w-full object-cover object-center rounded-lg"
-                style={{ aspectRatio: "21/9", width: "100%" }}
-                controls
-              />
+              <div className="relative">
+                <a
+                  href={`http://localhost:3000/post/${data.ownerid}/${data.postid}`}
+                  className="z-10"
+                >
+                  <video
+                    src={`http://localhost:8800/videos/${data.urls[0]}`}
+                    alt=""
+                    className="h-full w-full object-cover object-center rounded-lg"
+                    style={{ aspectRatio: "21/9", width: "100%" }}
+                    controls
+                  />
+                  <div className="absolute inset-0 bg-gray-700 opacity-0 transition-opacity duration-300 hover:opacity-40 rounded-lg"></div>
+                </a>
+              </div>
             )}
           </>
 
@@ -87,12 +95,13 @@ export default function PostCard({ data }) {
             {/* Post Tags */}
             <div className="mt-0 lg:mt-28">
               {data.tags.map((tag, index) => (
-                <span
+                <a
+                  href={`http://localhost:3000/post/${tag}`}
                   key={index}
                   className="bg-stone-200 text-stone-900 rounded-lg px-2 py-1 mr-2 mt-1"
                 >
                   {tag}
-                </span>
+                </a>
               ))}
             </div>
           </div>
