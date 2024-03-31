@@ -165,6 +165,54 @@ async function fetchDataForOwnerProfilePage(ownerID) {
   }
 }
 
+// provides all post data needed for the newsfeed
+// post media url
+// dog names
+// owner name
+// other owner names (if meetup)
+// postID, ownerID (for the href redirect)
+
+async function fetchAllPostData() {
+  try {
+    const client = await pool.connect();
+    const query = `
+    SELECT 
+          pw.postID,
+          array_agg(DISTINCT od.name) AS dogs,
+          own.ownerID,
+          CONCAT(own.firstName, ' ', own.lastName) AS owner_name,
+          w.location,
+          array_agg(DISTINCT pm.url) AS urls,
+          array_agg(DISTINCT CONCAT(own1.firstName, ' ', own1.lastName)) 
+            FILTER (WHERE CONCAT(own1.firstName, ' ', own1.lastName) IS NOT NULL 
+            AND own1.ownerID <> own.ownerID) 
+              AS met_up_owners,
+          array_agg(DISTINCT pwt.tag) AS tags
+    FROM Post_Walk pw
+    JOIN Walk w ON pw.walkID = w.walkID
+    JOIN WentFor wf ON w.walkID = wf.walkID
+    JOIN Owns_Dog od ON wf.dogID = od.dogID
+    JOIN Post_Walk_Owner pwo ON pw.postID = pwo.postID
+    JOIN Owner_Name own ON own.ownerID = pwo.ownerID
+    
+    LEFT JOIN Post_Media pm ON pw.postID = pm.postID
+    LEFT JOIN Post_Walk_Tag pwt ON pw.postID = pwt.postID
+    LEFT JOIN On_MeetUp omu ON w.walkID = omu.walkID
+    LEFT JOIN Walk_Date wd ON w.walkID = wd.walkID
+    LEFT JOIN Schedules s ON omu.meetUpID = s.meetUpID
+    LEFT JOIN Owner_Name own1 ON s.ownerID = own1.ownerID
+    GROUP BY pw.postID, own.ownerID, own.firstName, own.lastName, w.location, wd.date
+    ORDER BY pw.postID DESC, wd.date DESC;
+    `;
+    const result = await client.query(query);
+    client.release();
+    return result.rows;
+  } catch (error) {
+    console.error("Error fetching data for post from the database:", error);
+    throw error;
+  }
+}
+
 async function fetchDataByTag(tag) {
   try {
     const client = await pool.connect();
@@ -195,6 +243,7 @@ export {
   fetchDataForPostPage,
   fetchDataForOwnerProfilePage,
   fetchDataByTag,
+  fetchAllPostData,
 };
 
 // unused functions

@@ -24,7 +24,7 @@ export default function Post({ data }) {
               src="/walkingdog.jpeg"
               alt="Placeholder"
               className="h-full w-full object-cover object-center rounded-lg"
-              style={{ height: "500px", width: "600px" }}
+              style={{ aspectRatio: "4/3", width: "100%" }}
             />
           ) : data.urls.filter((url) => url).length === 1 ? (
             // One media: render the media without a gallery
@@ -35,7 +35,7 @@ export default function Post({ data }) {
                   src={`http://localhost:8800/images/${data.urls[0]}`}
                   alt=""
                   className="h-full w-full object-cover object-center rounded-lg"
-                  style={{ height: "500px", width: "600px" }}
+                  style={{ aspectRatio: "4/3", width: "100%" }}
                 />
               ) : (
                 // Video
@@ -43,7 +43,7 @@ export default function Post({ data }) {
                   src={`http://localhost:8800/videos/${data.urls[0]}`}
                   alt=""
                   className="h-full w-full object-cover object-center rounded-lg"
-                  style={{ height: "500px", width: "600px" }}
+                  style={{ aspectRatio: "4/3", width: "100%" }}
                   controls
                 />
               )}
@@ -107,7 +107,10 @@ export default function Post({ data }) {
                         src={`http://localhost:8800/images/${url}`}
                         alt={`Media ${index + 1}`}
                         className="h-full w-full object-cover object-center rounded-lg"
-                        style={{ height: "500px", width: "600px" }}
+                        style={{
+                          aspectRatio: "4/3",
+                          width: "100%",
+                        }}
                       />
                     ) : (
                       // Video
@@ -115,7 +118,7 @@ export default function Post({ data }) {
                         src={`http://localhost:8800/videos/${url}`}
                         alt={`Media ${index + 1}`}
                         className="h-full w-full object-cover object-center rounded-lg"
-                        style={{ height: "500px", width: "600px" }}
+                        style={{ aspectRatio: "4/3", width: "100%" }}
                         controls
                       />
                     )}

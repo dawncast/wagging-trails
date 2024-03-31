@@ -6,12 +6,27 @@ import {
   fetchDataForPostPage,
   fetchDataForOwnerProfilePage,
   fetchDataByTag,
+  fetchAllPostData,
 } from "../services/postWalkService.js";
 
 const router = express.Router();
 
 router.get("/", (req, res) => {
   res.json("hello there");
+});
+
+router.get("/all", async (req, res) => {
+  try {
+    const tableContent = await fetchAllPostData();
+    if (!tableContent) {
+      res.status(404).json({ error: "Posts not found" });
+      return;
+    }
+    res.json({ data: tableContent });
+  } catch (err) {
+    console.error("Error retrieving posts:", err);
+    res.status(500).json({ err: "Internal server error" });
+  }
 });
 
 router.post("/initiate-posts", async (req, res) => {
