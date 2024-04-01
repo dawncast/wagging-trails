@@ -25,7 +25,7 @@ This section will first have the development checklist per member, in which the 
 | ------------------------------------ | ------------------------------------- | -------------------------------- |
 | <ul><li>[ ] Owner’s Friend List Page | <ul><li>[ ] Home/Newsfeed             | <ul><li>[ ] Owner’s Profile Page |
 | <ul><li>[ ] Dog Modal Window         | <ul><li>[ ] Login Page                | <ul><li>[x] Owner’s Post Page    |
-|                                      | <ul><li>[ ] Side Menu Bar             | <ul><li>[ ] Side Scheduling Bar  |
+|                                      | <ul><li>[ ] Side Menu Bar             | <ul><li>[x] Side Scheduling Bar  |
 |                                      | <ul><li>[ ] Notification Modal Window |                                  |
 
 **Backend Entity Functions Development**
