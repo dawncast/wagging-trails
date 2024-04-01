@@ -23,6 +23,16 @@ export default function UpcomingSchedules() {
 
   return (
     <li>
+      <div className="flex justify-center mb-6">
+        {" "}
+        <button
+          onClick={null}
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold text-sm py-2 px-4 rounded-lg"
+        >
+          {" "}
+          Schedule a Task!
+        </button>
+      </div>
       <div className="text-sm font-semibold leading-6 text-indigo-200">
         Upcoming Tasks
       </div>
