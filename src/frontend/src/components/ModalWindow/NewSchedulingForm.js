@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Fragment } from "react";
-import { Menu, Transition } from "@headlessui/react";
+import DropdownSelect from "./Dropdown";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 
 import axios from "axios";
 
@@ -8,38 +8,26 @@ function CreateSchedule({ visible, onClose }) {
   // stub
   const ownerID = 5;
 
-  const MAX_CONTENT_LENGTH = 255;
-
   const [content, setContent] = useState("");
   const [tags, setTags] = useState([]);
 
   // data for form dropdowns
   const [dogs, setDogs] = useState([]);
   const eventType = ["walk", "hike", "run", "dog park"];
+  const [selectedDogs, setSelectedDogs] = useState([]);
 
-  const handleContentChange = (e) => {
-    const inputContent = e.target.value;
-
-    // Check if inputContent exceeds the maximum length
-    if (inputContent.length <= MAX_CONTENT_LENGTH) {
-      // Update state if within the limit
-      setContent(inputContent);
+  const handleDogsSelected = (item) => {
+    if (!selectedDogs.some((selectedItem) => selectedItem.key === item.key)) {
+      setSelectedDogs([...selectedDogs, item]);
     }
   };
 
-  const handleTagsChange = (e) => {
-    const inputTags = e.target.value.split(",").map((tag) => tag.trim());
-    const uniqueTags = inputTags.filter(
-      (tag, index, self) => tag && self.indexOf(tag) === index
+  const handleDogRemoved = (itemToRemove) => {
+    const updatedSelectedDogs = selectedDogs.filter(
+      (item) => item.key !== itemToRemove.key
     );
-
-    setTags(uniqueTags);
+    setSelectedDogs(updatedSelectedDogs);
   };
-
-  const userNavigation = [
-    { name: "Your profile", href: "#" },
-    { name: "Sign out", href: "#" },
-  ];
 
   //for dog data fetching
   useEffect(() => {
@@ -56,7 +44,7 @@ function CreateSchedule({ visible, onClose }) {
       .catch((error) => console.error("Error fetching dogs:", error));
   }, [ownerID]);
 
-  // for post submission
+  // for schedule submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -92,10 +80,6 @@ function CreateSchedule({ visible, onClose }) {
     if (e.target.id === "container") onClose();
   };
 
-  function classNames(...classes) {
-    return classes.filter(Boolean).join(" ");
-  }
-
   return (
     <div
       id="container"
@@ -106,35 +90,29 @@ function CreateSchedule({ visible, onClose }) {
         <h2 className="font-semibold text-center text-xl text-gray-700">
           Create a Schedule
         </h2>
+        <h2 className="text-gray-800">Select Dogs:</h2>
 
-        {/* <Transition
-          as={Fragment}
-          show={isDropdownOpen}
-          enter="transition ease-out duration-100"
-          enterFrom="transform opacity-0 scale-95"
-          enterTo="transform opacity-100 scale-100"
-          leave="transition ease-in duration-75"
-          leaveFrom="transform opacity-100 scale-100"
-          leaveTo="transform opacity-0 scale-95"
-        >
-          <Menu.Items className="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
-            {userNavigation.map((item) => (
-              <Menu.Item key={item.name}>
-                {({ active }) => (
-                  <a
-                    href={item.href}
-                    className={classNames(
-                      active ? "bg-gray-50" : "",
-                      "block px-3 py-1 text-sm leading-6 text-gray-900"
-                    )}
-                  >
-                    {item.name}
-                  </a>
-                )}
-              </Menu.Item>
+        {/* Selecting Dogs */}
+        <DropdownSelect
+          userSelection={dogs}
+          onItemSelected={handleDogsSelected}
+          onItemRemoved={handleDogRemoved}
+        />
+        <div className="text-gray-600">
+          <ul className="flex flex-wrap">
+            {selectedDogs.map((dog, index) => (
+              <span key={index} className="mr-4">
+                {dog.text}
+
+                <button onClick={() => handleDogRemoved(dog)}>
+                  <XMarkIcon className="h-3 w-3 ml-4" aria-hidden="true" />
+                </button>
+              </span>
             ))}
-          </Menu.Items>
-        </Transition> */}
+          </ul>
+        </div>
+
+        {/* Selecting a Type */}
 
         <form onSubmit={handleSubmit} className="mt-4">
           <button
