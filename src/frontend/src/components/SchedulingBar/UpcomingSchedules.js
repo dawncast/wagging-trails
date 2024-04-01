@@ -5,7 +5,9 @@ function classNames(...classes) {
 }
 
 export default function UpcomingSchedules() {
-  const ownerID = 1;
+  const ownerID = 1; // stub
+
+  // Schedule states
   const [schedules, setSchedules] = useState(null);
 
   useEffect(() => {
@@ -20,6 +22,8 @@ export default function UpcomingSchedules() {
   }
 
   console.log("Schedules state:", schedules);
+
+  // Create Walk Form
 
   return (
     <li>
@@ -46,17 +50,9 @@ export default function UpcomingSchedules() {
                 "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
               )}
             >
-              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-indigo-400 bg-indigo-500 text-[0.625rem] font-medium text-white">
-                {walk.dogname[0].toUpperCase()}
+              <span className="flex px-3 shrink-0 items-center justify-center rounded-lg border border-indigo-400 bg-indigo-500 text-[0.625rem] font-medium text-white">
+                {walk.walkeventtype !== null ? ` ${walk.walkeventtype}` : "act"}
               </span>
-
-              {walk.walkeventtype !== null ? (
-                <span>
-                  {walk.walkeventtype} with {walk.dogname}
-                </span>
-              ) : (
-                <span>Schedule with {walk.dogname}</span>
-              )}
               {walk.date !== null ? (
                 <span className="truncate">
                   {new Date(walk.date).toLocaleDateString("en-US", {
@@ -64,7 +60,13 @@ export default function UpcomingSchedules() {
                     day: "2-digit",
                   })}{" "}
                 </span>
-              ) : null}
+              ) : (
+                ""
+              )}
+              {walk.dogname}
+              <div className="ml-auto hover:text-gray-100 text-gray-300 font-bold py-1 px-2 text-xs">
+                Trail
+              </div>
             </a>
           </li>
         ))}

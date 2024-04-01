@@ -115,7 +115,15 @@ async function fetchAllWalks(ownerID) {
     const client = await pool.connect();
     const query = {
       text: `
-      SELECT w.walkID, od.dogID, od.name, wd.date, wdi.distance, om.meetupID, pw.postID, pwo.ownerID
+      SELECT w.walkID, 
+      ARRAY_AGG(od.dogID) as dogIDs, 
+      ARRAY_AGG(od.name) as dogs, 
+      wd.date, wdi.distance, 
+      om.meetupID, 
+      array_agg(DISTINCT CONCAT(own1.firstName, ' ', own1.lastName)) 
+            FILTER (WHERE CONCAT(own1.firstName, ' ', own1.lastName) IS NOT NULL 
+            AND own1.ownerID <> od.ownerID) 
+              AS met_up_owners,pw.postID, pwo.ownerID
       FROM Walk w 
       JOIN WentFor wf ON w.walkID = wf.walkID
       JOIN Owns_Dog od ON wf.dogID = od.dogID
@@ -124,7 +132,10 @@ async function fetchAllWalks(ownerID) {
       LEFT JOIN Post_Walk pw ON w.walkID = pw.walkID
       LEFT JOIN Post_Walk_Owner pwo ON pw.postID = pwo.postID
       LEFT JOIN On_MeetUp om ON w.walkID = om.walkID
+      LEFT JOIN Schedules s ON om.meetUpID = s.meetUpID
+      LEFT JOIN Owner_Name own1 ON s.ownerID = own1.ownerID
       WHERE od.ownerID = $1
+      GROUP BY w.walkID, wd.date, wdi.distance, om.meetupID, pw.postID, pwo.ownerID
       ORDER BY wd.date DESC NULLS LAST;
     `,
       values: [ownerID],

@@ -93,7 +93,7 @@ export default function PostCard({ data }) {
               <span>{data.location}</span>
             </div>
             {/* Post Tags */}
-            <div className="mt-0 lg:mt-28">
+            <div className="mt-1 xl:mt-8 2xl:mt-28">
               {data.tags.map((tag, index) => (
                 <a
                   href={`http://localhost:3000/post/${tag}`}
