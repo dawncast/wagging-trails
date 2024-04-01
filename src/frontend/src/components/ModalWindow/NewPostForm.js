@@ -94,7 +94,7 @@ function CreatePost({ visible, onClose, data }) {
       onClick={handleOnClose}
       className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex justify-center items-center"
     >
-      <div className="bg-white p-4 rounded">
+      <div className="bg-white p-4 rounded-xl">
         <h2 className="font-semibold text-center text-xl text-gray-700">
           Create a Post for your{" "}
           {data.meetupid !== null

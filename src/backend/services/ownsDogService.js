@@ -51,18 +51,15 @@ async function insertDog(ownerID, name, breed, birthday) {
 //updates the owner of a dog
 async function updateOwnerForDog(ownerIDNew, dogID) {
   try {
-
     const client = await pool.connect();
     await client.query("BEGIN");
-    const query1 =
-      "UPDATE owns_dog SET ownerid = $1 WHERE dogID = $2";
+    const query1 = "UPDATE owns_dog SET ownerid = $1 WHERE dogID = $2";
     const values = [ownerIDNew, dogID];
     await client.query(query1, values);
 
-    const query2 =
-      "UPDATE owns_dog_birthday SET ownerid =$1 WHERE dogID = $2";
-      const bday_values = [ownerIDNew, dogID];
-      await client.query(query2, bday_values);
+    const query2 = "UPDATE owns_dog_birthday SET ownerid =$1 WHERE dogID = $2";
+    const bday_values = [ownerIDNew, dogID];
+    await client.query(query2, bday_values);
 
     await client.query("COMMIT");
     return true;
@@ -75,13 +72,12 @@ async function updateOwnerForDog(ownerIDNew, dogID) {
 //deletes a dog tuple
 async function deleteDog(dogID) {
   let client;
-  try{
+  try {
     client = await pool.connect();
 
     await client.query("BEGIN");
 
-    const deleteDogQuery1=
-    "DELETE from owns_dog WHERE dogid = $1";
+    const deleteDogQuery1 = "DELETE from owns_dog WHERE dogid = $1";
     const deleteDogValues1 = [dogID];
     await client.query(deleteDogQuery1, deleteDogValues1);
 
@@ -94,7 +90,7 @@ async function deleteDog(dogID) {
     throw error;
   } finally {
     if (client) {
-    client.release();
+      client.release();
     }
   }
 }
@@ -102,25 +98,24 @@ async function deleteDog(dogID) {
 //returns all tuples for a dogs owned by a given ownerid
 async function dogsForOwner(ownerid) {
   let client;
-  try{
+  try {
     client = await pool.connect();
     await client.query("BEGIN");
 
-    const getDog=
-    "SELECT * from owns_dog where ownerid = $1";
-    const getDogValues=[ownerid];
-    const results = await client.query(getDog,getDogValues);
+    const getDog = "SELECT * from owns_dog where ownerid = $1";
+    const getDogValues = [ownerid];
+    const results = await client.query(getDog, getDogValues);
 
     await client.query("COMMIT");
     return results.rows;
-  }  catch (error) {
+  } catch (error) {
     // Rollback the transaction in case of error
     await client.query("ROLLBACK");
     console.error("Error retrieving dogs:", error);
     throw error;
   } finally {
     if (client) {
-    client.release();
+      client.release();
     }
   }
 }
@@ -128,18 +123,16 @@ async function dogsForOwner(ownerid) {
 //updates names for a dog based on dogid
 async function updateDogName(dogid, newDogName) {
   let client;
-  try{
+  try {
     client = await pool.connect();
-    const query1 = 
-    "UPDATE owns_dog SET name = $1 WHERE dogid = $2";
+    const query1 = "UPDATE owns_dog SET name = $1 WHERE dogid = $2";
     const query1Values = [newDogName, dogid];
     await client.query(query1, query1Values);
 
-    const query2 =
-    "UPDATE owns_dog_birthday SET name = $1 where dogid = $2"
+    const query2 = "UPDATE owns_dog_birthday SET name = $1 where dogid = $2";
     const query2Values = [newDogName, dogid];
-    await client.query(query2,query2Values);
-    
+    await client.query(query2, query2Values);
+
     await client.query("COMMIT");
     return true;
   } catch (error) {
@@ -158,38 +151,41 @@ async function updateDogName(dogid, newDogName) {
 async function updateDogBreed(dogid, newDogBreed) {
   try {
     const client = await pool.connect();
-    const query1 =
-    "UPDATE owns_dog SET breed = $1 where dogid = $2"
+    const query1 = "UPDATE owns_dog SET breed = $1 where dogid = $2";
     const queryValues = [newDogBreed, dogid];
-    await client.query(query1,queryValues);
-    
+    await client.query(query1, queryValues);
+
     client.release();
     return true;
   } catch (error) {
     console.error("Error updating dog breed:", error);
     throw error;
-  } 
+  }
 }
 
 async function updateDogBday(dogid, newDogBday) {
   try {
     const client = await pool.connect();
     const query1 =
-    "UPDATE owns_dog_birthday SET birthday = $1 where dogid = $2"
+      "UPDATE owns_dog_birthday SET birthday = $1 where dogid = $2";
     const queryValues = [newDogBday, dogid];
-    await client.query(query1,queryValues);
-    
+    await client.query(query1, queryValues);
+
     client.release();
     return true;
   } catch (error) {
     console.error("Error updating dog birthday:", error);
     throw error;
-  } 
+  }
 }
 
-
-
-
-
-
-export { fetchDogsFromDB, insertDog, updateOwnerForDog, deleteDog, dogsForOwner, updateDogName, updateDogBreed, updateDogBday };
+export {
+  fetchDogsFromDB,
+  insertDog,
+  updateOwnerForDog,
+  deleteDog,
+  dogsForOwner,
+  updateDogName,
+  updateDogBreed,
+  updateDogBday,
+};

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import CreateSchedule from "../ModalWindow/NewSchedulingForm";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -9,6 +10,9 @@ export default function UpcomingSchedules() {
 
   // Schedule states
   const [schedules, setSchedules] = useState(null);
+
+  // Creating a schedule will pop up a window
+  const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
     fetch(`http://localhost:8800/notification/walk-task/${ownerID}`)
@@ -21,16 +25,12 @@ export default function UpcomingSchedules() {
     return <div>Loading...</div>;
   }
 
-  console.log("Schedules state:", schedules);
-
-  // Create Walk Form
-
   return (
     <li>
       <div className="flex justify-center mb-6">
         {" "}
         <button
-          onClick={null}
+          onClick={() => setShowForm(true)}
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold text-sm py-2 px-4 rounded-lg"
         >
           {" "}
@@ -71,6 +71,14 @@ export default function UpcomingSchedules() {
           </li>
         ))}
       </ul>
+      {showForm && (
+        <CreateSchedule
+          onClose={() => {
+            setShowForm(false);
+          }}
+          visible={true}
+        />
+      )}
     </li>
   );
 }
