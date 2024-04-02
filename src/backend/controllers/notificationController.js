@@ -2,6 +2,7 @@ import express from "express";
 import {
   fetchOwnerWalkTask,
   fetchFromDB,
+  insertWalkTask,
 } from "../services/notificationService.js";
 
 const router = express.Router();
@@ -28,6 +29,26 @@ router.get("/walk-task/:ownerID", async (req, res) => {
   } catch (err) {
     console.error("Error retrieving walktasks:", err);
     res.status(500).json({ err: "Internal server error" });
+  }
+});
+
+// insert full walk from side scheduling bar.
+// insert by notification -> walk alert -> walk task -> logs
+router.post("/insert-walk-task", async (req, res) => {
+  const { ownerID, notifContent, dogName, date, walkeventtype } = req.body;
+  const insertResult = await insertWalkTask(
+    ownerID,
+    notifContent,
+    dogName,
+    date,
+    walkeventtype
+  );
+  if (insertResult) {
+    // split up dog names here just in case. Eg. "a,b" -> ["a","b"]
+    const dogNamesArray = dogName.split(",").map((name) => name.trim());
+    res.json({ success: true, dogNames: dogNamesArray });
+  } else {
+    res.status(500).json({ success: false });
   }
 });
 

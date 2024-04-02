@@ -26,9 +26,9 @@ router.post("/initiate-walks", async (req, res) => {
 
 router.post("/insert-walk", async (req, res) => {
   const { location, date, distance } = req.body;
-  const insertResult = await insertWalk(location, date, distance);
-  if (insertResult) {
-    res.json({ success: true });
+  const walkID = await insertWalk(location, date, distance);
+  if (walkID) {
+    res.json({ success: true, walkID: walkID });
   } else {
     res.status(500).json({ success: false });
   }
@@ -50,50 +50,47 @@ router.get("/:ownerID", async (req, res) => {
   }
 });
 
-
 router.delete("/delete-walk", async (req, res) => {
   const { walkid } = req.body;
   const deleteResult = await deleteWalk(walkid);
   if (deleteResult) {
-      res.json({ success: true });
+    res.json({ success: true });
   } else {
-      res.status(500).json({ success: false });
+    res.status(500).json({ success: false });
   }
-  });
+});
 
+router.put("/:walkid/update-walk-location", async (req, res) => {
+  const { walklocation } = req.body;
+  const walkid = req.params.walkid;
+  const updateResult = await updateWalkLocaton(walkid, walklocation);
+  if (updateResult) {
+    res.json({ success: true });
+  } else {
+    res.status(500).json({ success: false });
+  }
+});
 
-  router.put("/:walkid/update-walk-location", async (req,res) => {
-    const { walklocation } = req.body;
-    const walkid = req.params.walkid;
-    const updateResult = await updateWalkLocaton(walkid, walklocation);
-    if (updateResult) {
-      res.json({success : true});
-    } else {
-      res.status(500).json({ success: false});
-    }
-  });
+router.put("/:walkid/update-walk-date", async (req, res) => {
+  const { walkdate } = req.body;
+  const walkid = req.params.walkid;
+  const updateResult = await updateWalkDate(walkid, walkdate);
+  if (updateResult) {
+    res.json({ success: true });
+  } else {
+    res.status(500).json({ success: false });
+  }
+});
 
-  router.put("/:walkid/update-walk-date", async (req,res) => {
-    const { walkdate} = req.body;
-    const walkid = req.params.walkid;
-    const updateResult = await updateWalkDate(walkid, walkdate);
-    if (updateResult) {
-      res.json({success : true});
-    } else {
-      res.status(500).json({ success: false});
-    }
-  });
-
-  router.put("/:walkid/update-walk-distance", async (req,res) => {
-    const { walkdistance} = req.body;
-    const walkid = req.params.walkid;
-    const updateResult = await updateWalkDistance(walkid, walkdistance);
-    if (updateResult) {
-      res.json({success : true});
-    } else {
-      res.status(500).json({ success: false});
-    }
-  });
-
+router.put("/:walkid/update-walk-distance", async (req, res) => {
+  const { walkdistance } = req.body;
+  const walkid = req.params.walkid;
+  const updateResult = await updateWalkDistance(walkid, walkdistance);
+  if (updateResult) {
+    res.json({ success: true });
+  } else {
+    res.status(500).json({ success: false });
+  }
+});
 
 export default router;
