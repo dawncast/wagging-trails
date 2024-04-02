@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import DropdownSelect from "./Dropdown";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { StarIcon } from "@heroicons/react/20/solid";
 
@@ -7,10 +9,9 @@ import axios from "axios";
 
 function CreateSchedule({ visible, onClose }) {
   // stub
-  const ownerID = 3;
+  const ownerID = 1;
 
-  const [content, setContent] = useState("");
-  const [tags, setTags] = useState([]);
+  const MAX_CONTENT_LENGTH = 255;
 
   // data for form dropdowns
   const [dogs, setDogs] = useState([]);
@@ -21,12 +22,6 @@ function CreateSchedule({ visible, onClose }) {
     { key: "3", text: "run", value: "run" },
     { key: "4", text: "dog park", value: "dog park" },
   ];
-
-  const [rating, setRating] = useState(0);
-
-  const handleStarClick = (clickedRating) => {
-    setRating(clickedRating);
-  };
 
   // Dog selection
   const [selectedDogs, setSelectedDogs] = useState([]);
@@ -65,6 +60,26 @@ function CreateSchedule({ visible, onClose }) {
     setSelectedWalkEvent(event.value);
   };
 
+  // other selections
+
+  const [rating, setRating] = useState(0);
+  const [location, setLocation] = useState(null);
+  const [date, setDate] = useState(null);
+
+  const handleStarClick = (clickedRating) => {
+    setRating(clickedRating);
+  };
+
+  const handleLocationChange = (e) => {
+    const inputContent = e.target.value;
+
+    // Check if inputContent exceeds the maximum length
+    if (inputContent.length <= MAX_CONTENT_LENGTH) {
+      // Update state if within the limit
+      setLocation(inputContent);
+    }
+  };
+
   // for dog data fetching
   useEffect(() => {
     fetch(`http://localhost:8800/dog/${ownerID}/get-dog-for`)
@@ -99,26 +114,36 @@ function CreateSchedule({ visible, onClose }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const postData = {
-      walkID: null,
+    const scheduleData = {
       ownerID: ownerID,
-      content: content,
-      tags: tags,
+      notifContent:
+        "Walk with " +
+        selectedDogs
+          .map((dog) => dog.text)
+          .filter(Boolean)
+          .join(","),
+      dogName: selectedDogs
+        .map((dog) => dog.text)
+        .filter(Boolean)
+        .join(","),
+      date: date,
+      walkeventtype: selectedWalkEvent,
     };
     try {
       const response = await axios.post(
-        `http://localhost:8800/dog/${ownerID}/insert-post`,
-        postData
+        `http://localhost:8800/notification/insert-walk-task`,
+        scheduleData
       );
-      console.log("Post created:", response.data);
+      console.log("Schedule created:", response.data);
       // prepare data for upload
-      let postID = response.data.postID;
+      let dogNames = response.data.dogNames;
+      console.log(dogNames);
       // Check if postID is available
-      if (!postID) {
-        throw new Error("postID is null or undefined");
+      if (!dogNames) {
+        throw new Error("no dogs have been inserted for the schedule.");
       }
     } catch (error) {
-      console.error("Error creating post:", error);
+      console.error("Error creating schedule:", error);
     }
   };
 
@@ -148,7 +173,7 @@ function CreateSchedule({ visible, onClose }) {
 
         <div className="flex items-center my-3 mx-1">
           {/* Selecting Dogs */}
-          <h3 className="text-gray-800 mr-3">Select Dogs*:</h3>
+          <h3 className="text-gray-800 mr-3">Dogs*:</h3>
           <DropdownSelect
             userSelection={dogs}
             onItemSelected={handleDogsSelected}
@@ -166,21 +191,28 @@ function CreateSchedule({ visible, onClose }) {
             </ul>
           </div>
         </div>
-        <div className="flex flex-wrap">
-          {/* Selecting a Type */}
-          <h3 className="text-gray-800 mr-3 ml-1">Select Event Type:</h3>
-          <DropdownSelect
-            userSelection={eventType}
-            onItemSelected={handleWalkEventSelected}
-          />
-        </div>
+        <div className="flex items-center justify-between mx-1">
+          <div className="flex flex-wrap">
+            {/* Selecting a Type */}
+            <h3 className="text-gray-800 mr-3">Event Type:</h3>
+            <DropdownSelect
+              userSelection={eventType}
+              onItemSelected={handleWalkEventSelected}
+            />
+          </div>
+          <div className="flex items-center">
+            <h3 className="text-gray-800 mr-3">Date:</h3>
 
-        <input
-          type="text"
-          placeholder="YYYY-MM-DD"
-          onChange={null}
-          className="w-full border border-gray-300 text-gray-900 rounded-md py-2 px-3 my-3 mx-1 focus:outline-none focus:ring focus:border-blue-400"
-        />
+            <DatePicker
+              selected={date}
+              onChange={(date) => setDate(date)}
+              dateFormat="yyyy-MM-dd"
+              className="w-full border border-gray-300 text-gray-900 rounded-md py-2 px-3 my-3 focus:outline-none focus:ring focus:border-blue-400"
+              placeholderText="YYYY-MM-DD"
+              isClearable
+            />
+          </div>
+        </div>
 
         {/* Walk Form */}
         <h3 className="mt-2 font-semibold text-center text-lg text-gray-700 my-3">
