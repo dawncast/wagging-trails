@@ -11,16 +11,16 @@ async function insertMeetup(walkID, time, location, date, ownerID) {
     const meetupInsertQuery =
       "INSERT INTO On_Meetup (walkID, time, location, date) VALUES ($1, $2, $3, $4) RETURNING meetupID";
     const meetupInsertValues = [walkID, time, location, date];
-    const meetupResult = await client.query(
+    await client.query(
       meetupInsertQuery,
       meetupInsertValues
     );
-    const meetupID = meetupResult.rows[0].meetupid;
+    // const meetupID = meetupResult.rows[0].meetupid;
 
-    const scheduleInsertQuery =
-      "INSERT INTO schedules (meetupID, ownerID) VALUES ($1, $2)";
-    const scheduleInsertValues = [meetupID, ownerID];
-    await client.query(scheduleInsertQuery, scheduleInsertValues);
+    // const scheduleInsertQuery =
+    //   "INSERT INTO schedules (meetupID, ownerID) VALUES ($1, $2)";
+    // const scheduleInsertValues = [meetupID, ownerID];
+    // await client.query(scheduleInsertQuery, scheduleInsertValues);
 
     // Commit the transaction
     await client.query("COMMIT");

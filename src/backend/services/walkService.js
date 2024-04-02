@@ -92,7 +92,7 @@ async function insertWalk(location, date, distance) {
 
     // Commit the transaction
     await client.query("COMMIT");
-    return true;
+    return walkID;
   } catch (error) {
     // Rollback the transaction in case of error
     await client.query("ROLLBACK");
