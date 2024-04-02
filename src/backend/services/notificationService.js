@@ -26,4 +26,54 @@ async function fetchOwnerWalkTask(ownerID) {
   }
 }
 
-export { fetchFromDB, fetchOwnerWalkTask };
+async function insertWalkTask(
+  ownerID,
+  notifContent,
+  dogName,
+  date,
+  walkeventtype
+) {
+  let client;
+  try {
+    client = await pool.connect();
+    // Start transaction
+    await client.query("BEGIN");
+
+    const notifInsertQuery =
+      "INSERT INTO Receives_Notifications (ownerID, notifContent) VALUES ($1, $2) RETURNING notificationID";
+    const notifInsertValues = [ownerID, notifContent];
+    const notifResult = await client.query(notifInsertQuery, notifInsertValues);
+    const notificationID = notifResult.rows[0].notificationid;
+
+    const walkAlertInsertQuery =
+      "INSERT INTO walkalert (notificationID, dogName) VALUES ($1, $2)";
+    const walkAlertInsertValues = [notificationID, dogName];
+    await client.query(walkAlertInsertQuery, walkAlertInsertValues);
+
+    const taskInsertQuery =
+      "INSERT INTO organizes_walktask (ownerID, date, walkeventtype) VALUES ($1, $2, $3) RETURNING taskID";
+    const taskInsertValues = [ownerID, date, walkeventtype];
+    const taskResult = await client.query(taskInsertQuery, taskInsertValues);
+    const taskID = taskResult.rows[0].taskid;
+
+    const logsInsertQuery =
+      "INSERT INTO logs (notificationID, taskID) VALUES ($1, $2)";
+    const logsInsertValues = [notificationID, taskID];
+    await client.query(logsInsertQuery, logsInsertValues);
+
+    // Commit the transaction
+    await client.query("COMMIT");
+    return true;
+  } catch (error) {
+    // Rollback the transaction in case of error
+    await client.query("ROLLBACK");
+    console.error("Error inserting notification and walk tasks:", error);
+    throw error;
+  } finally {
+    if (client) {
+      client.release();
+    }
+  }
+}
+
+export { fetchFromDB, fetchOwnerWalkTask, insertWalkTask };
