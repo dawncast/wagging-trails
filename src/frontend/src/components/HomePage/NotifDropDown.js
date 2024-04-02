@@ -99,7 +99,7 @@ export default function Example() {
                 className="relative rounded-lg p-4 hover:bg-gray-50"
               >
                 <a
-                  href={item.friendPost.postlink}
+                  href={`http://localhost:3000/${item.friendPost.postlink}`}
                   className="font-semibold text-gray-900"
                 >
                   {item.friendPost.friendname}
