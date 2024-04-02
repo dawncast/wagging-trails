@@ -1,6 +1,7 @@
 import { Fragment, useState } from 'react'
 import { Dialog, Menu, Transition } from '@headlessui/react'
 import { useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import {
   Bars3Icon,
   BellIcon,
@@ -41,6 +42,16 @@ function classNames(...classes) {
 
 export default function SideBar({mainFeed}) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [navItem, setNavItem] = useState(false);
+  const location = useLocation();
+
+  const handleClick = (index) => {
+    const updatedNavigation = navigation.map((item, i) => ({
+      ...item,
+      current: i === index, // Set current to true for the clicked item, false for others
+    }));
+    setNavItem(updatedNavigation);
+  };
   const [navItem, setNavItem] = useState(false);
   const location = useLocation();
 
