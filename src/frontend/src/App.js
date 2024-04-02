@@ -15,9 +15,10 @@ function App() {
     <div>
       <BrowserRouter>
         <Routes>
-          <Route path="/home" element={<FeedPage />}></Route>
-          <Route path="/login" element={<Login />}></Route>
-          <Route path="/register" element={<Register />}></Route>
+         <Route path="/login" element={<Login />}></Route>
+         <Route path="/register" element={<Register />}></Route>
+          <Route path="/home" element={<HomePage />}></Route>
+          <Route path="/profile" element={<ProfilePage />}></Route>
           <Route path="/post/:ownerID/:postID" element={<PostPage />}></Route>
           <Route path="/profile/:ownerID" element={<ProfilePage />}></Route>
           <Route path="/post/:tag" element={<TagPage />}></Route>

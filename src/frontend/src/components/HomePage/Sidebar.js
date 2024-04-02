@@ -1,5 +1,6 @@
-import { Fragment, useState } from "react";
-import { Dialog, Menu, Transition } from "@headlessui/react";
+import { Fragment, useState } from 'react'
+import { Dialog, Menu, Transition } from '@headlessui/react'
+import { useLocation } from 'react-router-dom';
 import {
   Bars3Icon,
   BellIcon,
@@ -38,8 +39,18 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function SideBar({ mainFeed }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+export default function SideBar({mainFeed}) {
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [navItem, setNavItem] = useState(false);
+  const location = useLocation();
+
+  const handleClick = (index) => {
+    const updatedNavigation = navigation.map((item, i) => ({
+      ...item,
+      current: i === index, // Set current to true for the clicked item, false for others
+    }));
+    setNavItem(updatedNavigation);
+  };
 
   return (
     <>
@@ -348,17 +359,16 @@ export default function SideBar({ mainFeed }) {
                     leaveTo="transform opacity-0 scale-95"
                   >
                     <Menu.Items className="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
-                      {userNavigation.map((item) => (
-                        <Menu.Item key={item.name}>
+                      {userNavigation.map((item, index) => (
+                          <Menu.Item key={item.name}>
                           {({ active }) => (
                             <a
                               href={item.href}
-                              className={classNames(
-                                active ? "bg-gray-50" : "",
-                                "block px-3 py-1 text-sm leading-6 text-gray-900"
-                              )}
+                              className={`block px-3 py-1 text-sm leading-6 text-gray-900 ${item.current ? 'bg-gray-50' : ''} ${active ? 'bg-gray-50' : ''}`}
+                              onClick={() => handleClick(index)}
                             >
-                              {item.name}
+                              <item.icon className="w-4 h-4 mr-3" /> {/* Render the icon component */}
+                              <span>{item.name}</span>
                             </a>
                           )}
                         </Menu.Item>
