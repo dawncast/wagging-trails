@@ -8,11 +8,12 @@ async function fetchOwnerWalkTask(ownerID) {
     const client = await pool.connect();
     const query = {
       text: `
-      SELECT owt.taskID, wa.dogName, owt.date, owt.walkeventtype
+      SELECT owt.taskID, ARRAY_AGG(wa.dogName) AS dogNames, owt.date, owt.walkeventtype
       FROM Organizes_WalkTask owt 
       JOIN Logs l ON owt.taskID = l.taskID
       JOIN WalkAlert wa ON l.notificationID = wa.notificationID
       WHERE owt.ownerID = $1
+      GROUP BY owt.taskID, owt.date, owt.walkeventtype
       ORDER BY owt.date DESC NULLS LAST;
     `,
       values: [ownerID],

@@ -63,7 +63,7 @@ export default function UpcomingSchedules() {
               ) : (
                 ""
               )}
-              {walk.dogname}
+              <span className="truncate">{walk.dognames.join(", ")}</span>
               <div className="ml-auto hover:text-gray-100 text-gray-300 font-bold py-1 px-2 text-xs">
                 Trail
               </div>
