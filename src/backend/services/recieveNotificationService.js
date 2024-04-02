@@ -1,9 +1,9 @@
 import pool from "./databaseService.js";
 
-async function fetchNotificationsFromDB() {
+async function fetchNotificationsFromDB(ownerID) {
   try {
     const client = await pool.connect();
-    const result = await client.query("SELECT * FROM receives_notifications");
+    const result = await client.query("SELECT * FROM receives_notifications WHERE ownerid = $1", [ownerID]);
     client.release();
     return result.rows;
   } catch (error) {
