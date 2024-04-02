@@ -17,7 +17,6 @@ router.post("/insert-meetup", async (req, res) => {
     time,
     location,
     date,
-    ownerID
   );
   if (insertResult) {
     res.json({ success: true });
