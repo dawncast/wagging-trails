@@ -132,8 +132,16 @@ function CreateSchedule({ visible, onClose }) {
       .catch((error) => console.error("Error fetching dogs:", error));
   }, [ownerID]);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
+    if (location !== null) {
+      handleWalkSubmit();
+    } else {
+      handleScheduleSubmit();
+    }
+  };
+
+  const handleWalkSubmit = async () => {
     const walkData = {
       location: location,
       date: date,
@@ -172,59 +180,44 @@ function CreateSchedule({ visible, onClose }) {
         console.log("Walk created for dog", dog.text, ":", response.data);
       }
 
-      if (friends !== null) {
+      if (selectedFriends.length !== 0) {
         // do meetup
+        const meetupData = {
+          walkID: walkID,
+          time: time,
+          location: location,
+          date: date,
+        };
+        const response = await axios.post(
+          `http://localhost:8800/meetup/insert-meetup`,
+          meetupData
+        );
+        console.log("Meetup created:", response.data);
+
+        // prepare data for upload
+        let meetupID = response.data.meetupID;
+        console.log(meetupID);
+        // Check if postID is available
+        if (!meetupID) {
+          throw new Error("Error on creating a meetup.");
+        }
+
+        selectedFriends.push({ value: ownerID });
+        // do schedules
+        for (const friend of selectedFriends) {
+          const scheduleData = {
+            meetupID: meetupID,
+            ownerID: friend.value,
+          };
+
+          const response = await axios.post(
+            `http://localhost:8800/schedules/insert-schedule`,
+            scheduleData
+          );
+          console.log("Schedule created for ", friend.text, ":", response.data);
+        }
       }
-    } catch (error) {
-      console.error("Error creating schedule:", error);
-    }
-  };
-
-  // const handleWentForSubmit = async () => {
-  //   try {
-  //     // Iterate over each selected dog
-  //     for (const dog of selectedDogs) {
-  //       console.log("kek" + dog.value);
-  //       const wentForData = {
-  //         dogID: dog.value,
-  //         walkID: walkID,
-  //         rating: rating,
-  //       };
-
-  //       // Make API call for each dog
-  //       const response = await axios.post(
-  //         `http://localhost:8800/went-for/insert-went-for`,
-  //         wentForData
-  //       );
-  //       console.log("Walk created for dog", dog.text, ":", response.data);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error creating schedule:", error);
-  //   }
-  // };
-
-  const handleMeetUpSubmit = async () => {
-    const wentForData = {
-      location: location,
-      date: date,
-      distance: distance,
-    };
-
-    try {
-      const response = await axios.post(
-        `http://localhost:8800/went-for/insert-went-for`,
-        wentForData
-      );
-      console.log("Walk created:", response.data);
-
-      // prepare data for upload
-      let walkID = response.data.walkID;
-      console.log(walkID);
-      // Check if postID is available
-      if (!walkID) {
-        throw new Error("Error on creating a walk.");
-      }
-      setWalkID(walkID);
+      console.log("Created.");
     } catch (error) {
       console.error("Error creating schedule:", error);
     }
