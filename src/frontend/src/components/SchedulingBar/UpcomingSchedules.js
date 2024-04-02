@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import CreateSchedule from "../ModalWindow/NewSchedulingForm";
+import CreateWalk from "../ModalWindow/NewWalkForm";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -12,13 +13,15 @@ export default function UpcomingSchedules() {
   const [schedules, setSchedules] = useState(null);
 
   // Creating a schedule will pop up a window
-  const [showForm, setShowForm] = useState(false);
+  const [showFormSchedule, setShowFormSchedule] = useState(false);
+  const [showFormWalk, setShowFormWalk] = useState(false);
+  const [log, setLog] = useState(null);
 
   useEffect(() => {
     fetch(`http://localhost:8800/notification/walk-task/${ownerID}`)
       .then((response) => response.json())
       .then((data) => setSchedules(data))
-      .catch((error) => console.error("Error fetching post:", error));
+      .catch((error) => console.error("Error fetching walk task:", error));
   }, [ownerID]);
 
   if (!schedules) {
@@ -30,7 +33,7 @@ export default function UpcomingSchedules() {
       <div className="flex justify-center mb-6">
         {" "}
         <button
-          onClick={() => setShowForm(true)}
+          onClick={() => setShowFormSchedule(true)}
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold text-sm py-2 px-4 rounded-lg"
         >
           {" "}
@@ -49,6 +52,10 @@ export default function UpcomingSchedules() {
                 "text-indigo-200 hover:text-white hover:bg-indigo-700",
                 "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
               )}
+              onClick={() => {
+                setLog(walk);
+                setShowFormWalk(true);
+              }}
             >
               <span className="flex px-3 shrink-0 items-center justify-center rounded-lg border border-indigo-400 bg-indigo-500 text-[0.625rem] font-medium text-white">
                 {walk.walkeventtype !== null ? ` ${walk.walkeventtype}` : "act"}
@@ -71,11 +78,20 @@ export default function UpcomingSchedules() {
           </li>
         ))}
       </ul>
-      {showForm && (
+      {showFormSchedule && (
         <CreateSchedule
           onClose={() => {
-            setShowForm(false);
+            setShowFormSchedule(false);
           }}
+          visible={true}
+        />
+      )}
+      {showFormWalk && (
+        <CreateWalk
+          onClose={() => {
+            setShowFormWalk(false);
+          }}
+          log={log}
           visible={true}
         />
       )}

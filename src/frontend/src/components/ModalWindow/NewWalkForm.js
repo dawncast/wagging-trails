@@ -7,7 +7,7 @@ import { StarIcon } from "@heroicons/react/20/solid";
 
 import axios from "axios";
 
-function CreateWalk({ visible, onClose, data }) {
+function CreateWalk({ visible, onClose, log }) {
   // stub
   const ownerID = 1;
 
@@ -224,7 +224,7 @@ function CreateWalk({ visible, onClose, data }) {
     >
       <div className="bg-white p-4 rounded-xl">
         <h2 className="font-semibold text-center text-xl text-gray-700">
-          Create a Walk from your
+          Create a Walk from your {console.log(log)}
         </h2>
 
         <div className="flex items-center my-3 mx-1">
