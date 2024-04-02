@@ -61,10 +61,12 @@ function CreateSchedule({ visible, onClose }) {
   };
 
   // other selections
-
-  const [rating, setRating] = useState(0);
+  const [rating, setRating] = useState(null);
   const [location, setLocation] = useState(null);
   const [date, setDate] = useState(null);
+  const [distance, setDistance] = useState(null);
+  const [time, setTime] = useState(null);
+  const [walkID, setWalkID] = useState(null);
 
   const handleStarClick = (clickedRating) => {
     setRating(clickedRating);
@@ -80,15 +82,35 @@ function CreateSchedule({ visible, onClose }) {
     }
   };
 
+  const handleDistanceChange = (e) => {
+    const inputContent = e.target.value;
+
+    // Check if inputContent exceeds the maximum length
+    if (inputContent.length <= MAX_CONTENT_LENGTH) {
+      // Update state if within the limit
+      setDistance(inputContent);
+    }
+  };
+
+  const handleTimeChange = (e) => {
+    const inputContent = e.target.value;
+
+    // Check if inputContent exceeds the maximum length
+    if (inputContent.length <= 8) {
+      // Update state if within the limit
+      setTime(inputContent);
+    }
+  };
+
   // for dog data fetching
   useEffect(() => {
     fetch(`http://localhost:8800/dog/${ownerID}/get-dog-for`)
       .then((response) => response.json())
       .then((data) => {
         const parsedDogs = data.data.map((dog) => ({
-          key: `${dog.dogid}`,
+          key: dog.dogid,
           text: dog.name,
-          value: `${dog.dogid}`,
+          value: dog.dogid,
         }));
         setDogs(parsedDogs);
       })
@@ -110,10 +132,106 @@ function CreateSchedule({ visible, onClose }) {
       .catch((error) => console.error("Error fetching dogs:", error));
   }, [ownerID]);
 
-  // for schedule submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const walkData = {
+      location: location,
+      date: date,
+      distance: distance,
+    };
 
+    try {
+      // do walk
+      const response = await axios.post(
+        `http://localhost:8800/walk/insert-walk`,
+        walkData
+      );
+      console.log("Walk created:", response.data);
+
+      // prepare data for upload
+      let walkID = response.data.walkID;
+      console.log(walkID);
+      // Check if postID is available
+      if (!walkID) {
+        throw new Error("Error on creating a walk.");
+      }
+      setWalkID(walkID);
+
+      // do wentFor
+      for (const dog of selectedDogs) {
+        const wentForData = {
+          dogID: dog.value,
+          walkID: walkID,
+          rating: rating,
+        };
+
+        const response = await axios.post(
+          `http://localhost:8800/went-for/insert-went-for`,
+          wentForData
+        );
+        console.log("Walk created for dog", dog.text, ":", response.data);
+      }
+
+      if (friends !== null) {
+        // do meetup
+      }
+    } catch (error) {
+      console.error("Error creating schedule:", error);
+    }
+  };
+
+  // const handleWentForSubmit = async () => {
+  //   try {
+  //     // Iterate over each selected dog
+  //     for (const dog of selectedDogs) {
+  //       console.log("kek" + dog.value);
+  //       const wentForData = {
+  //         dogID: dog.value,
+  //         walkID: walkID,
+  //         rating: rating,
+  //       };
+
+  //       // Make API call for each dog
+  //       const response = await axios.post(
+  //         `http://localhost:8800/went-for/insert-went-for`,
+  //         wentForData
+  //       );
+  //       console.log("Walk created for dog", dog.text, ":", response.data);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error creating schedule:", error);
+  //   }
+  // };
+
+  const handleMeetUpSubmit = async () => {
+    const wentForData = {
+      location: location,
+      date: date,
+      distance: distance,
+    };
+
+    try {
+      const response = await axios.post(
+        `http://localhost:8800/went-for/insert-went-for`,
+        wentForData
+      );
+      console.log("Walk created:", response.data);
+
+      // prepare data for upload
+      let walkID = response.data.walkID;
+      console.log(walkID);
+      // Check if postID is available
+      if (!walkID) {
+        throw new Error("Error on creating a walk.");
+      }
+      setWalkID(walkID);
+    } catch (error) {
+      console.error("Error creating schedule:", error);
+    }
+  };
+
+  // for schedule submission
+  const handleScheduleSubmit = async () => {
     const scheduleData = {
       ownerID: ownerID,
       notifContent:
@@ -216,21 +334,28 @@ function CreateSchedule({ visible, onClose }) {
 
         {/* Walk Form */}
         <h3 className="mt-2 font-semibold text-center text-lg text-gray-700 my-3">
-          Is it already a finished schedule? Log it as a walk or meetup!
+          Is it already a finished schedule? Log it as a walk or host a meetup!
         </h3>
         <div className="flex items-center justify-between">
           <input
             type="text"
             placeholder="Location"
-            onChange={null}
+            onChange={handleLocationChange}
             className="w-full border border-gray-300 text-gray-900 rounded-md py-2 px-3 mb-3 mx-1 focus:outline-none focus:ring focus:border-blue-400"
           />
 
           <input
             type="text"
             placeholder="00:00:00"
-            onChange={null}
+            value={time}
+            maxLength={8}
+            onChange={handleTimeChange}
             className="w-full border border-gray-300 text-gray-900 rounded-md py-2 px-3 mb-3 mx-1 focus:outline-none focus:ring focus:border-blue-400"
+            onKeyDown={(e) => {
+              if (time.length >= MAX_CONTENT_LENGTH && e.key !== "Backspace") {
+                e.preventDefault();
+              }
+            }}
           />
         </div>
 
@@ -238,7 +363,7 @@ function CreateSchedule({ visible, onClose }) {
           <input
             type="text"
             placeholder="distance (km)"
-            onChange={null}
+            onChange={handleDistanceChange}
             className="w-full border border-gray-300 text-gray-900 rounded-md py-2 px-3 mb-3 mx-1 focus:outline-none focus:ring focus:border-blue-400"
           />
 
