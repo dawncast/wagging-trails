@@ -84,7 +84,7 @@ router.put("/:ownerID/update-contact", async (req, res) => {
   }
 });
 
-// for fetching ALL details needed in Owner Profile Page
+// for fetching owner details needed in Owner Profile Page
 router.get("/:ownerID", async (req, res) => {
   try {
     const ownerID = req.params.ownerID;
