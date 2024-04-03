@@ -174,9 +174,7 @@ async function deleteLog(notificationID, taskID) {
       "DELETE from logs WHERE notificationid = $1 AND taskid = $2";
     const deleteLogValues = [notificationID, taskID];
     await client.query(deleteLogQuery, deleteLogValues);
-
     await client.query("COMMIT");
-
     return true;
   } catch (error) {
     // Rollback the transaction in case of error

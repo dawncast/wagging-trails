@@ -212,6 +212,30 @@ function CreateWalk({ visible, onClose, log }) {
         }
       }
       console.log("Created.");
+
+      // delete the logs, then walk-task, then walk-alert.
+      for (const notifIDs of logData.notificationids) {
+        const deleteResponse = await axios.delete(
+          `http://localhost:8800/notification/${notifIDs}/${logData.taskid}/delete-log`
+        );
+        console.log("Deleted response: ", deleteResponse);
+      }
+
+      // delete walk-task
+      const deleteTaskResponse = await axios.delete(
+        `http://localhost:8800/notification/${logData.taskid}/delete-organizes-walk`
+      );
+      console.log("Deleted walktask: ", deleteTaskResponse);
+
+      // delete walk-alert
+      for (const notifIDs of logData.notificationids) {
+        const deleteAlertResponse = await axios.delete(
+          `http://localhost:8800/notification/${notifIDs}/delete-walk-alert`
+        );
+        console.log("Deleted response: ", deleteAlertResponse);
+      }
+      // all done.
+      console.log("Finished correctly.");
     } catch (error) {
       console.error("Error creating schedule:", error);
     }
