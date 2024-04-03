@@ -4,6 +4,7 @@ import {
   fetchFromDB,
   insertWalkTask,
   insertReceivesAndWalk,
+  insertOrganizesWalk,
 } from "../services/notificationService.js";
 
 const router = express.Router();
@@ -58,6 +59,16 @@ router.post("/insert-walk-alert", async (req, res) => {
   const notificationID = await insertReceivesAndWalk(ownerID, notifContent, dogName);
   if (notificationID) {
     res.json({ notificationID });
+  } else {
+    res.status(500).json({ success: false });
+  }
+});
+
+router.post("/insert-organizes-walk", async (req, res) => {
+  const {ownerID, data, walkeventtype } = req.body;
+  const taskID = await insertOrganizesWalk(ownerID, data, walkeventtype);
+  if (taskID) {
+    res.json({ taskID });
   } else {
     res.status(500).json({ success: false });
   }

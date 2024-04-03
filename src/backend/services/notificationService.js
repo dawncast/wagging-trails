@@ -97,8 +97,6 @@ async function insertReceivesAndWalk(
       const insertWalkAlertValues = [notiID, dogname];
       await client.query(insertWalkAlert, insertWalkAlertValues);
       
-
-
       await client.query("COMMIT");
       return notiID;
 
@@ -115,8 +113,33 @@ async function insertReceivesAndWalk(
     }
   }
 
+  async function insertOrganizesWalk(ownerID, date, walkEventType) {
+    let client;
+    try {
+      client = await pool.connect();
+
+      await client.query("BEGIN");
+      const organizesWalkQuery = "INSERT INTO organizes_walktask (ownerid, date, walkeventtype) VALUES ($1, $2, $3) RETURNING taskid"
+      const organizesWalkValues = [ownerID, date, walkEventType];
+      const result = await client.query(organizesWalkQuery,organizesWalkValues);
+      const taskID = result.rows[0].taskid;
+
+      await client.query("COMMIT");
+      return taskID;
+    } catch (error) {
+      // Rollback the transaction in case of error
+      await client.query("ROLLBACK");
+      console.error("Error inserting organizes_walk:", error);
+      throw error;
+    } finally {
+      if (client) {
+        client.release();
+      }
+    }
+  }
 
 
 
 
-export { fetchFromDB, fetchOwnerWalkTask, insertWalkTask, insertReceivesAndWalk };
+
+export { fetchFromDB, fetchOwnerWalkTask, insertWalkTask, insertReceivesAndWalk, insertOrganizesWalk };
