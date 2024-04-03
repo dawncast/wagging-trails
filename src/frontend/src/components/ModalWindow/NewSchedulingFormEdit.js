@@ -219,40 +219,70 @@ function CreateSchedule({ visible, onClose }) {
       }
       console.log("Created.");
     } catch (error) {
-      console.error("Error creating schedule:", error);
+      console.error("Error creating walk:", error);
     }
   };
 
   // for schedule submission
   const handleScheduleSubmit = async () => {
-    const scheduleData = {
-      ownerID: ownerID,
-      notifContent:
-        "Walk with " +
-        selectedDogs
-          .map((dog) => dog.text)
-          .filter(Boolean)
-          .join(","),
-      dogName: selectedDogs
-        .map((dog) => dog.text)
-        .filter(Boolean)
-        .join(","),
-      date: date,
-      walkeventtype: selectedWalkEvent,
-    };
     try {
+      const notificationIDs = []; // store all notificationIDs to match with Logs
+
+      // for each dog in selected dogs
+      for (const dog of selectedDogs) {
+        const notifData = {
+          ownerID: ownerID,
+          dogName: dog.text,
+          notifContent: "Walk with" + dog.text,
+        };
+
+        const response = await axios.post(
+          `http://localhost:8800/notification/insert-walk-alert`,
+          notifData
+        );
+        // assume we inserted properly and we received the notificationID
+        console.log("Walk alert created:" + response.data);
+
+        let notificationID = response.data.notificationID;
+        // Check if notificationID is available
+        if (!notificationID) {
+          throw new Error("Error on creating a walk alert.");
+        }
+        notificationIDs.push(notificationID); // store it.
+      }
+      // once we are done, we create a walk task.
+      const taskData = {
+        ownerID: ownerID,
+        data: date,
+        walkeventtype: selectedWalkEvent,
+      };
+
       const response = await axios.post(
         `http://localhost:8800/notification/insert-walk-task`,
-        scheduleData
+        taskData
       );
-      console.log("Schedule created:", response.data);
-      // prepare data for upload
-      let dogNames = response.data.dogNames;
-      console.log(dogNames);
-      // Check if postID is available
-      if (!dogNames) {
-        throw new Error("no dogs have been inserted for the schedule.");
+      // assume we inserted properly and we received the taskID
+      console.log("Walk task created:" + response.data);
+      let taskID = response.data.taskID;
+      // Check if notificationID is available
+      if (!taskID) {
+        throw new Error("Error on creating a walk task.");
       }
+
+      // finally, we iterate through every notificationID to insert to logs.
+      for (const notifID of notificationIDs) {
+        const logData = {
+          notificationID: notifID,
+          taskID: taskID,
+        };
+        const response = await axios.post(
+          `http://localhost:8800/notification/insert-logs`,
+          logData
+        );
+        // assume we inserted properly and we received the notificationID
+        console.log("Log created:" + response.data);
+      }
+      // we're done.
     } catch (error) {
       console.error("Error creating schedule:", error);
     }

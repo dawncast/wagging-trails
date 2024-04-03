@@ -102,14 +102,6 @@ CREATE TABLE IF NOT EXISTS friendpost (
     FOREIGN KEY (notificationid) REFERENCES receives_notifications (notificationid) ON DELETE CASCADE
 );
 
--- removed friendpost name
---CREATE TABLE IF NOT EXISTS friendpost_name (
---    postlink VARCHAR(255),
---    friendname VARCHAR(255) NOT NULL,
---    PRIMARY KEY (postlink, friendname),
---    FOREIGN KEY (postlink) REFERENCES friendpost_link (postlink) ON DELETE CASCADE
---);
-
 -- walk alert tables
 CREATE TABLE IF NOT EXISTS walkalert (
     notificationid INTEGER PRIMARY KEY,
@@ -324,12 +316,14 @@ INSERT INTO receives_notifications (ownerid, notifcontent) VALUES (3, 'New Post 
 INSERT INTO receives_notifications (ownerid, notifcontent) VALUES (4, 'New Post from One Three');
 
 -- Popo Lice has no friends.
+
 -- other walk notifications
-INSERT INTO receives_notifications (ownerid, notifcontent) VALUES (4, 'Time to walk Doggers!');
-INSERT INTO receives_notifications (ownerid, notifcontent) VALUES (4, 'Time to walk Arfy!');
-INSERT INTO receives_notifications (ownerid, notifcontent) VALUES (4, 'Time to walk Blanky!');
+INSERT INTO receives_notifications (ownerid, notifcontent) VALUES (1, 'Time to walk Doggers!');
+INSERT INTO receives_notifications (ownerid, notifcontent) VALUES (2, 'Time to walk Arfy!');
+INSERT INTO receives_notifications (ownerid, notifcontent) VALUES (3, 'Time to walk Blanky!');
 INSERT INTO receives_notifications (ownerid, notifcontent) VALUES (4, 'Time to walk Tory!');
-INSERT INTO receives_notifications (ownerid, notifcontent) VALUES (4, 'Time to walk K92!');
+INSERT INTO receives_notifications (ownerid, notifcontent) VALUES (5, 'Time to walk K91!');
+INSERT INTO receives_notifications (ownerid, notifcontent) VALUES (5, 'Time to walk K92!');
 
 -- friend post tables
 INSERT INTO friendpost (notificationid, postlink, friendname) VALUES (1, 'post/2/2', 'Jack Bean');
@@ -346,21 +340,23 @@ INSERT INTO walkalert (notificationid, dogname) VALUES (9, 'Doggers');
 INSERT INTO walkalert (notificationid, dogname) VALUES (10, 'Arfy');
 INSERT INTO walkalert (notificationid, dogname) VALUES (11, 'Blanky');
 INSERT INTO walkalert (notificationid, dogname) VALUES (12, 'Tory');
-INSERT INTO walkalert (notificationid, dogname) VALUES (13, 'K92');
+INSERT INTO walkalert (notificationid, dogname) VALUES (13, 'K91');
+INSERT INTO walkalert (notificationid, dogname) VALUES (14, 'K92');
 
 -- organizes walk task tables
 INSERT INTO organizes_walktask (ownerid, date, walkeventtype) VALUES (1, '2024-03-23', 'walk');
 INSERT INTO organizes_walktask (ownerid, date, walkeventtype) VALUES (2, '2024-04-05', 'hike');
 INSERT INTO organizes_walktask (ownerid, date, walkeventtype) VALUES (3, '2024-03-28', 'dog park');
 INSERT INTO organizes_walktask (ownerid, date, walkeventtype) VALUES (4, '2024-04-01', 'run');
-INSERT INTO organizes_walktask (ownerid, date, walkeventtype) VALUES (5, '2024-03-15', 'walk');
+INSERT INTO organizes_walktask (ownerid, date, walkeventtype) VALUES (5, '2024-03-15', 'walk'); -- K91 and K92 will both be here.
 
 -- log table
 INSERT INTO logs (notificationid, taskid) VALUES (9, 1);
 INSERT INTO logs (notificationid, taskid) VALUES (10, 2);
 INSERT INTO logs (notificationid, taskid) VALUES (11, 3);
 INSERT INTO logs (notificationid, taskid) VALUES (12, 4);
-INSERT INTO logs (notificationid, taskid) VALUES (13, 5);
+INSERT INTO logs (notificationid, taskid) VALUES (13, 5); -- K1 is in walk task 5
+INSERT INTO logs (notificationid, taskid) VALUES (14, 5); -- K2 is in walk task 5
 
 -- dog tables
 INSERT INTO owns_dog (ownerid, name, breed) VALUES (1, 'Doggers', 'Labrador');
