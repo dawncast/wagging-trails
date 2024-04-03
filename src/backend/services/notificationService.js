@@ -189,7 +189,60 @@ async function deleteLog(notificationID, taskID) {
 }
 
 
+async function deleteOrganizeWalk(taskID) {
+  let client;
+  try {
+    client = await pool.connect();
+
+    await client.query("BEGIN");
+    const deleteOrganizes = "DELETE from organizes_walktask WHERE taskid = $1";
+    const deleteOrganizesValue = [taskID];
+    await client.query(deleteOrganizes, deleteOrganizesValue);
+   
+    await client.query("COMMIT");
+    
+    return true;
+  } catch (error) {
+    // Rollback the transaction in case of error
+    await client.query("ROLLBACK");
+    console.error("Error deleting walktask:", error);
+    throw error;
+  } finally {
+    if (client) {
+      client.release();
+    }
+  }
+}
+
+async function deleteReceivesAndWalk(notificationID) {
+  let client;
+  try {
+    client = await pool.connect();
+
+    await client.query("BEGIN");
+    const deleteQuery = "DELETE from walkalert WHERE notificationid = $1";
+    const deleteValues = [notificationID];
+    await client.query(deleteQuery, deleteValues);
+
+    const deleteQuery1 = "DELETE from receives_notifications WHERE notificationid = $1";
+    const deleteValue1 = [notificationID];
+    await client.query(deleteQuery1, deleteValue1);
+   
+    await client.query("COMMIT");
+    
+    return true;
+  } catch (error) {
+    // Rollback the transaction in case of error
+    await client.query("ROLLBACK");
+    console.error("Error deleting receives and walkalert:", error);
+    throw error;
+  } finally {
+    if (client) {
+      client.release();
+    }
+  }
+}
 
 
 
-export { fetchFromDB, fetchOwnerWalkTask, insertWalkTask, insertReceivesAndWalk, insertOrganizesWalk, insertLog, deleteLog };
+export { fetchFromDB, fetchOwnerWalkTask, insertWalkTask, insertReceivesAndWalk, insertOrganizesWalk, insertLog, deleteLog, deleteOrganizeWalk, deleteReceivesAndWalk };
