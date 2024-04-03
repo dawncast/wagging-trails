@@ -372,6 +372,9 @@ function CreateWalk({ visible, onClose, log }) {
           >
             Submit
           </button>
+          <span className="text-gray-500 text-xs ml-3 pt-3">
+            *this will delete your schedule.
+          </span>
         </form>
       </div>
     </div>
