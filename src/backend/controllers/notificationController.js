@@ -3,6 +3,12 @@ import {
   fetchOwnerWalkTask,
   fetchFromDB,
   insertWalkTask,
+  insertReceivesAndWalk,
+  insertOrganizesWalk,
+  insertLog,
+  deleteLog,
+  deleteOrganizeWalk,
+  deleteReceivesAndWalk,
 } from "../services/notificationService.js";
 
 const router = express.Router();
@@ -50,6 +56,70 @@ router.post("/insert-walk-task", async (req, res) => {
   } else {
     res.status(500).json({ success: false });
   }
+});
+
+router.post("/insert-walk-alert", async (req, res) => {
+  const {ownerID, notifContent, dogName } = req.body;
+  const notificationID = await insertReceivesAndWalk(ownerID, notifContent, dogName);
+  if (notificationID) {
+    res.json({ notificationID });
+  } else {
+    res.status(500).json({ success: false });
+  }
+});
+
+router.post("/insert-organizes-walk", async (req, res) => {
+  const {ownerID, data, walkeventtype } = req.body;
+  const taskID = await insertOrganizesWalk(ownerID, data, walkeventtype);
+  if (taskID) {
+    res.json({ taskID });
+  } else {
+    res.status(500).json({ success: false });
+  }
+});
+
+router.post("/insert-log", async (req, res) => {
+  const {notificationID, taskID } = req.body;
+  const result = await insertLog(notificationID, taskID);
+  if (result) {
+    res.json({ success: true });
+  } else {
+    res.status(500).json({ success: false });
+  }
+});
+
+router.delete("/:notificationid/:taskid/delete-log", async (req,res) => {
+    const notificationid = req.params.notificationid;
+    const taskid = req.params.taskid;
+    const result = await deleteLog(notificationid, taskid);
+
+  if (result) {
+      res.json({ success: true });
+  } else {
+      res.status(500).json({ success: false });
+  }
+});
+
+router.delete("/:taskid/delete-organizes-walk", async (req,res) => {
+  const taskid = req.params.taskid;
+  const result = await deleteOrganizeWalk(taskid);
+
+if (result) {
+    res.json({ success: true });
+} else {
+    res.status(500).json({ success: false });
+}
+});
+
+router.delete("/:notificationid/delete-walk-alert", async (req,res) => {
+  const notificationid = req.params.notificationid;
+  const result = await deleteReceivesAndWalk(notificationid);
+
+if (result) {
+    res.json({ success: true });
+} else {
+    res.status(500).json({ success: false });
+}
 });
 
 export default router;

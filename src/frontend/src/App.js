@@ -9,6 +9,7 @@ import PostPage from "./pages/PostPage";
 import FeedPage from "./pages/FeedPage";
 import TagPage from "./pages/TagPage";
 import ProfilePage from "./pages/ProfilePage";
+import DisplayDog from "./pages/DisplayDog";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/owners" element={<DisplayOwner />}></Route>
           <Route path="/add-owner" element={<AddOwner />}></Route>
           <Route path="/update-owner" element={<UpdateOwner />}></Route>
+          <Route path="/dogs" element={<DisplayDog />}></Route>
         </Routes>
       </BrowserRouter>
     </div>
