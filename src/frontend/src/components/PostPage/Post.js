@@ -1,6 +1,7 @@
-import { React } from "react";
+import { React, useState } from "react";
 import { Tab } from "@headlessui/react";
 import { StarIcon } from "@heroicons/react/20/solid";
+import EditPost from "./EditPost";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -13,6 +14,31 @@ function isImage(url) {
 }
 
 export default function Post({ data }) {
+  // should have the ownerID of the current user
+  const ownerID = 1;
+
+  console.log("data passed", data);
+
+  // data passed:  postid, walkid, dogs[...], ownerid, owner_name, content,
+  //               location, date, distance, time, urls[...], tagged_dogs[...]
+  //               tags[...], met_up_owners[...], rating
+
+  // what we should be able to edit: dogs, content, location, date, distance, time, tagged_dogs, tags
+  // adding met_up_owners: if not a meetup, create a meetup.
+
+  const [showEditPost, setShowEditPost] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedContent, setEditedContent] = useState(data.content);
+  const [editedLocation, setEditedLocation] = useState(data.location);
+
+  const handleEditClick = () => {
+    setIsEditing(true);
+  };
+
+  const handleContentChange = (e) => {
+    setEditedContent(e.target.value);
+  };
+
   return (
     <div className="bg-white">
       <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
@@ -202,11 +228,22 @@ export default function Post({ data }) {
               {data.time && <span>{data.time}</span>}
               <br />
               {data.distance && <span>{data.distance} kilometers</span>}
+              {/* Post Content */}
               <h3 className="sr-only">Post Content</h3>
-              <div
-                className="space-y-6 mt-6 py-4 text-base text-gray-700"
-                dangerouslySetInnerHTML={{ __html: data.content }}
-              />
+              {isEditing ? (
+                <div className="space-y-6 mt-6 py-4 text-base text-gray-700">
+                  <textarea
+                    className=""
+                    value={editedContent}
+                    onChange={handleContentChange}
+                  />
+                </div>
+              ) : (
+                <div
+                  className="space-y-6 mt-6 py-4 text-base text-gray-700"
+                  dangerouslySetInnerHTML={{ __html: data.content }}
+                />
+              )}
               {/* Dog Tags*/}
               <div className="mt-4">
                 {data.tagged_dogs && data.tagged_dogs.length > 0 && (
@@ -234,9 +271,27 @@ export default function Post({ data }) {
                 ))}
               </div>
             </div>
+            {/* if the owner of the post is in the post page, they should be able to delete or edit the post */}
+            {data.ownerid === ownerID && (
+              <button
+                className="text-xs text-gray-500 py-3 mt-4"
+                onClick={handleEditClick}
+              >
+                edit post
+              </button>
+            )}
           </div>
         </div>
       </div>
+      {/* {showEditPost && (
+        <EditPost
+          onClose={() => {
+            setShowEditPost(false);
+          }}
+          data={data}
+          visible={true}
+        />
+      )} */}
     </div>
   );
 }
