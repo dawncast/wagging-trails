@@ -1,6 +1,8 @@
 import { React, useState } from "react";
 import { Tab } from "@headlessui/react";
 import { StarIcon } from "@heroicons/react/20/solid";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import EditPost from "./EditPost";
 
 function classNames(...classes) {
@@ -17,6 +19,8 @@ export default function Post({ data }) {
   // should have the ownerID of the current user
   const ownerID = 1;
 
+  const MAX_CONTENT_LENGTH = 255;
+
   console.log("data passed", data);
 
   // data passed:  postid, walkid, dogs[...], ownerid, owner_name, content,
@@ -30,13 +34,39 @@ export default function Post({ data }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(data.content);
   const [editedLocation, setEditedLocation] = useState(data.location);
+  const [editedDate, setEditedDate] = useState(data.date);
+  const [editedDistance, setEditedDistance] = useState(data.distance);
+  const [editedRating, setEditedRating] = useState(data.rating);
+  const [editedTags, setEditedTags] = useState(data.tags);
 
   const handleEditClick = () => {
     setIsEditing(true);
   };
 
   const handleContentChange = (e) => {
-    setEditedContent(e.target.value);
+    const inputContent = e.target.value;
+
+    // Check if inputContent exceeds the maximum length
+    if (inputContent.length <= MAX_CONTENT_LENGTH) {
+      // Update state if within the limit
+      setEditedContent(inputContent);
+    }
+  };
+  const handleLocationChange = (e) => {
+    setEditedLocation(e.target.value);
+  };
+
+  const handleStarClick = (clickedRating) => {
+    setEditedRating(clickedRating);
+  };
+
+  const handleTagsChange = (e) => {
+    const inputTags = e.target.value.split(",").map((tag) => tag.trim());
+    const uniqueTags = inputTags.filter(
+      (tag, index, self) => tag && self.indexOf(tag) === index
+    );
+
+    setEditedTags(uniqueTags);
   };
 
   return (
@@ -199,76 +229,161 @@ export default function Post({ data }) {
             {/* Walk Rating */}
             <div className="mt-3">
               <h3 className="sr-only">Walk Rating</h3>
-              <div className="flex items-center">
-                <div className="flex items-center">
-                  {[0, 1, 2, 3, 4].map((rating) => (
+              {isEditing ? (
+                <div className="flex mx-1 mb-3">
+                  <span className="text-gray-400 mr-3 mb-1">Edit rating: </span>
+                  {[0, 1, 2, 3, 4].map((star) => (
                     <StarIcon
-                      key={rating}
+                      key={star}
                       className={classNames(
-                        data.rating > rating
+                        editedRating > star
                           ? "text-indigo-500"
                           : "text-gray-300",
-                        "h-5 w-5 flex-shrink-0"
+                        "h-5 w-5 flex-shrink-0 cursor-pointer"
                       )}
+                      onClick={() => handleStarClick(star + 1)}
                       aria-hidden="true"
                     />
                   ))}
                 </div>
-                <p className="sr-only">{data.rating} out of 5 stars</p>
-              </div>
-            </div>
-
-            {/* Walk Details */}
-            <div className="mt-6">
-              <span>{data.location}</span>
-              <br />
-              {data.date && (
-                <span>{new Date(data.date).toLocaleDateString()}</span>
-              )}{" "}
-              {data.time && <span>{data.time}</span>}
-              <br />
-              {data.distance && <span>{data.distance} kilometers</span>}
-              {/* Post Content */}
-              <h3 className="sr-only">Post Content</h3>
-              {isEditing ? (
-                <div className="space-y-6 mt-6 py-4 text-base text-gray-700">
-                  <textarea
-                    className=""
-                    value={editedContent}
-                    onChange={handleContentChange}
-                  />
-                </div>
               ) : (
-                <div
-                  className="space-y-6 mt-6 py-4 text-base text-gray-700"
-                  dangerouslySetInnerHTML={{ __html: data.content }}
-                />
-              )}
-              {/* Dog Tags*/}
-              <div className="mt-4">
-                {data.tagged_dogs && data.tagged_dogs.length > 0 && (
-                  <>
-                    <span>Spotted Dogs: </span>
-                    {data.tagged_dogs.map((dog, index) => (
-                      <span key={index}>
-                        {dog}
-                        {index < data.tagged_dogs.length - 1 && ", "}{" "}
-                      </span>
+                <div className="flex items-center">
+                  <div className="flex items-center">
+                    {[0, 1, 2, 3, 4].map((rating) => (
+                      <StarIcon
+                        key={rating}
+                        className={classNames(
+                          data.rating > rating
+                            ? "text-indigo-500"
+                            : "text-gray-300",
+                          "h-5 w-5 flex-shrink-0"
+                        )}
+                        aria-hidden="true"
+                      />
                     ))}
-                  </>
+                  </div>
+                  <p className="sr-only">{data.rating} out of 5 stars</p>
+                </div>
+              )}
+            </div>
+            <div className="w-3/5">
+              {/* Walk Details */}
+              <div className="mt-6">
+                {/* Walk Location */}
+                {isEditing ? (
+                  <div className="flex items-center">
+                    <h3 className="text-gray-800 mr-3">Location:</h3>
+                    <input
+                      type="text"
+                      className="w-full text-base text-gray-700 border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring focus:border-blue-400"
+                      value={editedLocation}
+                      onChange={handleLocationChange}
+                    />
+                  </div>
+                ) : (
+                  <span>{data.location}</span>
                 )}
-              </div>
-              {/* Post Tags */}
-              <div className="mt-0 lg:mt-12">
-                {data.tags.map((tag, index) => (
-                  <a
-                    href={`http://localhost:3000/post/${tag}`}
-                    key={index}
-                    className="bg-stone-200 text-stone-900 rounded-lg px-2 py-1 mr-2 mt-1"
-                  >
-                    {tag}
-                  </a>
-                ))}
+                <br />
+                {/* Walk Date */}
+                {isEditing ? (
+                  <div className="flex items-center">
+                    <h3 className="text-gray-800 mr-3">Date:</h3>
+                    <DatePicker
+                      selected={editedDate}
+                      onChange={(date) => setEditedDate(date)}
+                      dateFormat="yyyy-MM-dd"
+                      className="w-full border border-gray-300 text-gray-900 rounded-md py-2 px-3 focus:outline-none focus:ring focus:border-blue-400"
+                      placeholderText="YYYY-MM-DD"
+                      isClearable
+                    />
+                  </div>
+                ) : (
+                  data.date && (
+                    <span>{new Date(data.date).toLocaleDateString()}</span>
+                  )
+                )}
+                {data.time && <span>{data.time}</span>}
+                <br />
+                {/* Walk Distance */}
+                {isEditing ? (
+                  <input
+                    type="text"
+                    value={editedDistance}
+                    placeholder="distance (km)"
+                    onChange={(dist) => setEditedDistance(dist)}
+                    className="w-full border border-gray-300 text-gray-900 rounded-md py-2 px-3 focus:outline-none focus:ring focus:border-blue-400"
+                  />
+                ) : (
+                  data.distance && <span>{data.distance} kilometers</span>
+                )}
+                {/* Post Content */}
+                <h3 className="sr-only">Post Content</h3>
+                {isEditing ? (
+                  <div className="space-y-6 py-4 text-base text-gray-700">
+                    <textarea
+                      className="w-full border border-gray-300 rounded-md pl-3 pt-3 pr-6 focus:outline-none focus:ring focus:border-blue-400"
+                      value={editedContent}
+                      maxLength={MAX_CONTENT_LENGTH}
+                      onChange={handleContentChange}
+                      onKeyDown={(e) => {
+                        if (
+                          editedContent.length >= MAX_CONTENT_LENGTH &&
+                          e.key !== "Backspace"
+                        ) {
+                          e.preventDefault(); // Prevent typing when max limit is reached
+                        }
+                      }}
+                    />
+                    <div className="text-gray-500 text-xs ml-auto text-right">
+                      {MAX_CONTENT_LENGTH - editedContent.length} characters
+                      remaining
+                    </div>
+                  </div>
+                ) : (
+                  <div
+                    className="space-y-6 mt-6 py-4 text-base text-gray-700"
+                    dangerouslySetInnerHTML={{ __html: data.content }}
+                  />
+                )}
+                {/* Dog Tags*/}
+                <div className="mt-4">
+                  {data.tagged_dogs && data.tagged_dogs.length > 0 && (
+                    <>
+                      <span>Spotted Dogs: </span>
+                      {data.tagged_dogs.map((dog, index) => (
+                        <span key={index}>
+                          {dog}
+                          {index < data.tagged_dogs.length - 1 && ", "}{" "}
+                        </span>
+                      ))}
+                    </>
+                  )}
+                </div>
+                {/* Post Tags */}
+                {isEditing ? (
+                  <div className="flex items-center">
+                    <span className="text-gray-400 mr-3 mb-5">Tags: </span>
+                    <input
+                      type="text"
+                      placeholder="Place your tags here. Add commas (', ') to separate!"
+                      value={editedTags.join(",")}
+                      onChange={handleTagsChange}
+                      className="w-full border border-gray-300 text-gray-900 rounded-md py-2 px-3 mb-3 focus:outline-none focus:ring focus:border-blue-400"
+                    />
+                  </div>
+                ) : (
+                  <div className="mt-0 lg:mt-12">
+                    {data.tags.map((tag, index) => (
+                      <a
+                        href={`http://localhost:3000/post/${tag}`}
+                        key={index}
+                        className="bg-stone-200 text-stone-900 rounded-lg px-2 py-1 mr-2 mt-1"
+                      >
+                        {tag}
+                      </a>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
             {/* if the owner of the post is in the post page, they should be able to delete or edit the post */}
