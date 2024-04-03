@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import CreateSchedule from "../ModalWindow/NewSchedulingForm";
+import CreateSchedule from "../ModalWindow/NewSchedulingFormEdit";
 import CreateWalk from "../ModalWindow/NewWalkForm";
 
 function classNames(...classes) {

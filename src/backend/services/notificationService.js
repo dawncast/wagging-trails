@@ -64,7 +64,7 @@ async function insertWalkTask(
 
     // Commit the transaction
     await client.query("COMMIT");
-    return true;
+    return taskID;
   } catch (error) {
     // Rollback the transaction in case of error
     await client.query("ROLLBACK");
@@ -78,91 +78,91 @@ async function insertWalkTask(
 }
 
 //fn to create recevies_notifs and walkalert together
-async function insertReceivesAndWalk(
-  ownerid,
-  notifcontent,
-  dogname) {
-    let client;
-    try {
-      client =await pool.connect();
+async function insertReceivesAndWalk(ownerid, notifcontent, dogname) {
+  let client;
+  try {
+    client = await pool.connect();
 
+    await client.query("BEGIN");
 
-      await client.query("BEGIN");
+    const insertReceivesNotif =
+      "INSERT INTO receives_notifications ( ownerid, notifcontent) VALUES ($1, $2) RETURNING notificationid";
+    const insertReceivesNotifValues = [ownerid, notifcontent];
+    const result = await client.query(
+      insertReceivesNotif,
+      insertReceivesNotifValues
+    );
+    const notiID = result.rows[0].notificationid;
 
-      const insertReceivesNotif = "INSERT INTO receives_notifications ( ownerid, notifcontent) VALUES ($1, $2) RETURNING notificationid";
-      const insertReceivesNotifValues = [ ownerid, notifcontent];
-      const result = await client.query(insertReceivesNotif, insertReceivesNotifValues)
-      const notiID = result.rows[0].notificationid;
+    const insertWalkAlert =
+      "INSERT INTO walkalert (notificationid, dogname) VALUES ($1, $2)";
+    const insertWalkAlertValues = [notiID, dogname];
+    await client.query(insertWalkAlert, insertWalkAlertValues);
 
-      const insertWalkAlert = "INSERT INTO walkalert (notificationid, dogname) VALUES ($1, $2)";
-      const insertWalkAlertValues = [notiID, dogname];
-      await client.query(insertWalkAlert, insertWalkAlertValues);
-      
-      await client.query("COMMIT");
-      return notiID;
-
-
-    } catch (error) {
-      // Rollback the transaction in case of error
-      await client.query("ROLLBACK");
-      console.error("Error ", error);
-      throw error;
-    } finally {
-      if (client) {
-        client.release();
-      }
+    await client.query("COMMIT");
+    return notiID;
+  } catch (error) {
+    // Rollback the transaction in case of error
+    await client.query("ROLLBACK");
+    console.error("Error ", error);
+    throw error;
+  } finally {
+    if (client) {
+      client.release();
     }
   }
+}
 
-  async function insertOrganizesWalk(ownerID, date, walkEventType) {
-    let client;
-    try {
-      client = await pool.connect();
+async function insertOrganizesWalk(ownerID, date, walkEventType) {
+  let client;
+  try {
+    client = await pool.connect();
 
-      await client.query("BEGIN");
-      const organizesWalkQuery = "INSERT INTO organizes_walktask (ownerid, date, walkeventtype) VALUES ($1, $2, $3) RETURNING taskid"
-      const organizesWalkValues = [ownerID, date, walkEventType];
-      const result = await client.query(organizesWalkQuery,organizesWalkValues);
-      const taskID = result.rows[0].taskid;
+    await client.query("BEGIN");
+    const organizesWalkQuery =
+      "INSERT INTO organizes_walktask (ownerid, date, walkeventtype) VALUES ($1, $2, $3) RETURNING taskid";
+    const organizesWalkValues = [ownerID, date, walkEventType];
+    const result = await client.query(organizesWalkQuery, organizesWalkValues);
+    const taskID = result.rows[0].taskid;
 
-      await client.query("COMMIT");
-      return taskID;
-    } catch (error) {
-      // Rollback the transaction in case of error
-      await client.query("ROLLBACK");
-      console.error("Error inserting organizes_walk:", error);
-      throw error;
-    } finally {
-      if (client) {
-        client.release();
-      }
+    await client.query("COMMIT");
+    return taskID;
+  } catch (error) {
+    // Rollback the transaction in case of error
+    await client.query("ROLLBACK");
+    console.error("Error inserting organizes_walk:", error);
+    throw error;
+  } finally {
+    if (client) {
+      client.release();
     }
   }
+}
 
-  async function insertLog(notificationID, taskID) {
-    let client;
-    try {
-      client = await pool.connect();
+async function insertLog(notificationID, taskID) {
+  let client;
+  try {
+    client = await pool.connect();
 
-      await client.query("BEGIN");
-      const logQuery = "INSERT INTO logs (notificationid, taskid) VALUES ($1, $2)"
-      const logValues = [notificationID, taskID];
-      await client.query(logQuery,logValues);
-   
+    await client.query("BEGIN");
+    const logQuery =
+      "INSERT INTO logs (notificationid, taskid) VALUES ($1, $2)";
+    const logValues = [notificationID, taskID];
+    await client.query(logQuery, logValues);
 
-      await client.query("COMMIT");
-      return true;
-    } catch (error) {
-      // Rollback the transaction in case of error
-      await client.query("ROLLBACK");
-      console.error("Error inserting log:", error);
-      throw error;
-    } finally {
-      if (client) {
-        client.release();
-      }
+    await client.query("COMMIT");
+    return true;
+  } catch (error) {
+    // Rollback the transaction in case of error
+    await client.query("ROLLBACK");
+    console.error("Error inserting log:", error);
+    throw error;
+  } finally {
+    if (client) {
+      client.release();
     }
   }
+}
 
 async function deleteLog(notificationID, taskID) {
   let client;
@@ -170,12 +170,13 @@ async function deleteLog(notificationID, taskID) {
     client = await pool.connect();
 
     await client.query("BEGIN");
-    const deleteLogQuery = "DELETE from logs WHERE notificationid = $1 AND taskid = $2";
+    const deleteLogQuery =
+      "DELETE from logs WHERE notificationid = $1 AND taskid = $2";
     const deleteLogValues = [notificationID, taskID];
     await client.query(deleteLogQuery, deleteLogValues);
-   
+
     await client.query("COMMIT");
-    
+
     return true;
   } catch (error) {
     // Rollback the transaction in case of error
@@ -189,7 +190,6 @@ async function deleteLog(notificationID, taskID) {
   }
 }
 
-
 async function deleteOrganizeWalk(taskID) {
   let client;
   try {
@@ -199,9 +199,9 @@ async function deleteOrganizeWalk(taskID) {
     const deleteOrganizes = "DELETE from organizes_walktask WHERE taskid = $1";
     const deleteOrganizesValue = [taskID];
     await client.query(deleteOrganizes, deleteOrganizesValue);
-   
+
     await client.query("COMMIT");
-    
+
     return true;
   } catch (error) {
     // Rollback the transaction in case of error
@@ -225,12 +225,13 @@ async function deleteReceivesAndWalk(notificationID) {
     const deleteValues = [notificationID];
     await client.query(deleteQuery, deleteValues);
 
-    const deleteQuery1 = "DELETE from receives_notifications WHERE notificationid = $1";
+    const deleteQuery1 =
+      "DELETE from receives_notifications WHERE notificationid = $1";
     const deleteValue1 = [notificationID];
     await client.query(deleteQuery1, deleteValue1);
-   
+
     await client.query("COMMIT");
-    
+
     return true;
   } catch (error) {
     // Rollback the transaction in case of error
@@ -244,6 +245,14 @@ async function deleteReceivesAndWalk(notificationID) {
   }
 }
 
-
-
-export { fetchFromDB, fetchOwnerWalkTask, insertWalkTask, insertReceivesAndWalk, insertOrganizesWalk, insertLog, deleteLog, deleteOrganizeWalk, deleteReceivesAndWalk };
+export {
+  fetchFromDB,
+  fetchOwnerWalkTask,
+  insertWalkTask,
+  insertReceivesAndWalk,
+  insertOrganizesWalk,
+  insertLog,
+  deleteLog,
+  deleteOrganizeWalk,
+  deleteReceivesAndWalk,
+};

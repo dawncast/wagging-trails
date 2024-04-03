@@ -11,6 +11,8 @@ function CreateWalk({ visible, onClose, log }) {
   // stub
   const ownerID = 1;
 
+  const [logData, setLogData] = useState(log);
+
   // data will be for deleting the schedule selected, so we need to
   // receive the taskID
 
@@ -122,6 +124,16 @@ function CreateWalk({ visible, onClose, log }) {
       .catch((error) => console.error("Error fetching dogs:", error));
   }, [ownerID]);
 
+  // after receiving log, store necessary data (basically an autofill)
+  // Update selectedDogs and dates when log changes
+  useEffect(() => {
+    if (log && log.dognames && dogs.length > 0) {
+      const selected = dogs.filter((dog) => log.dognames.includes(dog.text));
+      setSelectedDogs(selected);
+      setDate(log.date);
+    }
+  }, [log, dogs]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const walkData = {
@@ -224,7 +236,8 @@ function CreateWalk({ visible, onClose, log }) {
     >
       <div className="bg-white p-4 rounded-xl">
         <h2 className="font-semibold text-center text-xl text-gray-700">
-          Create a Walk from your {console.log(log)}
+          Create a Walk from your{" "}
+          {log.walkeventtype === "walk" ? "Schedule" : log.walkeventtype}
         </h2>
 
         <div className="flex items-center my-3 mx-1">
@@ -264,7 +277,7 @@ function CreateWalk({ visible, onClose, log }) {
         <div className="flex items-center justify-between">
           <input
             type="text"
-            placeholder="Location"
+            placeholder="Location*"
             onChange={handleLocationChange}
             className="w-full border border-gray-300 text-gray-900 rounded-md py-2 px-3 mb-3 mx-1 focus:outline-none focus:ring focus:border-blue-400"
           />

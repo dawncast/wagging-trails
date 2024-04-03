@@ -258,7 +258,7 @@ function CreateSchedule({ visible, onClose }) {
       };
 
       const response = await axios.post(
-        `http://localhost:8800/notification/insert-walk-task`,
+        `http://localhost:8800/notification/insert-organizes-walk`,
         taskData
       );
       // assume we inserted properly and we received the taskID
@@ -309,7 +309,7 @@ function CreateSchedule({ visible, onClose }) {
     >
       <div className="bg-white p-4 rounded-xl">
         <h2 className="font-semibold text-center text-xl text-gray-700">
-          Create a Schedule
+          Create a Schedule new new
         </h2>
 
         <div className="flex items-center my-3 mx-1">

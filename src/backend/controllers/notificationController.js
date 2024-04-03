@@ -50,36 +50,38 @@ router.post("/insert-walk-task", async (req, res) => {
     walkeventtype
   );
   if (insertResult) {
-    // split up dog names here just in case. Eg. "a,b" -> ["a","b"]
-    const dogNamesArray = dogName.split(",").map((name) => name.trim());
-    res.json({ success: true, dogNames: dogNamesArray });
+    res.json({ success: true, taskID: insertResult });
   } else {
     res.status(500).json({ success: false });
   }
 });
 
 router.post("/insert-walk-alert", async (req, res) => {
-  const {ownerID, notifContent, dogName } = req.body;
-  const notificationID = await insertReceivesAndWalk(ownerID, notifContent, dogName);
+  const { ownerID, notifContent, dogName } = req.body;
+  const notificationID = await insertReceivesAndWalk(
+    ownerID,
+    notifContent,
+    dogName
+  );
   if (notificationID) {
-    res.json({ notificationID });
+    res.json({ success: true, notificationID: notificationID });
   } else {
     res.status(500).json({ success: false });
   }
 });
 
 router.post("/insert-organizes-walk", async (req, res) => {
-  const {ownerID, data, walkeventtype } = req.body;
+  const { ownerID, data, walkeventtype } = req.body;
   const taskID = await insertOrganizesWalk(ownerID, data, walkeventtype);
   if (taskID) {
-    res.json({ taskID });
+    res.json({ success: true, taskID: taskID });
   } else {
     res.status(500).json({ success: false });
   }
 });
 
-router.post("/insert-log", async (req, res) => {
-  const {notificationID, taskID } = req.body;
+router.post("/insert-logs", async (req, res) => {
+  const { notificationID, taskID } = req.body;
   const result = await insertLog(notificationID, taskID);
   if (result) {
     res.json({ success: true });
@@ -88,38 +90,38 @@ router.post("/insert-log", async (req, res) => {
   }
 });
 
-router.delete("/:notificationid/:taskid/delete-log", async (req,res) => {
-    const notificationid = req.params.notificationid;
-    const taskid = req.params.taskid;
-    const result = await deleteLog(notificationid, taskid);
+router.delete("/:notificationid/:taskid/delete-log", async (req, res) => {
+  const notificationid = req.params.notificationid;
+  const taskid = req.params.taskid;
+  const result = await deleteLog(notificationid, taskid);
 
   if (result) {
-      res.json({ success: true });
+    res.json({ success: true });
   } else {
-      res.status(500).json({ success: false });
+    res.status(500).json({ success: false });
   }
 });
 
-router.delete("/:taskid/delete-organizes-walk", async (req,res) => {
+router.delete("/:taskid/delete-organizes-walk", async (req, res) => {
   const taskid = req.params.taskid;
   const result = await deleteOrganizeWalk(taskid);
 
-if (result) {
+  if (result) {
     res.json({ success: true });
-} else {
+  } else {
     res.status(500).json({ success: false });
-}
+  }
 });
 
-router.delete("/:notificationid/delete-walk-alert", async (req,res) => {
+router.delete("/:notificationid/delete-walk-alert", async (req, res) => {
   const notificationid = req.params.notificationid;
   const result = await deleteReceivesAndWalk(notificationid);
 
-if (result) {
+  if (result) {
     res.json({ success: true });
-} else {
+  } else {
     res.status(500).json({ success: false });
-}
+  }
 });
 
 export default router;
