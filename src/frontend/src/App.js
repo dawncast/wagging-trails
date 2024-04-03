@@ -26,6 +26,9 @@ function App() {
           <Route path="/add-owner" element={<AddOwner />}></Route>
           <Route path="/update-owner" element={<UpdateOwner />}></Route>
           <Route path="/dogs" element={<DisplayDog />}></Route>
+          <Route path="/my-dogs" element={<ProfilePage />}></Route>
+          <Route path="/my-friends" element={<ProfilePage/>}></Route>
+          <Route path="/my-posts" element={<ProfilePage />}></Route>
         </Routes>
       </BrowserRouter>
     </div>

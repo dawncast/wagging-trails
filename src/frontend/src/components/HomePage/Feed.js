@@ -110,3 +110,4 @@ export default function PostCard({ data }) {
     </div>
   );
 }
+
