@@ -138,8 +138,33 @@ async function insertReceivesAndWalk(
     }
   }
 
+  async function insertLog(notificationID, taskID) {
+    let client;
+    try {
+      client = await pool.connect();
+
+      await client.query("BEGIN");
+      const logQuery = "INSERT INTO logs (notificationid, taskid) VALUES ($1, $2)"
+      const logValues = [notificationID, taskID];
+      await client.query(logQuery,logValues);
+   
+
+      await client.query("COMMIT");
+      return true;
+    } catch (error) {
+      // Rollback the transaction in case of error
+      await client.query("ROLLBACK");
+      console.error("Error inserting organizes_walk:", error);
+      throw error;
+    } finally {
+      if (client) {
+        client.release();
+      }
+    }
+  }
 
 
 
 
-export { fetchFromDB, fetchOwnerWalkTask, insertWalkTask, insertReceivesAndWalk, insertOrganizesWalk };
+
+export { fetchFromDB, fetchOwnerWalkTask, insertWalkTask, insertReceivesAndWalk, insertOrganizesWalk, insertLog };
