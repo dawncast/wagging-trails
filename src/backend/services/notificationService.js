@@ -76,4 +76,47 @@ async function insertWalkTask(
   }
 }
 
-export { fetchFromDB, fetchOwnerWalkTask, insertWalkTask };
+//fn to create recevies_notifs and walkalert together
+async function insertReceivesAndWalk(
+  ownerid,
+  notifcontent,
+  dogname) {
+    let client;
+    try {
+      client =await pool.connect();
+
+
+      await client.query("BEGIN");
+
+      const insertReceivesNotif = "INSERT INTO receives_notifications ( ownerid, notifcontent) VALUES ($1, $2) RETURNING notificationid";
+      const insertReceivesNotifValues = [ ownerid, notifcontent];
+      const result = await client.query(insertReceivesNotif, insertReceivesNotifValues)
+      const notiID = result.rows[0].notificationid;
+
+      const insertWalkAlert = "INSERT INTO walkalert (notificationid, dogname) VALUES ($1, $2)";
+      const insertWalkAlertValues = [notiID, dogname];
+      await client.query(insertWalkAlert, insertWalkAlertValues);
+      
+
+
+      await client.query("COMMIT");
+      return notiID;
+
+
+    } catch (error) {
+      // Rollback the transaction in case of error
+      await client.query("ROLLBACK");
+      console.error("Error ", error);
+      throw error;
+    } finally {
+      if (client) {
+        client.release();
+      }
+    }
+  }
+
+
+
+
+
+export { fetchFromDB, fetchOwnerWalkTask, insertWalkTask, insertReceivesAndWalk };

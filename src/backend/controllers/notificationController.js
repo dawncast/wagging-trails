@@ -3,6 +3,7 @@ import {
   fetchOwnerWalkTask,
   fetchFromDB,
   insertWalkTask,
+  insertReceivesAndWalk,
 } from "../services/notificationService.js";
 
 const router = express.Router();
@@ -47,6 +48,16 @@ router.post("/insert-walk-task", async (req, res) => {
     // split up dog names here just in case. Eg. "a,b" -> ["a","b"]
     const dogNamesArray = dogName.split(",").map((name) => name.trim());
     res.json({ success: true, dogNames: dogNamesArray });
+  } else {
+    res.status(500).json({ success: false });
+  }
+});
+
+router.post("/insert-walk-alert", async (req, res) => {
+  const {ownerID, notifContent, dogName } = req.body;
+  const notificationID = await insertReceivesAndWalk(ownerID, notifContent, dogName);
+  if (notificationID) {
+    res.json({ notificationID });
   } else {
     res.status(500).json({ success: false });
   }
