@@ -407,7 +407,7 @@ function CreateSchedule({ visible, onClose }) {
         </div>
         <div className="flex items-center mx-1">
           {/* Selecting Friends */}
-          <h3 className="text-gray-800 mr-3">Select Friends*:</h3>
+          <h3 className="text-gray-800 mr-3">Select Friends:</h3>
           <DropdownSelect
             userSelection={friends}
             onItemSelected={handleFriendsSelected}
