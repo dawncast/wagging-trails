@@ -154,7 +154,7 @@ async function insertReceivesAndWalk(
     } catch (error) {
       // Rollback the transaction in case of error
       await client.query("ROLLBACK");
-      console.error("Error inserting organizes_walk:", error);
+      console.error("Error inserting log:", error);
       throw error;
     } finally {
       if (client) {
@@ -163,8 +163,33 @@ async function insertReceivesAndWalk(
     }
   }
 
+async function deleteLog(notificationID, taskID) {
+  let client;
+  try {
+    client = await pool.connect();
+
+    await client.query("BEGIN");
+    const deleteLogQuery = "DELETE from logs WHERE notificationid = $1 AND taskid = $2";
+    const deleteLogValues = [notificationID, taskID];
+    await client.query(deleteLogQuery, deleteLogValues);
+   
+    await client.query("COMMIT");
+    
+    return true;
+  } catch (error) {
+    // Rollback the transaction in case of error
+    await client.query("ROLLBACK");
+    console.error("Error deleting log:", error);
+    throw error;
+  } finally {
+    if (client) {
+      client.release();
+    }
+  }
+}
 
 
 
 
-export { fetchFromDB, fetchOwnerWalkTask, insertWalkTask, insertReceivesAndWalk, insertOrganizesWalk, insertLog };
+
+export { fetchFromDB, fetchOwnerWalkTask, insertWalkTask, insertReceivesAndWalk, insertOrganizesWalk, insertLog, deleteLog };

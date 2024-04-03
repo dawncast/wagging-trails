@@ -6,6 +6,7 @@ import {
   insertReceivesAndWalk,
   insertOrganizesWalk,
   insertLog,
+  deleteLog,
 } from "../services/notificationService.js";
 
 const router = express.Router();
@@ -82,6 +83,18 @@ router.post("/insert-log", async (req, res) => {
     res.json({ success: true });
   } else {
     res.status(500).json({ success: false });
+  }
+});
+
+router.delete("/:notificationid/:taskid/delete-log", async (req,res) => {
+    const notificationid = req.params.notificationid;
+    const taskid = req.params.taskid;
+    const result = await deleteLog(notificationid, taskid);
+
+  if (result) {
+      res.json({ success: true });
+  } else {
+      res.status(500).json({ success: false });
   }
 });
 
