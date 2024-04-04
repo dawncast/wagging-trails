@@ -62,7 +62,6 @@ function EditWalk({ visible, onClose, log }) {
   const [date, setDate] = useState(log.date);
   const [distance, setDistance] = useState(log.distance);
   const [time, setTime] = useState(log.time);
-  const [walkID, setWalkID] = useState(log.walkID);
 
   const handleStarClick = (clickedRating) => {
     setRating(clickedRating);
