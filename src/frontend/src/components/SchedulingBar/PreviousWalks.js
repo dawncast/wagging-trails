@@ -47,7 +47,7 @@ export default function PreviousWalks() {
                 console.log(walk);
               }}
               className={classNames(
-                "text-indigo-200 hover:text-white hover:bg-indigo-700",
+                "text-indigo-200 hover:text-white hover:bg-indigo-700 w-full",
                 "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
               )}
             >

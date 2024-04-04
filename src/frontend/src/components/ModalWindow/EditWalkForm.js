@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import DropdownSelect from "./Dropdown";
 import DatePicker from "react-datepicker";
+import { useNavigate } from "react-router-dom";
 import "react-datepicker/dist/react-datepicker.css";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { StarIcon } from "@heroicons/react/20/solid";
@@ -268,6 +269,21 @@ function EditWalk({ visible, onClose, log }) {
     }
   };
 
+  const navigate = useNavigate();
+
+  const handleDelete = async (e) => {
+    e.preventDefault();
+
+    try {
+      await axios.delete(
+        `http://localhost:8800/walk/${log.walkid}/delete-walk`
+      );
+      navigate("/home");
+    } catch (err) {
+      console.error("Error deleting walk:", err);
+    }
+  };
+
   // check if user wants to create a post
   if (!visible) return null;
 
@@ -401,6 +417,13 @@ function EditWalk({ visible, onClose, log }) {
             Submit
           </button>
         </form>
+        <a
+          className="text-xs text-red-500 py-3 mt-4 ml-5"
+          onClick={handleDelete}
+          href="/home"
+        >
+          delete walk
+        </a>
       </div>
     </div>
   );

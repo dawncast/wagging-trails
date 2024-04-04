@@ -1,4 +1,4 @@
-import { React, useState, useEffect } from "react";
+import { React, useState } from "react";
 import { Tab } from "@headlessui/react";
 import { StarIcon } from "@heroicons/react/20/solid";
 import DatePicker from "react-datepicker";
