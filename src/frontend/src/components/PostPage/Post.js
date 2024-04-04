@@ -1,4 +1,4 @@
-import { React, useState, useEffect } from "react";
+import { React, useState, useEffect, useRef } from "react";
 import { Tab } from "@headlessui/react";
 import { StarIcon } from "@heroicons/react/20/solid";
 import DatePicker from "react-datepicker";
@@ -7,6 +7,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import DropdownSelect from "../ModalWindow/Dropdown";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
+import EditPostMedia from "./EditPostMedia";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -24,6 +25,8 @@ export default function Post({ data }) {
   const MAX_CONTENT_LENGTH = 255;
 
   console.log("data passed", data);
+
+  const mediaRef = useRef();
 
   // data passed:  postid, walkid, dogs[...], ownerid, owner_name, content,
   //               location, date, distance, time, urls[...], tagged_dogs[...]
@@ -176,6 +179,8 @@ export default function Post({ data }) {
           postID: data.postid,
         });
       }
+
+      await mediaRef.current.handleSubmit();
       window.location.reload();
     } catch (err) {
       console.error("Error editing post:", err);
@@ -201,114 +206,124 @@ export default function Post({ data }) {
       <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
         <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-8">
           {/* Image gallery */}
-          {data.urls.every((url) => !url) ? (
-            // Placeholder for no media
-            <img
-              src="/walkingdog.jpeg"
-              alt="Placeholder"
-              className="h-full w-full object-cover object-center rounded-lg"
-              style={{ aspectRatio: "4/3", width: "100%" }}
-            />
-          ) : data.urls.filter((url) => url).length === 1 ? (
-            // One media: render the media without a gallery
-            <>
-              {isImage(data.urls[0]) ? (
-                // Image
-                <img
-                  src={`http://localhost:8800/images/${data.urls[0]}`}
-                  alt=""
-                  className="h-full w-full object-cover object-center rounded-lg"
-                  style={{ aspectRatio: "4/3", width: "100%" }}
-                />
-              ) : (
-                // Video
-                <video
-                  src={`http://localhost:8800/videos/${data.urls[0]}`}
-                  alt=""
-                  className="h-full w-full object-cover object-center rounded-lg"
-                  style={{ aspectRatio: "4/3", width: "100%" }}
-                  controls
-                />
-              )}
-            </>
-          ) : (
-            <Tab.Group as="div" className="flex flex-col-reverse">
-              {/* Image selector */}
-              <div className="mx-auto mt-6 hidden w-full max-w-2xl sm:block lg:max-w-none">
-                <Tab.List className="grid grid-cols-4 gap-6">
-                  {data.urls.map((url, index) => (
-                    <Tab
-                      key={index}
-                      className="relative flex h-24 cursor-pointer items-center justify-center rounded-md bg-white text-sm font-medium uppercase text-gray-900 hover:bg-gray-50 focus:outline-none focus:ring focus:ring-opacity-50 focus:ring-offset-4"
-                    >
-                      {({ selected }) => (
-                        <>
-                          <span className="sr-only">{`Media ${
-                            index + 1
-                          }`}</span>
-                          <span className="absolute inset-0 overflow-hidden rounded-md">
-                            {isImage(url) ? (
-                              // Image
-                              <img
-                                src={`http://localhost:8800/images/${url}`}
-                                alt={`Media ${index + 1}`}
-                                className="h-full w-full object-cover object-center"
-                              />
-                            ) : (
-                              // Video
-                              <div className="h-full w-full relative">
-                                <video
-                                  src={`http://localhost:8800/videos/${url}`}
+          {!isEditing ? (
+            data.urls.every((url) => !url) ? (
+              // Placeholder for no media
+              <img
+                src="/walkingdog.jpeg"
+                alt="Placeholder"
+                className="h-full w-full object-cover object-center rounded-lg"
+                style={{ aspectRatio: "4/3", width: "100%" }}
+              />
+            ) : data.urls.filter((url) => url).length === 1 ? (
+              // One media: render the media without a gallery
+              <>
+                {isImage(data.urls[0]) ? (
+                  // Image
+                  <img
+                    src={`http://localhost:8800/images/${data.urls[0]}`}
+                    alt=""
+                    className="h-full w-full object-cover object-center rounded-lg"
+                    style={{ aspectRatio: "4/3", width: "100%" }}
+                  />
+                ) : (
+                  // Video
+                  <video
+                    src={`http://localhost:8800/videos/${data.urls[0]}`}
+                    alt=""
+                    className="h-full w-full object-cover object-center rounded-lg"
+                    style={{ aspectRatio: "4/3", width: "100%" }}
+                    controls
+                  />
+                )}
+              </>
+            ) : (
+              <Tab.Group as="div" className="flex flex-col-reverse">
+                {/* Image selector */}
+                <div className="mx-auto mt-6 hidden w-full max-w-2xl sm:block lg:max-w-none">
+                  <Tab.List className="grid grid-cols-4 gap-6">
+                    {data.urls.map((url, index) => (
+                      <Tab
+                        key={index}
+                        className="relative flex h-24 cursor-pointer items-center justify-center rounded-md bg-white text-sm font-medium uppercase text-gray-900 hover:bg-gray-50 focus:outline-none focus:ring focus:ring-opacity-50 focus:ring-offset-4"
+                      >
+                        {({ selected }) => (
+                          <>
+                            <span className="sr-only">{`Media ${
+                              index + 1
+                            }`}</span>
+                            <span className="absolute inset-0 overflow-hidden rounded-md">
+                              {isImage(url) ? (
+                                // Image
+                                <img
+                                  src={`http://localhost:8800/images/${url}`}
                                   alt={`Media ${index + 1}`}
-                                  className="h-full w-full object-cover object-center rounded-lg"
-                                  controls
+                                  className="h-full w-full object-cover object-center"
                                 />
-                                <div className="absolute inset-0 bg-transparent"></div>
-                              </div>
-                            )}
-                          </span>
-                          <span
-                            className={classNames(
-                              selected ? "ring-indigo-500" : "ring-transparent",
-                              "pointer-events-none absolute inset-0 rounded-md ring-2 ring-offset-2"
-                            )}
-                            aria-hidden="true"
-                          />
-                        </>
-                      )}
-                    </Tab>
-                  ))}
-                </Tab.List>
-              </div>
+                              ) : (
+                                // Video
+                                <div className="h-full w-full relative">
+                                  <video
+                                    src={`http://localhost:8800/videos/${url}`}
+                                    alt={`Media ${index + 1}`}
+                                    className="h-full w-full object-cover object-center rounded-lg"
+                                    controls
+                                  />
+                                  <div className="absolute inset-0 bg-transparent"></div>
+                                </div>
+                              )}
+                            </span>
+                            <span
+                              className={classNames(
+                                selected
+                                  ? "ring-indigo-500"
+                                  : "ring-transparent",
+                                "pointer-events-none absolute inset-0 rounded-md ring-2 ring-offset-2"
+                              )}
+                              aria-hidden="true"
+                            />
+                          </>
+                        )}
+                      </Tab>
+                    ))}
+                  </Tab.List>
+                </div>
 
-              <Tab.Panels className="aspect-h-1 aspect-w-1 w-full">
-                {data.urls.map((url, index) => (
-                  <Tab.Panel key={index}>
-                    {isImage(url) ? (
-                      // Image
-                      <img
-                        src={`http://localhost:8800/images/${url}`}
-                        alt={`Media ${index + 1}`}
-                        className="h-full w-full object-cover object-center rounded-lg"
-                        style={{
-                          aspectRatio: "4/3",
-                          width: "100%",
-                        }}
-                      />
-                    ) : (
-                      // Video
-                      <video
-                        src={`http://localhost:8800/videos/${url}`}
-                        alt={`Media ${index + 1}`}
-                        className="h-full w-full object-cover object-center rounded-lg"
-                        style={{ aspectRatio: "4/3", width: "100%" }}
-                        controls
-                      />
-                    )}
-                  </Tab.Panel>
-                ))}
-              </Tab.Panels>
-            </Tab.Group>
+                <Tab.Panels className="aspect-h-1 aspect-w-1 w-full">
+                  {data.urls.map((url, index) => (
+                    <Tab.Panel key={index}>
+                      {isImage(url) ? (
+                        // Image
+                        <img
+                          src={`http://localhost:8800/images/${url}`}
+                          alt={`Media ${index + 1}`}
+                          className="h-full w-full object-cover object-center rounded-lg"
+                          style={{
+                            aspectRatio: "4/3",
+                            width: "100%",
+                          }}
+                        />
+                      ) : (
+                        // Video
+                        <video
+                          src={`http://localhost:8800/videos/${url}`}
+                          alt={`Media ${index + 1}`}
+                          className="h-full w-full object-cover object-center rounded-lg"
+                          style={{ aspectRatio: "4/3", width: "100%" }}
+                          controls
+                        />
+                      )}
+                    </Tab.Panel>
+                  ))}
+                </Tab.Panels>
+              </Tab.Group>
+            )
+          ) : (
+            <EditPostMedia
+              postid={data.postid}
+              ref={mediaRef}
+              data={data.urls !== null ? data.urls : []}
+            />
           )}
 
           <div className="mt-10 px-4 sm:mt-16 sm:px-0 lg:mt-0">

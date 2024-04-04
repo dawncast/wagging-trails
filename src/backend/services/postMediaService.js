@@ -67,16 +67,15 @@ async function insertMedia(fileName, date, mediaType, postID) {
   }
 }
 
-async function deletePhoto(mediaid) {
+async function deleteMedia(url) {
   let client;
-  try{
+  try {
     client = await pool.connect();
 
     await client.query("BEGIN");
 
-    const deletePhotoQuery1=
-    "DELETE from photo WHERE mediaid = $1";
-    const deletePhotoValue = [mediaid];
+    const deletePhotoQuery1 = "DELETE from post_media WHERE url = $1";
+    const deletePhotoValue = [url];
     await client.query(deletePhotoQuery1, deletePhotoValue);
 
     await client.query("COMMIT");
@@ -88,9 +87,9 @@ async function deletePhoto(mediaid) {
     throw error;
   } finally {
     if (client) {
-    client.release();
+      client.release();
     }
   }
 }
 
-export { upload, insertMedia, deletePhoto };
+export { upload, insertMedia, deleteMedia };
