@@ -2,6 +2,7 @@ import { React, useState, useEffect } from "react";
 import { Tab } from "@headlessui/react";
 import { StarIcon } from "@heroicons/react/20/solid";
 import DatePicker from "react-datepicker";
+import { useNavigate } from "react-router-dom";
 import "react-datepicker/dist/react-datepicker.css";
 import axios from "axios";
 
@@ -49,6 +50,18 @@ export default function Post({ data }) {
     setEditedLocation(e.target.value);
   };
 
+  const handleDistance = (e) => {
+    const inputValue = e.target.value;
+    // Regular expression to match integers or float values
+    const regex = /^[0-9]*\.?[0-9]*$/;
+    // Check if the input value matches the regex
+    if (regex.test(inputValue)) {
+      setEditedDistance(inputValue);
+    } else {
+      setEditedDistance(""); // set to empty string or any default value
+    }
+  };
+
   const handleStarClick = (clickedRating) => {
     setEditedRating(clickedRating);
   };
@@ -74,7 +87,6 @@ export default function Post({ data }) {
         `http://localhost:8800/posts/${data.postid}/update-post-content`,
         { content: editedContent }
       );
-
       // for tags = delete those tags first, then add new tags
       for (const tag of data.tags) {
         console.log("tags:", tag);
@@ -92,10 +104,43 @@ export default function Post({ data }) {
         );
         console.log("added successfully", tag);
       }
-
       console.log("Post edited.");
+
+      // do walks next
+      await axios.put(
+        `http://localhost:8800/walk/${data.walkid}/update-walk-location`,
+        { walklocation: editedLocation }
+      );
+      await axios.put(
+        `http://localhost:8800/walk/${data.walkid}/update-walk-date`,
+        { walkdate: editedDate }
+      );
+      await axios.put(
+        `http://localhost:8800/walk/${data.walkid}/update-walk-distance`,
+        { walkdistance: editedDistance }
+      );
+      // last, update rating
+      await axios.put(
+        `http://localhost:8800/went-for/${data.walkid}/update-wentfor`,
+        { rating: editedRating }
+      );
+      window.location.reload();
     } catch (err) {
       console.error("Error editing post:", err);
+    }
+  };
+  const navigate = useNavigate();
+
+  const handleDelete = async (e) => {
+    e.preventDefault();
+
+    try {
+      await axios.delete(
+        `http://localhost:8800/posts/${data.postid}/delete-post`
+      );
+      navigate("/home");
+    } catch (err) {
+      console.error("Error deleting post:", err);
     }
   };
 
@@ -350,7 +395,7 @@ export default function Post({ data }) {
                     type="text"
                     value={editedDistance}
                     placeholder="distance (km)"
-                    onChange={(dist) => setEditedDistance(dist)}
+                    onChange={handleDistance}
                     className="w-full border border-gray-300 text-gray-900 rounded-md py-2 px-3 focus:outline-none focus:ring focus:border-blue-400"
                   />
                 ) : (
@@ -432,12 +477,21 @@ export default function Post({ data }) {
             {/* if the owner of the post is in the post page, they should be able to delete or edit the post */}
             {data.ownerid === ownerID &&
               (!isEditing ? (
-                <button
-                  className="text-xs text-gray-500 py-3 mt-4"
-                  onClick={handleEditClick}
-                >
-                  edit post
-                </button>
+                <div className="flex items-center text-xs text-gray-500 py-3 mt-4">
+                  <button
+                    className="text-xs text-gray-500 py-3 mt-4"
+                    onClick={handleEditClick}
+                  >
+                    edit post
+                  </button>
+                  <a
+                    className="text-xs text-red-500 py-3 mt-4 ml-5"
+                    onClick={handleDelete}
+                    href="/home"
+                  >
+                    delete post
+                  </a>
+                </div>
               ) : (
                 <div className="flex items-center text-xs text-gray-500 py-3 mt-4">
                   <button className="mr-5" onClick={handleEditClick}>

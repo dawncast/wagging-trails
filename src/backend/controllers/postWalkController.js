@@ -113,8 +113,9 @@ router.put("/:postid/update-post-content", async (req, res) => {
   }
 });
 
-router.delete("/delete-post", async (req, res) => {
-  const { postid } = req.body;
+router.delete("/:postid/delete-post", async (req, res) => {
+  const postid = req.params.postid;
+  console.log(postid);
   const deleteResult = await deletePost(postid);
   if (deleteResult) {
     res.json({ success: true });
