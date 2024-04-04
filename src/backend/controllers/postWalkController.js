@@ -138,8 +138,9 @@ router.delete("/delete-post", async (req, res) => {
     }
   });
 
-  router.post("/insert-tag", async (req, res) => {
-    const { postid, tag } = req.body;
+  router.post("/:postid/insert-tag", async (req, res) => {
+    const postid = req.params.postid;
+    const tag  = req.body;
     const insertResult = await insertTag(
       postid,
       tag
