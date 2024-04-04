@@ -83,7 +83,6 @@ export default function PreviousWalks() {
               </a>
             ) : (
               <button
-                button
                 onClick={() => {
                   setWalk(walk);
                   setShowForm(true);
