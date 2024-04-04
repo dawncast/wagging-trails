@@ -3,7 +3,9 @@ import pool from "./databaseService.js";
 async function fetchDogsFromDB() {
   try {
     const client = await pool.connect();
-    const result = await client.query("SELECT * FROM Owns_Dog");
+    const result = await client.query("SELECT d.dogid, d.ownerid, d.name, d.breed, b.birthday  FROM owns_dog d INNER JOIN owns_dog_birthday b ON (d.dogid = b.dogid)");
+    
+
     client.release();
     return result.rows;
   } catch (error) {
@@ -179,6 +181,23 @@ async function updateDogBday(dogid, newDogBday) {
   }
 }
 
+async function fetchAllDogFriends(ownerID) {
+
+  try {
+    const client = await pool.connect();
+    const query = "SELECT dogid, d.name FROM owns_dog d WHERE d.ownerid = $1 OR (d.ownerid IN (SELECT ownerid2 FROM friendship f WHERE f.ownerid1 = $1))";
+    const values = [ownerID];
+    const result = await client.query(query,values)
+
+    client.release();
+    return result.rows;
+  } catch (error) {
+    console.error("Error fetching dogs from the database:", error);
+    throw error;
+  }
+}
+
+
 export {
   fetchDogsFromDB,
   insertDog,
@@ -188,4 +207,5 @@ export {
   updateDogName,
   updateDogBreed,
   updateDogBday,
+  fetchAllDogFriends
 };

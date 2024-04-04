@@ -306,6 +306,57 @@ async function deletePost(postid) {
   }
 }
 
+async function deleteTag(postID, tag) {
+  let client;
+  try {
+    client = await pool.connect();
+
+    await client.query("BEGIN");
+    const query = "DELETE from post_walk_tag WHERE postid = $1 and tag = $2";
+    const values = [postID, tag];
+    await client.query(query, values);
+
+    await client.query("COMMIT");
+
+    return true;
+  } catch (error) {
+    // Rollback the transaction in case of error
+    await client.query("ROLLBACK");
+    console.error("Error deleting tag:", error);
+    throw error;
+  } finally {
+    if (client) {
+      client.release();
+    }
+  }
+}
+
+async function insertTag(postid, tag) {
+  let client;
+  try {
+    client = await pool.connect();
+
+    await client.query("BEGIN");
+    const query =
+      "INSERT INTO post_walk_tag (postid, tag) VALUES ($1, $2)";
+    const values = [postid, tag];
+    const result = await client.query(query, values);
+   
+
+    await client.query("COMMIT");
+    return true;
+  } catch (error) {
+    // Rollback the transaction in case of error
+    await client.query("ROLLBACK");
+    console.error("Error inserting tag:", error);
+    throw error;
+  } finally {
+    if (client) {
+      client.release();
+    }
+  }
+}
+
 export {
   postWalkSetup,
   insertPost,
@@ -315,6 +366,8 @@ export {
   fetchAllPostData,
   updatePostContent,
   deletePost,
+  deleteTag,
+  insertTag
 };
 
 // unused functions

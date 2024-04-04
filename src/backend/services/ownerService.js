@@ -24,7 +24,30 @@ async function fetchOwnersFromDB() {
   }
 }
 
-async function fetchOwnerProfilePage(ownerID) {}
+async function fetchOwnerProfilePage(ownerID) {
+  try {
+    const client = await pool.connect();
+    const query = {
+      text: `
+          SELECT 
+            CONCAT(own.firstName, ' ', own.lastName) AS owner_name,
+            o.email,
+            owc.phoneNumber
+          FROM Owner o 
+          JOIN Owner_Name own ON o.ownerID = own.ownerID 
+          JOIN Owner_Contact owc ON owc.email = o.email
+          WHERE o.ownerID = $1;
+    `,
+      values: [ownerID],
+    };
+    const result = await client.query(query);
+    client.release();
+    return result.rows;
+  } catch (error) {
+    console.error("Error fetching data of the owner from the database:", error);
+    throw error;
+  }
+}
 
 /**
  * Initializes three normalized, owner tables.
@@ -170,6 +193,8 @@ async function updateOwnerContact(ownerID, email, newPhoneNumber) {
     }
   }
 }
+
+
 
 export {
   fetchOwnersFromDB,
