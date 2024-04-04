@@ -179,6 +179,23 @@ async function updateDogBday(dogid, newDogBday) {
   }
 }
 
+async function fetchAllDogFriends(ownerID) {
+
+  try {
+    const client = await pool.connect();
+    const query = "SELECT dogid, d.name FROM owns_dog d WHERE d.ownerid = $1 OR (d.ownerid IN (SELECT ownerid2 FROM friendship f WHERE f.ownerid1 = $1))";
+    const values = [ownerID];
+    const result = await client.query(query,values)
+
+    client.release();
+    return result.rows;
+  } catch (error) {
+    console.error("Error fetching dogs from the database:", error);
+    throw error;
+  }
+}
+
+
 export {
   fetchDogsFromDB,
   insertDog,
@@ -188,4 +205,5 @@ export {
   updateDogName,
   updateDogBreed,
   updateDogBday,
+  fetchAllDogFriends
 };

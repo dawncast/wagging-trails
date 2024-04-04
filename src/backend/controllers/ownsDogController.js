@@ -1,5 +1,5 @@
 import express from "express";
-import { deleteDog, dogsForOwner, fetchDogsFromDB, insertDog, updateDogBday, updateDogBreed, updateDogName, updateOwnerForDog } from "../services/ownsDogService.js";
+import { deleteDog, dogsForOwner, fetchAllDogFriends, fetchDogsFromDB, insertDog, updateDogBday, updateDogBreed, updateDogName, updateOwnerForDog } from "../services/ownsDogService.js";
 
 const router = express.Router();
 
@@ -87,6 +87,22 @@ router.put("/:dogid/update-dog-bday", async (req,res) => {
     res.json({success : true});
   } else {
     res.status(500).json({ success: false});
+  }
+});
+
+router.get("/:ownerid/fetch-all-dog-friends", async (req, res) => {
+  try {
+    const ownerid = req.params.ownerid;
+    const result = await fetchAllDogFriends(ownerid);
+    if (!result) {
+      res.status(404).json({error: "Owner not found"});
+      return;
+    }
+    res.json({data: result});
+
+  } catch (err) {
+    console.error("Error retrieving dogs for owner and friends: ", err);
+    res.status(500).json({err: "Internal server error"});
   }
 });
 

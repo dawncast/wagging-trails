@@ -171,6 +171,8 @@ async function updateOwnerContact(ownerID, email, newPhoneNumber) {
   }
 }
 
+
+
 export {
   fetchOwnersFromDB,
   initiateOwners,
