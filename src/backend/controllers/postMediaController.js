@@ -1,5 +1,9 @@
 import express from "express";
-import { upload, insertMedia, deletePhoto } from "../services/postMediaService.js";
+import {
+  upload,
+  insertMedia,
+  deleteMedia,
+} from "../services/postMediaService.js";
 const router = express.Router();
 
 router.post("/upload", upload.array("files", 10), async (req, res, next) => {
@@ -57,16 +61,14 @@ router.post("/insert", async (req, res) => {
   }
 });
 
-router.delete("/delete-photo", async (req, res) => {
-  const { mediaid } = req.body;
-  const deleteResult = await deletePhoto(
-      mediaid
-  );
+router.delete("/:url/delete-media", async (req, res) => {
+  const url = req.params.url;
+  const deleteResult = await deleteMedia(url);
   if (deleteResult) {
-      res.json({ success: true });
+    res.json({ success: true });
   } else {
-      res.status(500).json({ success: false });
+    res.status(500).json({ success: false });
   }
-  });
+});
 
 export default router;
