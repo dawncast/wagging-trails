@@ -89,8 +89,7 @@ async function deleteMeetup(meetupid) {
 
     await client.query("BEGIN");
 
-    const deleteMeetupQuery =
-      "DELETE from on_meetup WHERE meetupid = $1 AND NOT EXISTS (SELECT * FROM schedules WHERE meetupid = $1)";
+    const deleteMeetupQuery = "DELETE from on_meetup WHERE meetupid = $1";
     const deleteMeetupValues = [meetupid];
     await client.query(deleteMeetupQuery, deleteMeetupValues);
 

@@ -1,27 +1,25 @@
 import React, { useState, useEffect } from "react";
 import DropdownSelect from "./Dropdown";
 import DatePicker from "react-datepicker";
+import { useNavigate } from "react-router-dom";
 import "react-datepicker/dist/react-datepicker.css";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { StarIcon } from "@heroicons/react/20/solid";
 
 import axios from "axios";
 
-function CreateSchedule({ visible, onClose }) {
+function EditWalk({ visible, onClose, log }) {
   // stub
-  const ownerID = 1;
+  const ownerID = 5;
+
+  // data will be for deleting the schedule selected, so we need to
+  // receive the taskID
 
   const MAX_CONTENT_LENGTH = 255;
 
   // data for form dropdowns
   const [dogs, setDogs] = useState([]);
   const [friends, setFriends] = useState([]);
-  const eventType = [
-    { key: "1", text: "walk", value: "walk" },
-    { key: "2", text: "hike", value: "hike" },
-    { key: "3", text: "run", value: "run" },
-    { key: "4", text: "dog park", value: "dog park" },
-  ];
 
   // Dog selection
   const [selectedDogs, setSelectedDogs] = useState([]);
@@ -31,6 +29,11 @@ function CreateSchedule({ visible, onClose }) {
     }
   };
   const handleDogRemoved = (itemToRemove) => {
+    if (selectedDogs.length === 1) {
+      // If there's only one dog selected, do not allow removal
+      alert("You cannot remove the last dog selected.");
+      return;
+    }
     const updatedSelectedDogs = selectedDogs.filter(
       (item) => item.key !== itemToRemove.key
     );
@@ -53,20 +56,13 @@ function CreateSchedule({ visible, onClose }) {
     setSelectedFriends(updatedSelectedFriends);
   };
 
-  // Walk Event Selection
-  const [selectedWalkEvent, setSelectedWalkEvent] = useState(null);
-
-  const handleWalkEventSelected = (event) => {
-    setSelectedWalkEvent(event.value);
-  };
-
   // other selections
-  const [rating, setRating] = useState(null);
-  const [location, setLocation] = useState(null);
-  const [date, setDate] = useState(null);
-  const [distance, setDistance] = useState(null);
-  const [time, setTime] = useState(null);
-  const [walkID, setWalkID] = useState(null);
+  const [rating, setRating] = useState(log.rating);
+  const [location, setLocation] = useState(log.location);
+  const [date, setDate] = useState(log.date);
+  const [distance, setDistance] = useState(log.distance);
+  const [time, setTime] = useState(log.time);
+  const [walkID, setWalkID] = useState(log.walkID);
 
   const handleStarClick = (clickedRating) => {
     setRating(clickedRating);
@@ -132,58 +128,67 @@ function CreateSchedule({ visible, onClose }) {
       .catch((error) => console.error("Error fetching dogs:", error));
   }, [ownerID]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (location !== null) {
-      handleWalkSubmit();
-    } else {
-      handleScheduleSubmit();
+  // after receiving log, store necessary data (basically an autofill)
+  // Update selectedDogs and dates when log changes
+  useEffect(() => {
+    if (log && log.dogs && dogs.length > 0) {
+      const selected = dogs.filter((dog) => log.dogs.includes(dog.text));
+      setSelectedDogs(selected);
     }
-  };
+  }, [log, dogs]);
 
-  const handleWalkSubmit = async () => {
-    const walkData = {
-      location: location,
-      date: date,
-      distance: distance,
-    };
+  // do the same for friends
+  useEffect(() => {
+    if (log && log.met_up_owners && friends.length > 0) {
+      const selected = friends.filter((friend) =>
+        log.met_up_owners.includes(friend.text)
+      );
+      setSelectedFriends(selected);
+    }
+  }, [log, friends]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log(selectedFriends.length);
 
     try {
-      // do walk
-      const response = await axios.post(
-        `http://localhost:8800/walk/insert-walk`,
-        walkData
-      );
-      console.log("Walk created:", response.data);
-
+      // update the meetups first
+      // remove current meetups in the meetupID then make a new one
       // prepare data for upload
-      let walkID = response.data.walkID;
-      console.log(walkID);
-      // Check if postID is available
-      if (!walkID) {
-        throw new Error("Error on creating a walk.");
-      }
-      setWalkID(walkID);
+      if (log.meetupid !== null && selectedFriends.length > 0) {
+        let meetupID = log.meetupid;
+        // remove all meetups from schedule
+        for (const friend of log.met_up_ownerids) {
+          await axios.delete(
+            `http://localhost:8800/schedules/${meetupID}/${friend}/delete-schedule`
+          );
+          console.log("Schedule deleted for ownerid", friend);
+        }
 
-      // do wentFor
-      for (const dog of selectedDogs) {
-        const wentForData = {
-          dogID: dog.value,
-          walkID: walkID,
-          rating: rating,
-        };
+        // create meetups
+        selectedFriends.push({ value: ownerID });
+        // do schedules
+        for (const friend of selectedFriends) {
+          const scheduleData = {
+            meetupID: meetupID,
+            ownerID: friend.value,
+          };
 
-        const response = await axios.post(
-          `http://localhost:8800/went-for/insert-went-for`,
-          wentForData
+          const response = await axios.post(
+            `http://localhost:8800/schedules/insert-schedule`,
+            scheduleData
+          );
+          console.log("Schedule created for ", friend.text, ":", response.data);
+        }
+      } else if (log.meetupid !== null && selectedFriends.length === 0) {
+        // delete the meetup if removed all selected friends.
+        await axios.delete(
+          `http://localhost:8800/meetup/${log.meetupid}/delete-meetup`
         );
-        console.log("Walk created for dog", dog.text, ":", response.data);
-      }
-
-      if (selectedFriends.length !== 0) {
+      } else if (selectedFriends.length > 0) {
         // do meetup
         const meetupData = {
-          walkID: walkID,
+          walkID: log.walkid,
           time: time,
           location: location,
           date: date,
@@ -217,78 +222,65 @@ function CreateSchedule({ visible, onClose }) {
           console.log("Schedule created for ", friend.text, ":", response.data);
         }
       }
-      console.log("Created.");
-    } catch (error) {
-      console.error("Error creating walk:", error);
-    }
-  };
 
-  // for schedule submission
-  const handleScheduleSubmit = async () => {
-    try {
-      const notificationIDs = []; // store all notificationIDs to match with Logs
-
-      // for each dog in selected dogs
-      for (const dog of selectedDogs) {
-        const notifData = {
-          ownerID: ownerID,
-          dogName: dog.text,
-          notifContent: "Walk with" + dog.text,
-        };
-
-        const response = await axios.post(
-          `http://localhost:8800/notification/insert-walk-alert`,
-          notifData
-        );
-        // assume we inserted properly and we received the notificationID
-        console.log("Walk alert created:" + response.data);
-
-        let notificationID = response.data.notificationID;
-        // Check if notificationID is available
-        if (!notificationID) {
-          throw new Error("Error on creating a walk alert.");
-        }
-        notificationIDs.push(notificationID); // store it.
-      }
-      // once we are done, we create a walk task.
-      const taskData = {
-        ownerID: ownerID,
-        data: date,
-        walkeventtype: selectedWalkEvent,
-      };
-
-      const response = await axios.post(
-        `http://localhost:8800/notification/insert-organizes-walk`,
-        taskData
+      // Now, edit the walk details.
+      await axios.put(
+        `http://localhost:8800/walk/${log.walkid}/update-walk-location`,
+        { walklocation: location }
       );
-      // assume we inserted properly and we received the taskID
-      console.log("Walk task created:" + response.data);
-      let taskID = response.data.taskID;
-      // Check if notificationID is available
-      if (!taskID) {
-        throw new Error("Error on creating a walk task.");
+      await axios.put(
+        `http://localhost:8800/walk/${log.walkid}/update-walk-date`,
+        { walkdate: date }
+      );
+      await axios.put(
+        `http://localhost:8800/walk/${log.walkid}/update-walk-distance`,
+        { walkdistance: distance }
+      );
+
+      // now the dogs.
+      await axios.put(
+        `http://localhost:8800/went-for/${log.walkid}/update-wentfor`,
+        { rating: rating }
+      );
+
+      // delete all the went for tuples first
+      for (const dog of log.dogids) {
+        await axios.delete(
+          `http://localhost:8800/went-for/${log.walkid}/${dog}/delete-went-for`
+        );
+        console.log("Schedule deleted for dogid", dog);
       }
 
-      // finally, we iterate through every notificationID to insert to logs.
-      for (const notifID of notificationIDs) {
-        const logData = {
-          notificationID: notifID,
-          taskID: taskID,
-        };
-        const response = await axios.post(
-          `http://localhost:8800/notification/insert-logs`,
-          logData
-        );
-        // assume we inserted properly and we received the notificationID
-        console.log("Log created:" + response.data);
+      // add all from the selected dogs
+      for (const dog of selectedDogs) {
+        await axios.post(`http://localhost:8800/went-for/insert-went-for`, {
+          dogID: dog.value,
+          walkID: log.walkid,
+          rating: rating,
+        });
+        console.log("Schedule inserted for dogid", dog);
       }
-      // we're done.
+
+      console.log("Finished correctly.");
     } catch (error) {
       console.error("Error creating schedule:", error);
     }
   };
 
-  console.log(dogs);
+  const navigate = useNavigate();
+
+  const handleDelete = async (e) => {
+    e.preventDefault();
+
+    try {
+      await axios.delete(
+        `http://localhost:8800/walk/${log.walkid}/delete-walk`
+      );
+      navigate("/home");
+    } catch (err) {
+      console.error("Error deleting walk:", err);
+    }
+  };
 
   // check if user wants to create a post
   if (!visible) return null;
@@ -309,7 +301,7 @@ function CreateSchedule({ visible, onClose }) {
     >
       <div className="bg-white p-4 rounded-xl">
         <h2 className="font-semibold text-center text-xl text-gray-700">
-          Create a Schedule new new
+          Edit your {log.meetupid !== null ? "Meetup" : "Walk"}
         </h2>
 
         <div className="flex items-center my-3 mx-1">
@@ -332,37 +324,25 @@ function CreateSchedule({ visible, onClose }) {
             </ul>
           </div>
         </div>
-        <div className="flex items-center justify-between mx-1">
-          <div className="flex flex-wrap">
-            {/* Selecting a Type */}
-            <h3 className="text-gray-800 mr-3">Event Type:</h3>
-            <DropdownSelect
-              userSelection={eventType}
-              onItemSelected={handleWalkEventSelected}
-            />
-          </div>
-          <div className="flex items-center">
-            <h3 className="text-gray-800 mr-3">Date:</h3>
 
-            <DatePicker
-              selected={date}
-              onChange={(date) => setDate(date)}
-              dateFormat="yyyy-MM-dd"
-              className="w-full border border-gray-300 text-gray-900 rounded-md py-2 px-3 my-3 focus:outline-none focus:ring focus:border-blue-400"
-              placeholderText="YYYY-MM-DD"
-              isClearable
-            />
-          </div>
+        <div className="flex items-center">
+          <h3 className="text-gray-800 mr-3">Date:</h3>
+
+          <DatePicker
+            selected={date}
+            onChange={(date) => setDate(date)}
+            dateFormat="yyyy-MM-dd"
+            className="w-full border border-gray-300 text-gray-900 rounded-md py-2 px-3 my-3 focus:outline-none focus:ring focus:border-blue-400"
+            placeholderText="YYYY-MM-DD"
+            isClearable
+          />
         </div>
 
-        {/* Walk Form */}
-        <h3 className="mt-2 font-semibold text-center text-lg text-gray-700 my-3">
-          Is it already a finished schedule? Log it as a walk or host a meetup!
-        </h3>
         <div className="flex items-center justify-between">
           <input
             type="text"
-            placeholder="Location"
+            placeholder="Location*"
+            value={location}
             onChange={handleLocationChange}
             className="w-full border border-gray-300 text-gray-900 rounded-md py-2 px-3 mb-3 mx-1 focus:outline-none focus:ring focus:border-blue-400"
           />
@@ -385,6 +365,7 @@ function CreateSchedule({ visible, onClose }) {
         <div className="flex items-center justify-between">
           <input
             type="text"
+            value={distance}
             placeholder="distance (km)"
             onChange={handleDistanceChange}
             className="w-full border border-gray-300 text-gray-900 rounded-md py-2 px-3 mb-3 mx-1 focus:outline-none focus:ring focus:border-blue-400"
@@ -425,18 +406,26 @@ function CreateSchedule({ visible, onClose }) {
             </ul>
           </div>
         </div>
-
-        <form onSubmit={handleSubmit} className="mt-4">
-          <button
-            type="submit"
-            className="mx-auto w-30 bg-blue-500 text-white rounded-md py-2 px-4 hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-400"
+        <div className="flex items-center">
+          <form onSubmit={handleSubmit} className="mt-4">
+            <button
+              type="submit"
+              className="mx-auto w-30 bg-blue-500 text-white rounded-md py-2 px-4 hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-400"
+            >
+              Submit
+            </button>
+          </form>
+          <a
+            className="text-xs text-red-500 py-3 mt-4 ml-5 "
+            onClick={handleDelete}
+            href="/home"
           >
-            Submit
-          </button>
-        </form>
+            delete walk
+          </a>
+        </div>
       </div>
     </div>
   );
 }
 
-export default CreateSchedule;
+export default EditWalk;

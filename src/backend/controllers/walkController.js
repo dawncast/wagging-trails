@@ -50,8 +50,8 @@ router.get("/:ownerID", async (req, res) => {
   }
 });
 
-router.delete("/delete-walk", async (req, res) => {
-  const { walkid } = req.body;
+router.delete("/:walkid/delete-walk", async (req, res) => {
+  const walkid = req.params.walkid;
   const deleteResult = await deleteWalk(walkid);
   if (deleteResult) {
     res.json({ success: true });

@@ -2,7 +2,10 @@ import { React, useState, useEffect } from "react";
 import { Tab } from "@headlessui/react";
 import { StarIcon } from "@heroicons/react/20/solid";
 import DatePicker from "react-datepicker";
+import { useNavigate } from "react-router-dom";
 import "react-datepicker/dist/react-datepicker.css";
+import DropdownSelect from "../ModalWindow/Dropdown";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 
 function classNames(...classes) {
@@ -17,7 +20,7 @@ function isImage(url) {
 
 export default function Post({ data }) {
   // should have the ownerID of the current user
-  const ownerID = 1;
+  const ownerID = 5;
   const MAX_CONTENT_LENGTH = 255;
 
   console.log("data passed", data);
@@ -49,6 +52,18 @@ export default function Post({ data }) {
     setEditedLocation(e.target.value);
   };
 
+  const handleDistance = (e) => {
+    const inputValue = e.target.value;
+    // Regular expression to match integers or float values
+    const regex = /^[0-9]*\.?[0-9]*$/;
+    // Check if the input value matches the regex
+    if (regex.test(inputValue)) {
+      setEditedDistance(inputValue);
+    } else {
+      setEditedDistance(""); // set to empty string or any default value
+    }
+  };
+
   const handleStarClick = (clickedRating) => {
     setEditedRating(clickedRating);
   };
@@ -63,6 +78,40 @@ export default function Post({ data }) {
     setEditedTags(uniqueTags);
   };
 
+  // data for form dropdowns
+  const [dogs, setDogs] = useState([]);
+
+  // Dog selection
+  const [selectedDogs, setSelectedDogs] = useState([]);
+
+  const handleDogsSelected = (item) => {
+    if (!selectedDogs.some((selectedItem) => selectedItem.key === item.key)) {
+      setSelectedDogs([...selectedDogs, item]);
+      console.log(selectedDogs);
+    }
+  };
+  const handleDogRemoved = (itemToRemove) => {
+    const updatedSelectedDogs = selectedDogs.filter(
+      (item) => item.key !== itemToRemove.key
+    );
+    setSelectedDogs(updatedSelectedDogs);
+  };
+
+  // for dog data fetching - all dogs are taggable
+  useEffect(() => {
+    fetch(`http://localhost:8800/dog/`)
+      .then((response) => response.json())
+      .then((data) => {
+        const parsedDogs = data.data.map((dog) => ({
+          key: dog.dogid,
+          text: dog.name,
+          value: dog.dogid,
+        }));
+        setDogs(parsedDogs);
+      })
+      .catch((error) => console.error("Error fetching dogs:", error));
+  }, [ownerID]);
+
   // will be the same as new post form (but updates)
   // post_walk will handle: content, tags -> based on postid from data
   // walk will handle: date, rating, location ->based on walkid from data
@@ -74,7 +123,6 @@ export default function Post({ data }) {
         `http://localhost:8800/posts/${data.postid}/update-post-content`,
         { content: editedContent }
       );
-
       // for tags = delete those tags first, then add new tags
       for (const tag of data.tags) {
         console.log("tags:", tag);
@@ -92,10 +140,59 @@ export default function Post({ data }) {
         );
         console.log("added successfully", tag);
       }
-
       console.log("Post edited.");
+
+      // do walks next
+      await axios.put(
+        `http://localhost:8800/walk/${data.walkid}/update-walk-location`,
+        { walklocation: editedLocation }
+      );
+      await axios.put(
+        `http://localhost:8800/walk/${data.walkid}/update-walk-date`,
+        { walkdate: editedDate }
+      );
+      await axios.put(
+        `http://localhost:8800/walk/${data.walkid}/update-walk-distance`,
+        { walkdistance: editedDistance }
+      );
+      // last, update rating
+      await axios.put(
+        `http://localhost:8800/went-for/${data.walkid}/update-wentfor`,
+        { rating: editedRating }
+      );
+
+      // do tagged in -> delete all first then insert everything again
+
+      const res = await axios.delete(
+        `http://localhost:8800/tagged-in/${data.postid}/delete-tagged-in`
+      );
+      console.log(res);
+      if (selectedDogs.length > 0) {
+        console.log(selectedDogs);
+
+        // insert tagged dogs
+        await axios.post(`http://localhost:8800/tagged-in/insert-tagged-in`, {
+          dogIDs: selectedDogs.map((dog) => dog.value),
+          postID: data.postid,
+        });
+      }
+      window.location.reload();
     } catch (err) {
       console.error("Error editing post:", err);
+    }
+  };
+  const navigate = useNavigate();
+
+  const handleDelete = async (e) => {
+    e.preventDefault();
+
+    try {
+      await axios.delete(
+        `http://localhost:8800/posts/${data.postid}/delete-post`
+      );
+      navigate("/home");
+    } catch (err) {
+      console.error("Error deleting post:", err);
     }
   };
 
@@ -350,7 +447,7 @@ export default function Post({ data }) {
                     type="text"
                     value={editedDistance}
                     placeholder="distance (km)"
-                    onChange={(dist) => setEditedDistance(dist)}
+                    onChange={handleDistance}
                     className="w-full border border-gray-300 text-gray-900 rounded-md py-2 px-3 focus:outline-none focus:ring focus:border-blue-400"
                   />
                 ) : (
@@ -386,19 +483,46 @@ export default function Post({ data }) {
                   />
                 )}
                 {/* Dog Tags*/}
-                <div className="mt-4">
-                  {data.tagged_dogs && data.tagged_dogs.length > 0 && (
-                    <>
-                      <span>Spotted Dogs: </span>
-                      {data.tagged_dogs.map((dog, index) => (
-                        <span key={index}>
-                          {dog}
-                          {index < data.tagged_dogs.length - 1 && ", "}{" "}
-                        </span>
-                      ))}
-                    </>
-                  )}
-                </div>
+                {isEditing ? (
+                  <div className="flex items-center my-3 mx-1 text-xs">
+                    {/* Selecting Tagged Dogs */}
+                    <h3 className="text-gray-800 mr-3">Tagged Dogs:</h3>
+                    <DropdownSelect
+                      userSelection={dogs}
+                      onItemSelected={handleDogsSelected}
+                    />
+                    <div className="text-gray-600 ml-5 m-1">
+                      <ul className="">
+                        {selectedDogs.map((dog, index) => (
+                          <span key={index} className="mr-2">
+                            {dog.text}
+                            <button onClick={() => handleDogRemoved(dog)}>
+                              <XMarkIcon
+                                className="h-3 w-3 ml-2"
+                                aria-hidden="true"
+                              />
+                            </button>
+                          </span>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="mt-4">
+                    {data.tagged_dogs && data.tagged_dogs.length > 0 && (
+                      <>
+                        <span>Spotted Dogs: </span>
+                        {data.tagged_dogs.map((dog, index) => (
+                          <span key={index}>
+                            {dog}
+                            {index < data.tagged_dogs.length - 1 && ", "}{" "}
+                          </span>
+                        ))}
+                      </>
+                    )}
+                  </div>
+                )}
+
                 {/* Post Tags */}
                 {isEditing ? (
                   <div className="flex items-center">
@@ -432,12 +556,21 @@ export default function Post({ data }) {
             {/* if the owner of the post is in the post page, they should be able to delete or edit the post */}
             {data.ownerid === ownerID &&
               (!isEditing ? (
-                <button
-                  className="text-xs text-gray-500 py-3 mt-4"
-                  onClick={handleEditClick}
-                >
-                  edit post
-                </button>
+                <div className="flex items-center text-xs text-gray-500 py-3 mt-4">
+                  <button
+                    className="text-xs text-gray-500 py-3 mt-4"
+                    onClick={handleEditClick}
+                  >
+                    edit post
+                  </button>
+                  <a
+                    className="text-xs text-red-500 py-3 mt-4 ml-5"
+                    onClick={handleDelete}
+                    href="/home"
+                  >
+                    delete post
+                  </a>
+                </div>
               ) : (
                 <div className="flex items-center text-xs text-gray-500 py-3 mt-4">
                   <button className="mr-5" onClick={handleEditClick}>

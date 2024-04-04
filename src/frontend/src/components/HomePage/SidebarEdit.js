@@ -1,6 +1,11 @@
 import { Fragment, useState } from "react";
 import { Dialog, Menu, Transition } from "@headlessui/react";
-import { Bars3Icon, BellIcon, XMarkIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import {
+  Bars3Icon,
+  BellIcon,
+  XMarkIcon,
+  MagnifyingGlassIcon,
+} from "@heroicons/react/24/outline";
 
 import UpcomingSchedules from "../SchedulingBar/UpcomingSchedules";
 import PreviousWalks from "../SchedulingBar/PreviousWalks";
@@ -17,7 +22,7 @@ export default function SideBarEdit({ mainFeed }) {
 
   const handleDropDownClick = () => {
     console.log("Dropdown clicked");
-};
+  };
 
   return (
     <>
@@ -126,7 +131,7 @@ export default function SideBarEdit({ mainFeed }) {
             />
 
             <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
-            <form className="relative flex flex-1" action="#" method="GET">
+              <form className="relative flex flex-1" action="#" method="GET">
                 <label htmlFor="search-field" className="sr-only">
                   Search
                 </label>
@@ -143,7 +148,9 @@ export default function SideBarEdit({ mainFeed }) {
                 />
               </form>
               <div className="flex items-center gap-x-4 lg:gap-x-6">
-              <NotificationDropDown handleDropDownClick={handleDropDownClick} />
+                <NotificationDropDown
+                  handleDropDownClick={handleDropDownClick}
+                />
 
                 {/* Separator */}
                 <div

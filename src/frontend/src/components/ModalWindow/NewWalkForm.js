@@ -96,7 +96,7 @@ function CreateWalk({ visible, onClose, log }) {
 
   // for dog data fetching
   useEffect(() => {
-    fetch(`http://localhost:8800/dog/${ownerID}/get-dog-for`)
+    fetch(`http://localhost:8800/dog/${ownerID}/fetch-all-dog-friends`)
       .then((response) => response.json())
       .then((data) => {
         const parsedDogs = data.data.map((dog) => ({
@@ -135,6 +135,14 @@ function CreateWalk({ visible, onClose, log }) {
   }, [log, dogs]);
 
   const handleSubmit = async (e) => {
+    if (selectedDogs.length === 0) {
+      alert("Please select atleast one dog.");
+      return;
+    }
+    if (location == null) {
+      alert("Please input a location.");
+      return;
+    }
     e.preventDefault();
     const walkData = {
       location: location,
