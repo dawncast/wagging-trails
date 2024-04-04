@@ -3,7 +3,7 @@ import { Tab } from "@headlessui/react";
 import { StarIcon } from "@heroicons/react/20/solid";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import EditPost from "./EditPost";
+import axios from "axios";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -18,7 +18,6 @@ function isImage(url) {
 export default function Post({ data }) {
   // should have the ownerID of the current user
   const ownerID = 1;
-
   const MAX_CONTENT_LENGTH = 255;
 
   console.log("data passed", data);
@@ -29,8 +28,6 @@ export default function Post({ data }) {
 
   // what we should be able to edit: dogs, content, location, date, distance, time, tagged_dogs, tags
   // adding met_up_owners: if not a meetup, create a meetup.
-
-  const [showEditPost, setShowEditPost] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(data.content);
   const [editedLocation, setEditedLocation] = useState(data.location);
@@ -40,15 +37,12 @@ export default function Post({ data }) {
   const [editedTags, setEditedTags] = useState(data.tags);
 
   const handleEditClick = () => {
-    setIsEditing(true);
+    setIsEditing(!isEditing);
   };
 
   const handleContentChange = (e) => {
     const inputContent = e.target.value;
-
-    // Check if inputContent exceeds the maximum length
     if (inputContent.length <= MAX_CONTENT_LENGTH) {
-      // Update state if within the limit
       setEditedContent(inputContent);
     }
   };
@@ -65,8 +59,38 @@ export default function Post({ data }) {
     const uniqueTags = inputTags.filter(
       (tag, index, self) => tag && self.indexOf(tag) === index
     );
-
     setEditedTags(uniqueTags);
+  };
+
+  // will be the same as new post form (but updates)
+  // post_walk will handle: content, tags -> based on postid from data
+  // walk will handle: date, rating, location ->based on walkid from data
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    // do post_walk updates first
+
+    try {
+      await axios.put(
+        `http://localhost:8800/posts/${data.postid}/update-post-content`,
+        { content: editedContent }
+      );
+
+      // for tags = delete those tags first, then add new tags
+      for (const tag in data.tags) {
+        await axios.delete(
+          `http://localhost:8800/posts/${data.postid}/${tag}/delete-tag`
+        );
+      }
+      for (const tag in editedTags) {
+        await axios.post(`http://localhost:8800/posts/${data.postid}/add-tag`, {
+          tag: tag,
+        });
+      }
+
+      console.log("Post edited.");
+    } catch (err) {
+      console.error("Error editing post:", err);
+    }
   };
 
   return (
@@ -186,45 +210,55 @@ export default function Post({ data }) {
 
           <div className="mt-10 px-4 sm:mt-16 sm:px-0 lg:mt-0">
             {/* Post Title */}
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-              {data.met_up_owners && data.met_up_owners.length > 0 ? (
-                <>
-                  <div>
-                    Met up with{" "}
-                    {data.met_up_owners.map((owner, index) => (
-                      <span key={index}>
-                        {owner}
-                        {index !== data.met_up_owners.length - 1 && ", "}{" "}
+            {isEditing ? (
+              <>
+                <h1 className="text-xl font-bold tracking-tight text-gray-900">
+                  Edit your post
+                </h1>
+              </>
+            ) : (
+              <>
+                <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+                  {data.met_up_owners && data.met_up_owners.length > 0 ? (
+                    <>
+                      <div>
+                        Met up with{" "}
+                        {data.met_up_owners.map((owner, index) => (
+                          <span key={index}>
+                            {owner}
+                            {index !== data.met_up_owners.length - 1 &&
+                              ", "}{" "}
+                          </span>
+                        ))}
+                      </div>
+                      <span className="mt-4 text-xl font-semibold text-gray-800">
+                        Along by{" "}
+                        {data.dogs.map((dog, index) => (
+                          <span key={index}>
+                            {dog}
+                            {index !== data.dogs.length - 1 && ", "}{" "}
+                          </span>
+                        ))}
                       </span>
-                    ))}
-                  </div>
-                  <span className="mt-4 text-xl font-semibold text-gray-800">
-                    Along by{" "}
-                    {data.dogs.map((dog, index) => (
-                      <span key={index}>
-                        {dog}
-                        {index !== data.dogs.length - 1 && ", "}{" "}
-                      </span>
-                    ))}
-                  </span>
-                </>
-              ) : (
-                <div>
-                  Trailing with{" "}
-                  {data.dogs.map((dog, index) => (
-                    <span key={index}>
-                      {dog}
-                      {index !== data.dogs.length - 1 && ", "}{" "}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </h1>
-
-            {/* Post Owner */}
-            <h2 className="text-lg mt-1 tracking-tight text-gray-700">
-              Post by {data.owner_name}
-            </h2>
+                    </>
+                  ) : (
+                    <div>
+                      Trailing with{" "}
+                      {data.dogs.map((dog, index) => (
+                        <span key={index}>
+                          {dog}
+                          {index !== data.dogs.length - 1 && ", "}{" "}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </h1>
+                {/* Post Owner */}
+                <h2 className="text-lg mt-1 tracking-tight text-gray-700">
+                  Post by {data.owner_name}
+                </h2>
+              </>
+            )}
 
             {/* Walk Rating */}
             <div className="mt-3">
@@ -319,7 +353,7 @@ export default function Post({ data }) {
                 {/* Post Content */}
                 <h3 className="sr-only">Post Content</h3>
                 {isEditing ? (
-                  <div className="space-y-6 py-4 text-base text-gray-700">
+                  <div className="py-4 text-base text-gray-700">
                     <textarea
                       className="w-full border border-gray-300 rounded-md pl-3 pt-3 pr-6 focus:outline-none focus:ring focus:border-blue-400"
                       value={editedContent}
@@ -387,26 +421,32 @@ export default function Post({ data }) {
               </div>
             </div>
             {/* if the owner of the post is in the post page, they should be able to delete or edit the post */}
-            {data.ownerid === ownerID && (
-              <button
-                className="text-xs text-gray-500 py-3 mt-4"
-                onClick={handleEditClick}
-              >
-                edit post
-              </button>
-            )}
+            {data.ownerid === ownerID &&
+              (!isEditing ? (
+                <button
+                  className="text-xs text-gray-500 py-3 mt-4"
+                  onClick={handleEditClick}
+                >
+                  edit post
+                </button>
+              ) : (
+                <div className="flex items-center text-xs text-gray-500 py-3 mt-4">
+                  <button className="mr-5" onClick={handleEditClick}>
+                    cancel
+                  </button>
+                  <form onSubmit={handleSubmit}>
+                    <button
+                      type="submit"
+                      className="mx-auto w-30 bg-blue-500 text-white rounded-md py-2 px-4 hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-400"
+                    >
+                      Submit
+                    </button>
+                  </form>
+                </div>
+              ))}
           </div>
         </div>
       </div>
-      {/* {showEditPost && (
-        <EditPost
-          onClose={() => {
-            setShowEditPost(false);
-          }}
-          data={data}
-          visible={true}
-        />
-      )} */}
     </div>
   );
 }
