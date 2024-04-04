@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import SideBar from "../components/HomePage/Sidebar";
+import SideBarEdit from "../components/HomePage/SidebarEdit";
 import Profile from "../components/ProfilePage/profile.js";
 
 
@@ -12,6 +13,14 @@ function ProfilePage() {
   const [ownerDetails, setOwnerDetails] = useState(null);
 
 
+
+   // fetches owner details
+   useEffect(() => {
+    fetch(`http://localhost:8800/owner/${ownerID}`)
+      .then((response) => response.json())
+      .then((data) => setOwnerDetails(data))
+      .catch((error) => console.error("Error fetching friends:", error));
+  }, [ownerID]);
 
   // fetches friend list
   useEffect(() => {
@@ -47,8 +56,8 @@ function ProfilePage() {
   console.log("Dog state:", dogs);
   return (
     <div>
-      <SideBar
-        mainFeed={<Profile posts={posts} friends={friends} dogs={dogs} />}
+      <SideBarEdit
+        mainFeed={<Profile ownerID={ownerID} posts={posts} friends={friends} dogs={dogs} ownerDetails={ownerDetails} />}
       />
     </div>
   );

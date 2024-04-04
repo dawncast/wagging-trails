@@ -1,105 +1,202 @@
-import { Fragment, useState } from "react";
-import PostCardForProfile from "../../components/HomePage/Feed.js";
+import { React, Fragment, useState } from "react";
 import SideBarEdit from "../../components/HomePage/SidebarEdit";
-
-const secondaryNavigation = [
-  { name: "Overview", href: "#", current: true },
-  { name: "Posts", href: "/my-posts", current: false },
-  { name: "Friends", href: "/my-friends", current: false },
-  { name: "Dogs", href: "/my-dogs", current: false },
-];
-const stats = [
-  { name: "Number of deploys", value: "405" },
-  { name: "Average deploy time", value: "3.65", unit: "mins" },
-  { name: "Number of servers", value: "3" },
-  { name: "Success rate", value: "98.5%" },
-];
-
-const statuses = {
-  Completed: "text-green-400 bg-green-400/10",
-  Error: "text-rose-400 bg-rose-400/10",
-};
-const activityItems = [
-  {
-    user: {
-      name: "Michael Foster",
-      imageUrl:
-        "https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    },
-    commit: "2d89f0c8",
-    branch: "main",
-    status: "Completed",
-    duration: "25s",
-    date: "45 minutes ago",
-    dateTime: "2023-01-23T11:00",
-  },
-  // More items...
-];
+import PostCardForProfile from "./profilePosts";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {
+  CalendarDaysIcon,
+  CreditCardIcon,
+  UserCircleIcon,
+} from "@heroicons/react/20/solid";
+import {
+  DevicePhoneMobileIcon,
+  EnvelopeIcon,
+  FaceSmileIcon,
+  MagnifyingGlassIcon,
+  PhoneIcon,
+} from "@heroicons/react/24/outline";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Profile({ posts, friends, dogs }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [post, setPost] = useState(posts);
 
-  console.log("posts" , post);
+
+export default function Profile({
+  ownerDetails,
+  posts,
+  friends,
+  dogs,
+  ownerID,
+}) {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [postData, setPostData] = useState(posts.data);
+  const [ownerInfo, setOwnerInfo] = useState(ownerDetails.data[0]);
+  const [dogData, setDogData] = useState(dogs.data);
+  const [editClicked, setEditClicked] = useState(false);
+
+  const [newOwnerName, setNewOwnerName] = useState(ownerInfo.owner_name);
+  const [newNumber, setNewNumber] = useState(ownerInfo.phonenumber);
+  const [newEmail, setNewEmail] = useState(ownerInfo.email);
+
+  
+
+
+  const handleEditClick = () => {
+    setEditClicked(!editClicked);
+  }
+  const handleNameChange = (e) => {
+    setNewOwnerName(e.target.value);
+  }
+
+  const handlePhoneNumberChange = (e) => {
+    setNewNumber(e.target.value);
+  }
+
+  const handleEmailChange = (e) => {
+    setNewEmail(e.target.value);
+  }
+
+
+
+
+
+  console.log("post data", postData);
+
   return (
-    <>
-      <main>
-        <header>
-          {/* Secondary navigation */}
-          <nav className="flex overflow-x-auto border-b border-white/10 py-4">
-            <ul
-              role="list"
-              className="flex min-w-full flex-none gap-x-6 px-4 text-sm font-semibold leading-6 text-gray-400 sm:px-6 lg:px-8"
-            >
-              {secondaryNavigation.map((item) => (
-                <li key={item.name}>
-                  <a
-                    href={item.href}
-                    className={item.current ? "text-indigo-400" : ""}
-                  >
-                    {item.name}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
-{/* 
-          <div>
-            // <h2>Posts:</h2>
-            // <pre>{JSON.stringify(posts, null, 2)}</pre>
-            // <h2>Friends:</h2>
-            // <pre>{JSON.stringify(friends, null, 2)}</pre>
-            // <h2>Dogs:</h2>
-            // <pre>{JSON.stringify(dogs, null, 2)}</pre>
-            //{" "}
-          </div> */}
-          {/* Heading */}
-          <div className="flex flex-col items-start justify-between gap-x-8 gap-y-4 bg-gray-700/10 px-4 py-4 sm:flex-row sm:items-center sm:px-6 lg:px-8">
-            <div>
-              <div className="flex items-center gap-x-3">
-                <div className="flex-none rounded-full bg-green-400/10 p-1 text-green-400">
-                  <div className="h-2 w-2 rounded-full bg-current" />
-                </div>
-                <h1 className="flex gap-x-3 text-base leading-7">
-                  <span className="font-semibold text-black">My Profile</span>
-                  <span className="text-gray-600">/</span>
-                  <span className="font-semibold text-black">basic info</span>
-                </h1>
-              </div>
-              <p className="mt-2 text-xs leading-6 text-gray-400">
-                
-              </p>
+    <div className="lg:col-start-3 lg:row-end-1">
+      {/* owner details */}
+      <div className="flex gap-10">
+        <h2 className="sr-only">Profile</h2>
+        <div className="rounded-lg grid-cols-2 bg-gray-50 shadow-sm ring-1 ring-gray-900/5">
+          <dl className="flex flex-wrap">
+            <div className="flex-auto pl-6 pt-6">
+              <dt className="text-sm font-semibold leading-6 text-gray-900">
+                Profile
+              </dt>
+              <dd className="mt-1 text-base font-semibold leading-6 text-gray-900"></dd>
             </div>
-            <div className="order-first flex-none rounded-full bg-indigo-400/10 px-2 py-1 text-xs font-medium text-indigo-400 ring-1 ring-inset ring-indigo-400/30 sm:order-none">
-              Complete
+            <div className="flex-none self-end px-6 pt-4">
+              <dt className="sr-only">Status</dt>
+              <dd className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+                {editClicked ? (<button onClick={handleEditClick}>editing</button>): <button onClick={handleEditClick}>edit</button>}
+              </dd>
             </div>
+            <div className="mt-6 flex w-full flex-none gap-x-4 border-t border-gray-900/5 px-6 pt-6">
+              <dt className="flex-none">
+                <span className="sr-only">name</span>
+                <UserCircleIcon
+                  className="h-6 w-5 text-gray-400"
+                  aria-hidden="true"
+                />
+              </dt>
+              <dd className="text-sm font-medium leading-6 text-gray-900">
+                {editClicked ? (
+                  <input
+                    type="text"
+                    value={newOwnerName}
+                    onChange={handleNameChange}
+                  />
+                ) : (
+                  ownerInfo.owner_name
+                )}
+              </dd>
+            </div>
+            <div className="mt-4 flex w-full flex-none gap-x-4 px-6">
+              <dt className="flex-none">
+                <span className="sr-only">Phone number</span>
+                <PhoneIcon
+                  className="h-6 w-5 text-gray-400"
+                  aria-hidden="true"
+                />
+              </dt>
+              <dd className="text-sm leading-6 text-gray-500">
+                {editClicked ? (
+                  <input
+                    type="text"
+                    value={newNumber}
+                    onChange={handlePhoneNumberChange}
+                  />
+                ) : (
+                  ownerInfo.phonenumber
+                )}
+              </dd>
+            </div>
+            <div className="mt-4 flex w-full flex-none gap-x-4 px-6">
+              <dt className="flex-none">
+                <span className="sr-only">Email</span>
+                <EnvelopeIcon
+                  className="h-6 w-5 text-gray-400"
+                  aria-hidden="true"
+                />
+              </dt>
+              <dd className="text-sm leading-6 text-gray-500">
+                {editClicked ? (
+                  <input
+                    type="text"
+                    value={newEmail}
+                    onChange={handleEmailChange}
+                  />
+                ) : (
+                  ownerInfo.email
+                )}
+              </dd>
+            </div>
+          </dl>
+          <div className="mt-6 px-2 py-2"></div>
+        </div>
+     
+    
+
+        {/* my dogs */}
+        <h2 className="sr-only">My dogs</h2>
+        <div className="rounded-lg grid-cols-2 flex-auto bg-gray-50 shadow-sm ring-1 ring-gray-900/5">
+          <dl className="flex flex-wrap">
+            <div className="flex-auto pl-6 pt-6">
+              <dt className="text-sm font-semibold leading-6 text-gray-900">
+                My dogs
+              </dt>
+              <dd className="mt-1 text-base font-semibold leading-6 text-gray-900"></dd>
+            </div>
+            <div className="flex-none self-end px-6 pt-4">
+              <dt className="sr-only">Status</dt>
+              <dd className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+                edit
+              </dd>
+            </div>
+            <div className="mt-6 flex w-full flex-none gap-x-4 border-t border-gray-900/5 px-6 pt-6">
+              {dogData.map((dog, index) => [
+                <dt key={`dt-${index}`} className="flex-none">
+                  <span className="sr-only">Dogs</span>
+                  <FaceSmileIcon className="h-6 w-5 text-gray-400" aria-hidden="true" />
+                </dt>,
+                <dd
+                  key={`dd-${index}`}
+                  className="text-sm font-medium leading-6 text-gray-900"
+                >
+                  {dog.name}
+                </dd>,
+              ])}
+            </div>   
+          </dl>
+          <div className="mt-6 px-2 py-2"></div>
+        </div>
+      </div>
+
+      {/* my posts */}
+      <div className=" mt-10 rounded-lg bg-gray-50 shadow-sm ring-1 ring-gray-900/5">
+        <dl className="flex flex-wrap">
+          <div className="flex-auto pl-6 pt-6">
+            <dt className="text-sm font-semibold leading-6 text-gray-900">
+              My Posts
+            </dt>
+            <dd className="mt-1 text-base font-semibold leading-6 text-gray-900"></dd>
           </div>
-        </header>
-      </main>
-    </>
+
+          <div className="mt-6 flex w-full flex-none gap-x-4 border-t border-gray-900/5 px-6 pt-6">
+            <PostCardForProfile data={postData} />
+          </div>
+        </dl>
+      </div>
+    </div>
   );
 }

@@ -12,7 +12,7 @@ import SettingsButton from "../SchedulingBar/Settings";
 import Logo from "../SchedulingBar/Logo";
 import NotificationDropDown from "./NotifDropDown";
 
-export default function SideBarEdit({ mainFeed }) {
+export default function SideBarEdit({ mainFeed, ownerID }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleDropDownClick = () => {
@@ -79,7 +79,7 @@ export default function SideBarEdit({ mainFeed }) {
                     <Logo />
                     <nav className="flex flex-1 flex-col">
                       <ul className="flex flex-1 flex-col gap-y-7">
-                        <Directories />
+                        <Directories ownerID={ownerID} />
                         <UpcomingSchedules />
                         <PreviousWalks />
                         <SettingsButton />

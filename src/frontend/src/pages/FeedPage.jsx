@@ -5,6 +5,7 @@ import SideBarEdit from "../components/HomePage/SidebarEdit";
 
 function FeedPage() {
   const [post, setPost] = useState(null);
+  let ownerID = 1;
 
   useEffect(() => {
     fetch(`http://localhost:8800/posts/all`)
@@ -21,6 +22,7 @@ function FeedPage() {
   return (
     <div>
       <SideBarEdit
+        ownerID={ownerID}
         mainFeed={post.data.map((postData) => (
           <PostCard key={postData.postid} data={postData} />
         ))}

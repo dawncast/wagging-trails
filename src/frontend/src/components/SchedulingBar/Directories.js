@@ -19,22 +19,24 @@ const navigation = [
     icon: HomeIcon,
     current: true,
   },
-  { name: "Profile", href: "#", icon: UserIcon, current: false },
-  { name: "Friends", href: "#", icon: UserGroupIcon, current: false },
+  { name: "Profile", href: "/profile", icon: UserIcon, current: false },
+  { name: "Friends", href: "/friends", icon: UserGroupIcon, current: false },
 ];
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Directories() {
+
+
+export default function Directories({ownerID}) {
   return (
     <li>
       <ul className="-mx-2 space-y-1">
         {navigation.map((item) => (
           <li key={item.name}>
             <a
-              href={item.href}
+              href={item.href+'/1'}
               className={classNames(
                 item.current
                   ? "bg-indigo-700 text-white"
