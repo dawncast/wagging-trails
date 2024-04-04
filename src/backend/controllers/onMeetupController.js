@@ -59,8 +59,8 @@ router.put("/:meetupid/update-meetup-date", async (req, res) => {
   }
 });
 
-router.delete("/delete-meetup", async (req, res) => {
-  const { meetupid } = req.body;
+router.delete("/:meetupid/delete-meetup", async (req, res) => {
+  const meetupid = req.params.meetupid;
   const deleteResult = await deleteMeetup(meetupid);
   if (deleteResult) {
     res.json({ success: true });

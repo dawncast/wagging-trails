@@ -216,7 +216,7 @@ CREATE TABLE IF NOT EXISTS schedules (
     meetupid INTEGER,
     ownerid INTEGER,
     PRIMARY KEY (meetupid, ownerid),
-    FOREIGN KEY (meetupid) REFERENCES on_meetup (meetupid),
+    FOREIGN KEY (meetupid) REFERENCES on_meetup (meetupid) ON DELETE CASCADE,
     FOREIGN KEY (ownerid) REFERENCES owner (ownerid) ON DELETE NO ACTION ON UPDATE CASCADE
 );
 
@@ -385,9 +385,11 @@ INSERT INTO walk_dist (walkid, distance) VALUES (1, 2.5);
 
 INSERT INTO walk (location) VALUES ('Beyond the sea');
 INSERT INTO walk_date (walkid, date) VALUES (2, '2024-02-20');
+INSERT INTO walk_dist (walkid, distance) VALUES (2, null);
 
 INSERT INTO walk (location) VALUES ('Vancouver Downtown');
 INSERT INTO walk_date (walkid, date) VALUES (3, '2024-02-28');
+INSERT INTO walk_dist (walkid, distance) VALUES (3, null);
 
 INSERT INTO walk (location) VALUES ('Long Lane Park');
 INSERT INTO walk_date (walkid, date) VALUES (4, '2024-01-14');
@@ -395,21 +397,28 @@ INSERT INTO walk_dist (walkid, distance) VALUES (4, 60.0);
 
 INSERT INTO walk (location) VALUES ('Police Station Park');
 INSERT INTO walk_date (walkid, date) VALUES (5, '2024-01-19');
+INSERT INTO walk_dist (walkid, distance) VALUES (5, null);
 
 INSERT INTO walk (location) VALUES ('Long Lane Park');
 INSERT INTO walk_date (walkid, date) VALUES (6, '2024-01-14');
+INSERT INTO walk_dist (walkid, distance) VALUES (6, null);
 
 -- non posted meetups
 INSERT INTO walk (location) VALUES ('Central Pond');
 INSERT INTO walk_date (walkid, date) VALUES (7, '2024-02-28');
+INSERT INTO walk_dist (walkid, distance) VALUES (7, null);
 
 INSERT INTO walk (location) VALUES ('Metrotown');
 INSERT INTO walk_date (walkid, date) VALUES (8, '2024-02-20');
+INSERT INTO walk_dist (walkid, distance) VALUES (8, null);
 
 INSERT INTO walk (location) VALUES ('UBC');
+INSERT INTO walk_date (walkid, date) VALUES (9, null);
+INSERT INTO walk_dist (walkid, distance) VALUES (9, null);
 
 INSERT INTO walk (location) VALUES ('Police Station');
 INSERT INTO walk_date (walkid, date) VALUES (10, '2024-05-28');
+INSERT INTO walk_dist (walkid, distance) VALUES (10, null);
 
 -- non posted walks
 INSERT INTO walk (location) VALUES ('Long Lane Park');
@@ -418,6 +427,7 @@ INSERT INTO walk_dist (walkid, distance) VALUES (11, 50.0);
 
 INSERT INTO walk (location) VALUES ('Central Pond');
 INSERT INTO walk_date (walkid, date) VALUES (12, '2024-02-14');
+INSERT INTO walk_dist (walkid, distance) VALUES (12, null);
 
 -- went for table (dog-walk relationship)
 INSERT INTO wentfor (dogid, walkid, rating) VALUES (1, 1, '4');

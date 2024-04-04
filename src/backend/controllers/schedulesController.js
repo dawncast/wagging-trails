@@ -1,5 +1,8 @@
 import express from "express";
-import { insertSchedule } from "../services/schedulesService.js";
+import {
+  insertSchedule,
+  deleteSchedule,
+} from "../services/schedulesService.js";
 
 const router = express.Router();
 
@@ -15,4 +18,14 @@ router.post("/insert-schedule", async (req, res) => {
   }
 });
 
+router.delete("/:meetupid/:ownerid/delete-schedule", async (req, res) => {
+  const meetupID = req.params.meetupid;
+  const ownerID = req.params.ownerid;
+  const insertResult = await deleteSchedule(meetupID, ownerID);
+  if (insertResult) {
+    res.json({ success: true });
+  } else {
+    res.status(500).json({ success: false });
+  }
+});
 export default router;
