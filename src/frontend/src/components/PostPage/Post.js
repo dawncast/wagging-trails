@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 import { Tab } from "@headlessui/react";
 import { StarIcon } from "@heroicons/react/20/solid";
 import DatePicker from "react-datepicker";
@@ -34,7 +34,6 @@ export default function Post({ data }) {
   const [editedDate, setEditedDate] = useState(data.date);
   const [editedDistance, setEditedDistance] = useState(data.distance);
   const [editedRating, setEditedRating] = useState(data.rating);
-  const [editedTags, setEditedTags] = useState(data.tags);
 
   const handleEditClick = () => {
     setIsEditing(!isEditing);
@@ -54,11 +53,13 @@ export default function Post({ data }) {
     setEditedRating(clickedRating);
   };
 
+  const [editedTags, setEditedTags] = useState([...data.tags]);
   const handleTagsChange = (e) => {
     const inputTags = e.target.value.split(",").map((tag) => tag.trim());
     const uniqueTags = inputTags.filter(
       (tag, index, self) => tag && self.indexOf(tag) === index
     );
+
     setEditedTags(uniqueTags);
   };
 
@@ -67,24 +68,29 @@ export default function Post({ data }) {
   // walk will handle: date, rating, location ->based on walkid from data
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // do post_walk updates first
-
     try {
+      // do post_walk updates first
       await axios.put(
         `http://localhost:8800/posts/${data.postid}/update-post-content`,
         { content: editedContent }
       );
 
       // for tags = delete those tags first, then add new tags
-      for (const tag in data.tags) {
-        await axios.delete(
+      for (const tag of data.tags) {
+        console.log("tags:", tag);
+        const deleteResponse = await axios.delete(
           `http://localhost:8800/posts/${data.postid}/${tag}/delete-tag`
         );
+        console.log("deleted successfully", deleteResponse);
       }
-      for (const tag in editedTags) {
-        await axios.post(`http://localhost:8800/posts/${data.postid}/add-tag`, {
-          tag: tag,
-        });
+      for (const tag of editedTags) {
+        await axios.post(
+          `http://localhost:8800/posts/${data.postid}/insert-tag`,
+          {
+            tag: tag,
+          }
+        );
+        console.log("added successfully", tag);
       }
 
       console.log("Post edited.");
@@ -399,24 +405,27 @@ export default function Post({ data }) {
                     <span className="text-gray-400 mr-3 mb-5">Tags: </span>
                     <input
                       type="text"
-                      placeholder="Place your tags here. Add commas (', ') to separate!"
-                      value={editedTags.join(",")}
+                      placeholder="Add commas (', ') to separate!"
+                      value={editedTags}
                       onChange={handleTagsChange}
+                      on
                       className="w-full border border-gray-300 text-gray-900 rounded-md py-2 px-3 mb-3 focus:outline-none focus:ring focus:border-blue-400"
                     />
                   </div>
                 ) : (
-                  <div className="mt-0 lg:mt-12">
-                    {data.tags.map((tag, index) => (
-                      <a
-                        href={`http://localhost:3000/post/${tag}`}
-                        key={index}
-                        className="bg-stone-200 text-stone-900 rounded-lg px-2 py-1 mr-2 mt-1"
-                      >
-                        {tag}
-                      </a>
-                    ))}
-                  </div>
+                  data.tags[0] !== null && (
+                    <div className="mt-0 lg:mt-12">
+                      {data.tags.map((tag, index) => (
+                        <a
+                          href={`http://localhost:3000/post/${tag}`}
+                          key={index}
+                          className="bg-stone-200 text-stone-900 rounded-lg px-2 py-1 mr-2 mt-1"
+                        >
+                          {tag}
+                        </a>
+                      ))}
+                    </div>
+                  )
                 )}
               </div>
             </div>

@@ -11,7 +11,6 @@ import {
   deletePost,
   deleteTag,
   insertTag,
-
 } from "../services/postWalkService.js";
 
 const router = express.Router();
@@ -124,30 +123,27 @@ router.delete("/delete-post", async (req, res) => {
   }
 });
 
-  router.delete("/:postid/:tag/delete-tag", async (req, res) => {
-    const postid = req.params.postid;
-    const tag = req.params.tag;
-    const result = await deleteTag(postid,tag);
-  
-    if (result) {
-      res.json({ success: true });
-    } else {
-      res.status(500).json({ success: false });
-    }
-  });
+router.delete("/:postid/:tag/delete-tag", async (req, res) => {
+  const postid = req.params.postid;
+  const tag = req.params.tag;
+  const result = await deleteTag(postid, tag);
 
-  router.post("/:postid/insert-tag", async (req, res) => {
-    const postid = req.params.postid;
-    const tag  = req.body;
-    const insertResult = await insertTag(
-      postid,
-      tag
-    );
-    if (insertResult) {
-      res.json({ success: true });
-    } else {
-      res.status(500).json({ success: false });
-    }
-  });
+  if (result) {
+    res.json({ success: true });
+  } else {
+    res.status(500).json({ success: false });
+  }
+});
+
+router.post("/:postid/insert-tag", async (req, res) => {
+  const postid = req.params.postid;
+  const { tag } = req.body;
+  const insertResult = await insertTag(postid, tag);
+  if (insertResult) {
+    res.json({ success: true });
+  } else {
+    res.status(500).json({ success: false });
+  }
+});
 
 export default router;
