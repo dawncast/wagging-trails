@@ -3,7 +3,9 @@ import pool from "./databaseService.js";
 async function fetchDogsFromDB() {
   try {
     const client = await pool.connect();
-    const result = await client.query("SELECT * FROM Owns_Dog");
+    const result = await client.query("SELECT d.dogid, d.ownerid, d.name, d.breed, b.birthday  FROM owns_dog d INNER JOIN owns_dog_birthday b ON (d.dogid = b.dogid)");
+    
+
     client.release();
     return result.rows;
   } catch (error) {
