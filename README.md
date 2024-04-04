@@ -24,7 +24,7 @@ This section will first have the development checklist per member, in which the 
 | Aman                                 | Sangita                               | James                            |
 | ------------------------------------ | ------------------------------------- | -------------------------------- |
 | <ul><li>[ ] Owner’s Friend List Page | <ul><li>[ ] Home/Newsfeed             | <ul><li>[ ] Owner’s Profile Page |
-| <ul><li>[ ] Dog Modal Window         | <ul><li>[ ] Login Page                | <ul><li>[x] Owner’s Post Page    |
+| <ul><li>[ ] Dog Modal Window         | <ul><li>[ ] Login Page                | <ul><li>[ ] Owner’s Post Page    |
 |                                      | <ul><li>[ ] Side Menu Bar             | <ul><li>[x] Side Scheduling Bar  |
 |                                      | <ul><li>[ ] Notification Modal Window |                                  |
 
@@ -34,13 +34,13 @@ This section will first have the development checklist per member, in which the 
 | ----------------------------------------------------------- | -------------------------------------------------------------- | ----------------------------------------------------- |
 | <ul><li>[X] `Owner` - for friend list                       | <ul><li>[ ] `Owner` - for login and search                     | <ul><li>[X] `Owner` - for profile page                |
 | <ul><li>[X] `Friendship` - for friend list                  | <ul><li>[ ] `Walk` - for scheduling bar and post               | <ul><li>[X] `Owns_Dog` - for profile page             |
-| <ul><li>[X] `Owns_Dog` - for dog window                     | <ul><li>[ ] `Post_Walk` - for post                             | <ul><li>[ ] `Walk` - for scheduling bar and post      |
+| <ul><li>[X] `Owns_Dog` - for dog window                     | <ul><li>[ ] `Post_Walk` - for post                             | <ul><li>[x] `Walk` - for scheduling bar and post      |
 | <ul><li>[X] `Walk` - for dog window                         | <ul><li>[ ] `Friendship` - for posts                           | <ul><li>[x] `Post_Walk` - for scheduling bar and post |
 | <ul><li>[X] `Post_Walk` - for dog window                    | <ul><li>[X] `Receives_Notifications` - for notification window | <ul><li>[X] `On_MeetUp` - for scheduling bar and post |
-| <ul><li>[X] `WentFor` - for dog window                      | <ul><li>[ ] `FriendPost` - for posts                           | <ul><li>[ ] `Schedules` - for scheduling bar          |
+| <ul><li>[X] `WentFor` - for dog window                      | <ul><li>[ ] `FriendPost` - for posts                           | <ul><li>[x] `Schedules` - for scheduling bar          |
 | <ul><li>[ ] `On_MeetUp` - for dog window                    |                                                                | <ul><li>[X] `TaggedIn` - for post                     |
-| <ul><li>[ ] `Post_Media`, `Video`, `Photo` - for dog window |                                                                | <ul><li>[x] `Post_Media`, `Video`, `Photo` - for post |
-| <ul><li>[ ] `TaggedIn` - for dog window                     |                                                                | <ul><li>[ ] `Logs` - for scheduling                   |
+| <ul><li>[ ] `Post_Media`, `Video`, `Photo` - for dog window |                                                                | <ul><li>[ ] `Post_Media`, `Video`, `Photo` - for post |
+| <ul><li>[ ] `TaggedIn` - for dog window                     |                                                                | <ul><li>[x] `Logs` - for scheduling                   |
 
 **Misc. Checklist**
 
