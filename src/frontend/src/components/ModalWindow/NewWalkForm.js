@@ -135,6 +135,14 @@ function CreateWalk({ visible, onClose, log }) {
   }, [log, dogs]);
 
   const handleSubmit = async (e) => {
+    if (selectedDogs.length === 0) {
+      alert("Please select atleast one dog.");
+      return;
+    }
+    if (location == null) {
+      alert("Please input a location.");
+      return;
+    }
     e.preventDefault();
     const walkData = {
       location: location,

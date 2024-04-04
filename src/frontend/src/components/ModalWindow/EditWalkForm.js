@@ -9,7 +9,7 @@ import axios from "axios";
 
 function EditWalk({ visible, onClose, log }) {
   // stub
-  const ownerID = 3;
+  const ownerID = 5;
 
   const [logData, setLogData] = useState(log);
 
@@ -30,6 +30,11 @@ function EditWalk({ visible, onClose, log }) {
     }
   };
   const handleDogRemoved = (itemToRemove) => {
+    if (selectedDogs.length === 1) {
+      // If there's only one dog selected, do not allow removal
+      alert("You cannot remove the last dog selected.");
+      return;
+    }
     const updatedSelectedDogs = selectedDogs.filter(
       (item) => item.key !== itemToRemove.key
     );
@@ -234,6 +239,28 @@ function EditWalk({ visible, onClose, log }) {
       );
 
       // now the dogs.
+      await axios.put(
+        `http://localhost:8800/went-for/${log.walkid}/update-wentfor`,
+        { rating: rating }
+      );
+
+      // delete all the went for tuples first
+      for (const dog of log.dogids) {
+        await axios.delete(
+          `http://localhost:8800/went-for/${log.walkid}/${dog}/delete-went-for`
+        );
+        console.log("Schedule deleted for dogid", dog);
+      }
+
+      // add all from the selected dogs
+      for (const dog of selectedDogs) {
+        await axios.post(`http://localhost:8800/went-for/insert-went-for`, {
+          dogID: dog.value,
+          walkID: log.walkid,
+          rating: rating,
+        });
+        console.log("Schedule inserted for dogid", dog);
+      }
 
       console.log("Finished correctly.");
     } catch (error) {

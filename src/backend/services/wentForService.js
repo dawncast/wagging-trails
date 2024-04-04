@@ -31,17 +31,41 @@ async function insertWentFor(dogID, walkID, rating) {
 async function updateWentFor(walkid, newRating) {
   try {
     const client = await pool.connect();
-    const query1 =
-    "UPDATE wentfor SET rating = $1 where walkid = $2"
+    const query1 = "UPDATE wentfor SET rating = $1 where walkid = $2";
     const queryValues = [newRating, walkid];
-    await client.query(query1,queryValues);
-    
+    await client.query(query1, queryValues);
+
     client.release();
     return true;
   } catch (error) {
     console.error("Error updating walk rating:", error);
     throw error;
-  } 
+  }
 }
 
-export { insertWentFor, updateWentFor };
+async function deleteWentFor(dogid, walkid) {
+  let client;
+  try {
+    client = await pool.connect();
+
+    await client.query("BEGIN");
+
+    const deleteQuery = "DELETE from wentfor WHERE dogid = $1 AND walkid = $2";
+    const deleteValues = [dogid, walkid];
+    await client.query(deleteQuery, deleteValues);
+
+    await client.query("COMMIT");
+    return true;
+  } catch (error) {
+    // Rollback the transaction in case of error
+    await client.query("ROLLBACK");
+    console.error("Error deleting wentfor:", error);
+    throw error;
+  } finally {
+    if (client) {
+      client.release();
+    }
+  }
+}
+
+export { insertWentFor, updateWentFor, deleteWentFor };
