@@ -9,6 +9,8 @@ import {
   fetchAllPostData,
   updatePostContent,
   deletePost,
+  deleteTag,
+  insertTag,
 
 } from "../services/postWalkService.js";
 
@@ -122,6 +124,31 @@ router.delete("/delete-post", async (req, res) => {
   } else {
       res.status(500).json({ success: false });
   }
+  });
+
+  router.delete("/:postid/:tag/delete-tag", async (req, res) => {
+    const postid = req.params.postid;
+    const tag = req.params.tag;
+    const result = await deleteTag(postid,tag);
+  
+    if (result) {
+      res.json({ success: true });
+    } else {
+      res.status(500).json({ success: false });
+    }
+  });
+
+  router.post("/insert-tag", async (req, res) => {
+    const { postid, tag } = req.body;
+    const insertResult = await insertTag(
+      postid,
+      tag
+    );
+    if (insertResult) {
+      res.json({ success: true });
+    } else {
+      res.status(500).json({ success: false });
+    }
   });
 
 export default router;
