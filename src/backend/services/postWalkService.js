@@ -92,6 +92,7 @@ async function fetchDataForPostPage(postID, ownerID) {
     const query = `
     SELECT 
           pw.postID,
+          w.walkID,
           array_agg(DISTINCT od.name) AS dogs,
           own.ownerID,
           CONCAT(own.firstName, ' ', own.lastName) AS owner_name,
@@ -134,7 +135,7 @@ async function fetchDataForPostPage(postID, ownerID) {
     LEFT JOIN Schedules s ON omu.meetUpID = s.meetUpID
     LEFT JOIN Owner_Name own1 ON s.ownerID = own1.ownerID
     WHERE pw.postID = ${postID} AND pwo.ownerID = ${ownerID}
-    GROUP BY pw.postID, own.ownerID, own.firstName, own.lastName, pwc.content, w.location, wd.date, wdi.distance, omu.time;
+    GROUP BY pw.postID, w.walkID, own.ownerID, own.firstName, own.lastName, pwc.content, w.location, wd.date, wdi.distance, omu.time;
     `;
     const result = await client.query(query);
     client.release();
@@ -178,6 +179,7 @@ async function fetchAllPostData() {
     const query = `
     SELECT 
           pw.postID,
+          w.walkID,
           array_agg(DISTINCT od.name) AS dogs,
           own.ownerID,
           CONCAT(own.firstName, ' ', own.lastName) AS owner_name,
@@ -201,7 +203,7 @@ async function fetchAllPostData() {
     LEFT JOIN Walk_Date wd ON w.walkID = wd.walkID
     LEFT JOIN Schedules s ON omu.meetUpID = s.meetUpID
     LEFT JOIN Owner_Name own1 ON s.ownerID = own1.ownerID
-    GROUP BY pw.postID, own.ownerID, own.firstName, own.lastName, w.location, wd.date
+    GROUP BY pw.postID, w.walkID, own.ownerID, own.firstName, own.lastName, w.location, wd.date
     ORDER BY pw.postID DESC, wd.date DESC;
     `;
     const result = await client.query(query);
@@ -220,6 +222,7 @@ async function fetchDataByTag(tag) {
       text: `
           SELECT 
           pw.postID,
+          w.walkID,
           array_agg(DISTINCT od.name) AS dogs,
           own.ownerID,
           CONCAT(own.firstName, ' ', own.lastName) AS owner_name,
@@ -244,7 +247,7 @@ async function fetchDataByTag(tag) {
     LEFT JOIN Schedules s ON omu.meetUpID = s.meetUpID
     LEFT JOIN Owner_Name own1 ON s.ownerID = own1.ownerID
     WHERE pwt.tag = $1
-    GROUP BY pw.postID, own.ownerID, own.firstName, own.lastName, w.location, wd.date
+    GROUP BY pw.postID, w.walkID, own.ownerID, own.firstName, own.lastName, w.location, wd.date
     ORDER BY pw.postID DESC, wd.date DESC;
     `,
       values: [tag],
@@ -262,32 +265,30 @@ async function updatePostContent(postid, content) {
   try {
     const client = await pool.connect();
     const query1 =
-    "UPDATE post_walk_content SET content = $1 where postid = $2"
+      "UPDATE post_walk_content SET content = $1 where postid = $2";
     const queryValues = [content, postid];
-    await client.query(query1,queryValues);
-    
+    await client.query(query1, queryValues);
+
     client.release();
     return true;
   } catch (error) {
     console.error("Error updating content for post:", error);
     throw error;
-  } 
+  }
 }
 
 async function deletePost(postid) {
   let client;
-  try{
+  try {
     client = await pool.connect();
 
     await client.query("BEGIN");
 
-    const deletePostQuery=
-    "DELETE from post_walk WHERE postid = $1";
+    const deletePostQuery = "DELETE from post_walk WHERE postid = $1";
     const deletePostValues1 = [postid];
     await client.query(deletePostQuery, deletePostValues1);
 
-    const deletePostQuery2=
-    "DELETE from post_walk_owner WHERE postid = $1";
+    const deletePostQuery2 = "DELETE from post_walk_owner WHERE postid = $1";
     const deletePostValues2 = [postid];
     await client.query(deletePostQuery2, deletePostValues2);
 
@@ -300,7 +301,7 @@ async function deletePost(postid) {
     throw error;
   } finally {
     if (client) {
-    client.release();
+      client.release();
     }
   }
 }
@@ -355,7 +356,6 @@ async function insertTag(postid, tag) {
     }
   }
 }
-
 
 export {
   postWalkSetup,
