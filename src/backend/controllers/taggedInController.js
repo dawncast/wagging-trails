@@ -1,5 +1,8 @@
 import express from "express";
-import { insertTaggedDog } from "../services/taggedInService.js";
+import {
+  insertTaggedDog,
+  deleteTaggedIn,
+} from "../services/taggedInService.js";
 
 const router = express.Router();
 
@@ -7,6 +10,16 @@ const router = express.Router();
 router.post("/insert-tagged-in", async (req, res) => {
   const { dogIDs, postID } = req.body;
   const insertResult = await insertTaggedDog(dogIDs, postID);
+  if (insertResult) {
+    res.json({ success: true });
+  } else {
+    res.status(500).json({ success: false });
+  }
+});
+
+router.delete("/:postid/delete-tagged-in", async (req, res) => {
+  const postID = req.params.postid;
+  const insertResult = await deleteTaggedIn(postID);
   if (insertResult) {
     res.json({ success: true });
   } else {

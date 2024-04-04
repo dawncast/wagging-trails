@@ -1,9 +1,11 @@
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 import { Tab } from "@headlessui/react";
 import { StarIcon } from "@heroicons/react/20/solid";
 import DatePicker from "react-datepicker";
 import { useNavigate } from "react-router-dom";
 import "react-datepicker/dist/react-datepicker.css";
+import DropdownSelect from "../ModalWindow/Dropdown";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 
 function classNames(...classes) {
@@ -18,7 +20,7 @@ function isImage(url) {
 
 export default function Post({ data }) {
   // should have the ownerID of the current user
-  const ownerID = 1;
+  const ownerID = 5;
   const MAX_CONTENT_LENGTH = 255;
 
   console.log("data passed", data);
@@ -76,6 +78,40 @@ export default function Post({ data }) {
     setEditedTags(uniqueTags);
   };
 
+  // data for form dropdowns
+  const [dogs, setDogs] = useState([]);
+
+  // Dog selection
+  const [selectedDogs, setSelectedDogs] = useState([]);
+
+  const handleDogsSelected = (item) => {
+    if (!selectedDogs.some((selectedItem) => selectedItem.key === item.key)) {
+      setSelectedDogs([...selectedDogs, item]);
+      console.log(selectedDogs);
+    }
+  };
+  const handleDogRemoved = (itemToRemove) => {
+    const updatedSelectedDogs = selectedDogs.filter(
+      (item) => item.key !== itemToRemove.key
+    );
+    setSelectedDogs(updatedSelectedDogs);
+  };
+
+  // for dog data fetching - all dogs are taggable
+  useEffect(() => {
+    fetch(`http://localhost:8800/dog/`)
+      .then((response) => response.json())
+      .then((data) => {
+        const parsedDogs = data.data.map((dog) => ({
+          key: dog.dogid,
+          text: dog.name,
+          value: dog.dogid,
+        }));
+        setDogs(parsedDogs);
+      })
+      .catch((error) => console.error("Error fetching dogs:", error));
+  }, [ownerID]);
+
   // will be the same as new post form (but updates)
   // post_walk will handle: content, tags -> based on postid from data
   // walk will handle: date, rating, location ->based on walkid from data
@@ -124,6 +160,22 @@ export default function Post({ data }) {
         `http://localhost:8800/went-for/${data.walkid}/update-wentfor`,
         { rating: editedRating }
       );
+
+      // do tagged in -> delete all first then insert everything again
+
+      const res = await axios.delete(
+        `http://localhost:8800/tagged-in/${data.postid}/delete-tagged-in`
+      );
+      console.log(res);
+      if (selectedDogs.length > 0) {
+        console.log(selectedDogs);
+
+        // insert tagged dogs
+        await axios.post(`http://localhost:8800/tagged-in/insert-tagged-in`, {
+          dogIDs: selectedDogs.map((dog) => dog.value),
+          postID: data.postid,
+        });
+      }
       window.location.reload();
     } catch (err) {
       console.error("Error editing post:", err);
@@ -431,19 +483,46 @@ export default function Post({ data }) {
                   />
                 )}
                 {/* Dog Tags*/}
-                <div className="mt-4">
-                  {data.tagged_dogs && data.tagged_dogs.length > 0 && (
-                    <>
-                      <span>Spotted Dogs: </span>
-                      {data.tagged_dogs.map((dog, index) => (
-                        <span key={index}>
-                          {dog}
-                          {index < data.tagged_dogs.length - 1 && ", "}{" "}
-                        </span>
-                      ))}
-                    </>
-                  )}
-                </div>
+                {isEditing ? (
+                  <div className="flex items-center my-3 mx-1 text-xs">
+                    {/* Selecting Tagged Dogs */}
+                    <h3 className="text-gray-800 mr-3">Tagged Dogs:</h3>
+                    <DropdownSelect
+                      userSelection={dogs}
+                      onItemSelected={handleDogsSelected}
+                    />
+                    <div className="text-gray-600 ml-5 m-1">
+                      <ul className="">
+                        {selectedDogs.map((dog, index) => (
+                          <span key={index} className="mr-2">
+                            {dog.text}
+                            <button onClick={() => handleDogRemoved(dog)}>
+                              <XMarkIcon
+                                className="h-3 w-3 ml-2"
+                                aria-hidden="true"
+                              />
+                            </button>
+                          </span>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="mt-4">
+                    {data.tagged_dogs && data.tagged_dogs.length > 0 && (
+                      <>
+                        <span>Spotted Dogs: </span>
+                        {data.tagged_dogs.map((dog, index) => (
+                          <span key={index}>
+                            {dog}
+                            {index < data.tagged_dogs.length - 1 && ", "}{" "}
+                          </span>
+                        ))}
+                      </>
+                    )}
+                  </div>
+                )}
+
                 {/* Post Tags */}
                 {isEditing ? (
                   <div className="flex items-center">

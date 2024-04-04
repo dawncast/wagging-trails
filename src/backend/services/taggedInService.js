@@ -31,4 +31,29 @@ async function insertTaggedDog(dogIDs, postID) {
   }
 }
 
-export { insertTaggedDog };
+async function deleteTaggedIn(postID) {
+  let client;
+  try {
+    client = await pool.connect();
+
+    await client.query("BEGIN");
+
+    const deleteQuery = "DELETE from taggedin WHERE postid = $1";
+    const deleteValues = [postID];
+    await client.query(deleteQuery, deleteValues);
+
+    await client.query("COMMIT");
+    return true;
+  } catch (error) {
+    // Rollback the transaction in case of error
+    await client.query("ROLLBACK");
+    console.error("Error deleting taggedDogs:", error);
+    throw error;
+  } finally {
+    if (client) {
+      client.release();
+    }
+  }
+}
+
+export { insertTaggedDog, deleteTaggedIn };

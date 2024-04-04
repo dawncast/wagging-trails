@@ -179,7 +179,7 @@ function CreatePost({ visible, onClose, data }) {
 
           <div className="flex items-center my-3 mx-1">
             {/* Selecting Tagged Dogs */}
-            <h3 className="text-gray-800 mr-3">Tagged Dogs*:</h3>
+            <h3 className="text-gray-800 mr-3">Tagged Dogs:</h3>
             <DropdownSelect
               userSelection={dogs}
               onItemSelected={handleDogsSelected}
