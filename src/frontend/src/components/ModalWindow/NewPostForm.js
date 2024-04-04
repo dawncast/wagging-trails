@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
+import DropdownSelect from "./Dropdown";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 
 function CreatePost({ visible, onClose, data }) {
   // stub
@@ -34,6 +36,40 @@ function CreatePost({ visible, onClose, data }) {
     setTags(uniqueTags);
   };
 
+  // data for form dropdowns
+  const [dogs, setDogs] = useState([]);
+
+  // Dog selection
+  const [selectedDogs, setSelectedDogs] = useState([]);
+
+  const handleDogsSelected = (item) => {
+    if (!selectedDogs.some((selectedItem) => selectedItem.key === item.key)) {
+      setSelectedDogs([...selectedDogs, item]);
+      console.log(selectedDogs);
+    }
+  };
+  const handleDogRemoved = (itemToRemove) => {
+    const updatedSelectedDogs = selectedDogs.filter(
+      (item) => item.key !== itemToRemove.key
+    );
+    setSelectedDogs(updatedSelectedDogs);
+  };
+
+  // for dog data fetching - all dogs are taggable
+  useEffect(() => {
+    fetch(`http://localhost:8800/dog/`)
+      .then((response) => response.json())
+      .then((data) => {
+        const parsedDogs = data.data.map((dog) => ({
+          key: dog.dogid,
+          text: dog.name,
+          value: dog.dogid,
+        }));
+        setDogs(parsedDogs);
+      })
+      .catch((error) => console.error("Error fetching dogs:", error));
+  }, [ownerID]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -62,16 +98,29 @@ function CreatePost({ visible, onClose, data }) {
       fileFormData.append("postID", postID); // Append postID here
 
       console.log(files);
-      const uploadResponse = await axios.post(
-        "http://localhost:8800/media/upload",
-        fileFormData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      console.log("File uploaded:", uploadResponse.data);
+      if (files.length > 0) {
+        const uploadResponse = await axios.post(
+          "http://localhost:8800/media/upload",
+          fileFormData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        console.log("File uploaded:", uploadResponse.data);
+      }
+
+      if (selectedDogs.length > 0) {
+        console.log(selectedDogs);
+
+        // insert tagged dogs
+        await axios.post(`http://localhost:8800/tagged-in/insert-tagged-in`, {
+          dogIDs: selectedDogs.map((dog) => dog.value),
+          postID: postID,
+        });
+      }
+
       // reset
       setFiles([]);
       setContent("");
@@ -126,6 +175,27 @@ function CreatePost({ visible, onClose, data }) {
           />
           <div className="text-gray-500 text-xs mb-3 ml-auto text-right">
             {MAX_CONTENT_LENGTH - content.length} characters remaining
+          </div>
+
+          <div className="flex items-center my-3 mx-1">
+            {/* Selecting Tagged Dogs */}
+            <h3 className="text-gray-800 mr-3">Tagged Dogs*:</h3>
+            <DropdownSelect
+              userSelection={dogs}
+              onItemSelected={handleDogsSelected}
+            />
+            <div className="text-gray-600 ml-5 m-1">
+              <ul className="">
+                {selectedDogs.map((dog, index) => (
+                  <span key={index} className="mr-4">
+                    {dog.text}
+                    <button onClick={() => handleDogRemoved(dog)}>
+                      <XMarkIcon className="h-3 w-3 ml-4" aria-hidden="true" />
+                    </button>
+                  </span>
+                ))}
+              </ul>
+            </div>
           </div>
 
           <input

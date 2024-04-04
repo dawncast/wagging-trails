@@ -96,7 +96,7 @@ function CreateWalk({ visible, onClose, log }) {
 
   // for dog data fetching
   useEffect(() => {
-    fetch(`http://localhost:8800/dog/${ownerID}/get-dog-for`)
+    fetch(`http://localhost:8800/dog/${ownerID}/fetch-all-dog-friends`)
       .then((response) => response.json())
       .then((data) => {
         const parsedDogs = data.data.map((dog) => ({

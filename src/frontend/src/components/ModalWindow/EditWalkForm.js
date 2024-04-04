@@ -12,8 +12,6 @@ function EditWalk({ visible, onClose, log }) {
   // stub
   const ownerID = 5;
 
-  const [logData, setLogData] = useState(log);
-
   // data will be for deleting the schedule selected, so we need to
   // receive the taskID
 
@@ -102,7 +100,7 @@ function EditWalk({ visible, onClose, log }) {
 
   // for dog data fetching
   useEffect(() => {
-    fetch(`http://localhost:8800/dog/${ownerID}/get-dog-for`)
+    fetch(`http://localhost:8800/dog/${ownerID}/fetch-all-dog-friends`)
       .then((response) => response.json())
       .then((data) => {
         const parsedDogs = data.data.map((dog) => ({
@@ -408,22 +406,23 @@ function EditWalk({ visible, onClose, log }) {
             </ul>
           </div>
         </div>
-
-        <form onSubmit={handleSubmit} className="mt-4">
-          <button
-            type="submit"
-            className="mx-auto w-30 bg-blue-500 text-white rounded-md py-2 px-4 hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-400"
+        <div className="flex items-center">
+          <form onSubmit={handleSubmit} className="mt-4">
+            <button
+              type="submit"
+              className="mx-auto w-30 bg-blue-500 text-white rounded-md py-2 px-4 hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-400"
+            >
+              Submit
+            </button>
+          </form>
+          <a
+            className="text-xs text-red-500 py-3 mt-4 ml-5 "
+            onClick={handleDelete}
+            href="/home"
           >
-            Submit
-          </button>
-        </form>
-        <a
-          className="text-xs text-red-500 py-3 mt-4 ml-5"
-          onClick={handleDelete}
-          href="/home"
-        >
-          delete walk
-        </a>
+            delete walk
+          </a>
+        </div>
       </div>
     </div>
   );
