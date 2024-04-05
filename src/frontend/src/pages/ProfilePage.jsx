@@ -13,7 +13,6 @@ function ProfilePage() {
   const [ownerDetails, setOwnerDetails] = useState(null);
 
 
-
    // fetches owner details
    useEffect(() => {
     fetch(`http://localhost:8800/owner/${ownerID}`)
@@ -45,6 +44,9 @@ function ProfilePage() {
       .then((data) => setDogs(data))
       .catch((error) => console.error("Error fetching dogs:", error));
   }, [ownerID]);
+
+ 
+
 
   if (!posts || !dogs || !friends) {
     return <div>Loading...</div>;

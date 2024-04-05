@@ -198,6 +198,35 @@ async function fetchAllDogFriends(ownerID) {
 }
 
 
+async function selectDogDetails(dogid, cond) {
+  try {
+    const client = await pool.connect();
+
+    let selectedFields = "*";
+    if (cond == "name") {
+      selectedFields = "name"
+    } else if (cond == "breed") {
+      selectedFields = "breed"
+    } else if (cond == "both") {
+      selectedFields = "name, breed"
+    }
+
+    const query = `SELECT ${selectedFields} FROM owns_dog WHERE dogid = $1`;
+    const queryValues = [dogid];
+    const result = await client.query(query, queryValues);
+
+    client.release();
+    console.log("selectFields", selectedFields);
+    return result.rows; // Return rows from the SELECT query
+  } catch (error) {
+    console.error("Error selecting dog details:", error);
+    throw error;
+  }
+}
+
+
+
+
 export {
   fetchDogsFromDB,
   insertDog,
@@ -207,5 +236,7 @@ export {
   updateDogName,
   updateDogBreed,
   updateDogBday,
-  fetchAllDogFriends
+  fetchAllDogFriends,
+  selectDogDetails
+  
 };
