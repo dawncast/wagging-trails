@@ -10,13 +10,15 @@ import FeedPage from "./pages/FeedPage";
 import TagPage from "./pages/TagPage";
 import ProfilePage from "./pages/ProfilePage";
 import DisplayDog from "./pages/DisplayDog";
+import MyFriendsPage from "./pages/MyFriends";
+
 
 function App() {
   return (
     <div>
       <BrowserRouter>
         <Routes>
-          <Route path="/home" element={<FeedPage />}></Route>
+          <Route path="/home/:ownerID" element={<FeedPage />}></Route>
           <Route path="/login" element={<Login />}></Route>
           <Route path="/register" element={<Register />}></Route>
           <Route path="/post/:ownerID/:postID" element={<PostPage />}></Route>
@@ -26,6 +28,7 @@ function App() {
           <Route path="/add-owner" element={<AddOwner />}></Route>
           <Route path="/update-owner" element={<UpdateOwner />}></Route>
           <Route path="/dogs" element={<DisplayDog />}></Route>
+          <Route path="/friends/:ownerID" element={<MyFriendsPage />}></Route>
         </Routes>
       </BrowserRouter>
     </div>

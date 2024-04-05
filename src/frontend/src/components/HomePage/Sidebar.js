@@ -19,10 +19,9 @@ import {
 } from "@heroicons/react/20/solid";
 
 const navigation = [
-  { name: "Dashboard", href: "#", icon: HomeIcon, current: true },
-  { name: "Profile", href: "#", icon: UserIcon, current: false },
+  { name: "Dashboard", href: "/home", icon: HomeIcon, current: true },
+  { name: "Profile", href: "/profile", icon: UserIcon, current: false },
   { name: "Friends", href: "#", icon: UserGroupIcon, current: false },
-  { name: "Calendar", href: "#", icon: CalendarIcon, current: false },
 ];
 const myDogs = [
   { id: 1, name: "dog1", href: "#", initial: "H", current: false },

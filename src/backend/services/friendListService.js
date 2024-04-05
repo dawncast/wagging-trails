@@ -114,9 +114,11 @@ async function fetchFriendsForProfilePage(ownerID) {
     const client = await pool.connect();
     const query = {
       text: `
-          SELECT f.ownerid2, CONCAT(own.firstName, ' ', own.lastName) AS owner_name
+          SELECT f.ownerid2, CONCAT(own.firstName, ' ', own.lastName) AS owner_name, f.dateoffriendship, o.email, contact.phonenumber
           FROM Friendship f 
           JOIN Owner_Name own ON own.ownerid = f.ownerid2
+          JOIN Owner o ON o.ownerid = f.ownerid2
+          JOIN Owner_Contact contact ON contact.email = o.email
           WHERE f.ownerid1 = $1
     `,
       values: [ownerID],
