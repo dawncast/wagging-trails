@@ -25,6 +25,7 @@ export default function Profile({
   friends,
   dogs,
   ownerID,
+  walkCount,
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [postData, setPostData] = useState(posts.data);
@@ -70,7 +71,7 @@ export default function Profile({
       },
       body: JSON.stringify({
         firstName: newFirstName,
-        lastName: newLastName, 
+        lastName: newLastName,
       }),
     })
       .then((response) => {
@@ -84,43 +85,38 @@ export default function Profile({
         let newName = newFirstName + " " + newLastName;
         console.log("new name", newName);
         setOwnerName(newName);
-
       })
       .catch((error) => {
         console.error("Error updating owner name:", error);
       });
 
-      // update owner contact
-      fetch(`http://localhost:8800/owner/${ownerID}/update-contact`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: newEmail,
-          phoneNumber: newNumber, 
-        }),
+    // update owner contact
+    fetch(`http://localhost:8800/owner/${ownerID}/update-contact`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: newEmail,
+        phoneNumber: newNumber,
+      }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
       })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-          return response.json();
-        })
-        .then((data) => {
-          console.log("Owner contact updated successfully:", data);
-       
-  
-        })
-        .catch((error) => {
-          console.error("Error updating owner contact:", error);
-        });
+      .then((data) => {
+        console.log("Owner contact updated successfully:", data);
+      })
+      .catch((error) => {
+        console.error("Error updating owner contact:", error);
+      });
 
-      // close editing tab 
-      setEditClicked(!editClicked);
-
+    // close editing tab
+    setEditClicked(!editClicked);
   };
-  
 
   return (
     <div className="lg:col-start-3 lg:row-end-1">
@@ -177,11 +173,11 @@ export default function Profile({
                       value={newLastName}
                       onChange={handleLastNameChange}
                       className="appearance-none  w-20 px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm mr-2"
-
                     />
                   </>
                 ) : (
-                  ownerName  )}
+                  ownerName
+                )}
               </dd>
             </div>
             <div className="mt-4 flex w-full flex-none gap-x-4 px-6">
@@ -199,7 +195,6 @@ export default function Profile({
                     value={newNumber}
                     onChange={handlePhoneNumberChange}
                     className="appearance-none  w-30 px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm mr-2"
-
                   />
                 ) : (
                   newNumber
@@ -221,7 +216,6 @@ export default function Profile({
                     value={newEmail}
                     onChange={handleEmailChange}
                     className="appearance-none  w-30 px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm mr-2"
-
                   />
                 ) : (
                   newEmail
@@ -262,16 +256,40 @@ export default function Profile({
                   className="text-sm font-medium leading-6 text-gray-900"
                 >
                   {dog.name}
-                
                 </dd>,
                 <dd
-                key={`dd-${index}`}
-                className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-600/20">
-
-                {dog.breed}
-              
-              </dd>,
+                  key={`dd-${index}`}
+                  className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-600/20"
+                >
+                  {dog.breed}
+                </dd>,
               ])}
+            </div>
+          </dl>
+          <div className="mt-6 px-2 py-2"></div>
+        </div>
+
+        {/* walk counter */}
+        <h2 className="sr-only">Walk Counter</h2>
+        <div className="rounded-lg grid-cols-1 flex-auto bg-gray-50 shadow-sm ring-1 ring-gray-900/5">
+          <dl className="flex flex-wrap">
+            <div className="flex-auto pl-6 pt-6">
+              <dt className="text-sm font-semibold leading-6 text-gray-900">
+                Walk Participation
+              </dt>
+              <dd className="mt-1 text-base font-semibold leading-6 text-gray-900"></dd>
+            </div>
+            <div className="mt-6 w-full flex-none gap-x-4 border-t border-gray-900/5 px-6 pt-6">
+              {walkCount.data.map((count, index) => (
+                <div key={`pair-${index}`} className="flex mb-3">
+                  <div className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-600/20">
+                    {count.num_dogs} dogs in a walk
+                  </div>
+                  <div className="text-xs ml-5 leading-6 text-gray-900">
+                    {count.num_walks} walks
+                  </div>
+                </div>
+              ))}
             </div>
           </dl>
           <div className="mt-6 px-2 py-2"></div>
