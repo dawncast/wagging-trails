@@ -254,8 +254,8 @@ CREATE TABLE IF NOT EXISTS taggedin (
     dogid INTEGER,
     postid INTEGER,
     PRIMARY KEY (dogid, postid),
-    FOREIGN KEY (dogid) REFERENCES owns_dog (dogid),
-    FOREIGN KEY (postid) REFERENCES post_walk (postid)
+    FOREIGN KEY (dogid) REFERENCES owns_dog (dogid) ON DELETE CASCADE,
+    FOREIGN KEY (postid) REFERENCES post_walk (postid) ON DELETE CASCADE
 );
 
 
