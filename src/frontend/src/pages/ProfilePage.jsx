@@ -12,8 +12,9 @@ function ProfilePage() {
   const [ownerDetails, setOwnerDetails] = useState(null);
   const [walkCount, setWalkCount] = useState(null);
 
-  // fetches owner details
-  useEffect(() => {
+
+   // fetches owner details
+   useEffect(() => {
     fetch(`http://localhost:8800/owner/${ownerID}`)
       .then((response) => response.json())
       .then((data) => setOwnerDetails(data))
@@ -53,6 +54,7 @@ function ProfilePage() {
   }, [ownerID]);
 
   if (!posts || !dogs || !friends || !walkCount) {
+
     return <div>Loading...</div>;
   }
 

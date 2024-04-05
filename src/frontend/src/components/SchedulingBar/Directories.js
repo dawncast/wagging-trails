@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
   Bars3Icon,
   BellIcon,
@@ -28,12 +29,12 @@ function classNames(...classes) {
 }
 
 
-
 export default function Directories({ownerID}) {
+
   return (
     <li>
       <ul className="-mx-2 space-y-1">
-        {navigation.map((item) => (
+        {navigation.map((item, index) => (
           <li key={item.name}>
             <a
               href={item.href+'/1'}
