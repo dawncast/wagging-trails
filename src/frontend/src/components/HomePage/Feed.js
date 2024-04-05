@@ -7,12 +7,10 @@ function classNames(...classes) {
 // Function to check if URL is an image
 function isImage(url) {
   const extension = url.split(".").pop().toLowerCase();
-  return ["jpg", "jpeg", "png", "gif", "bmp"].includes(extension);
+  return ["jpg", "jpeg", "png", "gif", "bmp", "webp"].includes(extension);
 }
 
 export default function PostCard({ data }) {
-
-
   return (
     <div className="bg-white">
       <div className="mx-auto max-w-2xl px-4 py-4 lg:max-w-7xl lg:px-8">
@@ -112,4 +110,3 @@ export default function PostCard({ data }) {
     </div>
   );
 }
-

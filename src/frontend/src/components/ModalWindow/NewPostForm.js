@@ -125,6 +125,8 @@ function CreatePost({ visible, onClose, data }) {
       setFiles([]);
       setContent("");
       setTags([]);
+      alert("Post created successfully.");
+      window.location.reload();
     } catch (error) {
       console.error("Error creating post:", error);
     }

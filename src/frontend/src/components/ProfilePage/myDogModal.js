@@ -11,7 +11,12 @@ export default function MyDogModal({ ownerID, onSelectedDogDetails }) {
   const [selectedIds, setSelectedIds] = useState([]);
   const [selectedOptions, setSelectedOptions] = useState();
   const [open, setOpen] = useState(true);
-  const cancelButtonRef = useRef(null)
+  const cancelButtonRef = useRef(null);
+
+  useEffect(() => {
+    const defaultIds = dogDetails.map((detail) => detail.id);
+    setSelectedIds(defaultIds);
+  }, []);
 
   const handleCheckboxChange = (detailID) => {
     setSelectedIds((prevIds) => {
@@ -27,38 +32,33 @@ export default function MyDogModal({ ownerID, onSelectedDogDetails }) {
     console.log(selectedIds);
   }, [selectedIds]);
 
-
   const generateCond = (selectedIds) => {
-    let cond = '';
+    let cond = "";
     if (selectedIds.includes(1)) {
-      cond += 'name';
+      cond += "name";
     }
     if (selectedIds.includes(2)) {
-      cond += (cond ? ', ' : '') + 'breed';
+      cond += (cond ? ", " : "") + "breed";
     }
     return cond;
   };
 
   let cond = generateCond([...selectedIds]);
-
   console.log("cond", cond);
 
   const fetchSelectedDogDetails = () => {
     fetch(`http://localhost:8800/dog/${ownerID}/${cond}`)
-    .then((response) => response.json())
-    .then((data) => setSelectedOptions(data))
-    .catch((error) => console.error("Error fetching dogs:", error));
+      .then((response) => response.json())
+      .then((data) => setSelectedOptions(data))
+      .catch((error) => console.error("Error fetching dogs:", error));
     setOpen(false);
   };
-
 
   useEffect(() => {
     onSelectedDogDetails(selectedOptions);
     console.log("selected details", selectedOptions);
-  }, [selectedOptions]);
+  }, [onSelectedDogDetails, selectedOptions]);
 
-  
-;
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog

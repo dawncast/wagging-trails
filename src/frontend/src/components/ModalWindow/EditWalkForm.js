@@ -261,6 +261,8 @@ function EditWalk({ visible, onClose, log }) {
       }
 
       console.log("Finished correctly.");
+      alert("Walk has been edited.");
+      window.location.reload();
     } catch (error) {
       console.error("Error creating schedule:", error);
     }

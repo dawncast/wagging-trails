@@ -244,6 +244,8 @@ function CreateWalk({ visible, onClose, log }) {
       }
       // all done.
       console.log("Finished correctly.");
+      alert("Walk has been created.");
+      window.location.reload();
     } catch (error) {
       console.error("Error creating schedule:", error);
     }

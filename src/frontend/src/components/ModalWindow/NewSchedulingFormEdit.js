@@ -218,6 +218,8 @@ function CreateSchedule({ visible, onClose }) {
         }
       }
       console.log("Created.");
+      alert("Walk has been created.");
+      window.location.reload();
     } catch (error) {
       console.error("Error creating walk:", error);
     }

@@ -132,8 +132,11 @@ export default function Profile({
     setUpdatedDogDetails(selectedDogDetails);
   };
 
-  console.log("updated dog details", updatedDogDetails);
+  useEffect(() => {
+    handleSelectedDogDetails(); // Call it without any arguments to initialize with default or pre-selected details
+  }, []);
 
+  console.log("updated dog details", updatedDogDetails);
 
   return (
     <div className="lg:col-start-3 lg:row-end-1">
