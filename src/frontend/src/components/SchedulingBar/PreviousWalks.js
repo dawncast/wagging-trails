@@ -55,7 +55,7 @@ export default function PreviousWalks() {
               {walk.meetupid !== null ? (
                 <>
                   <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-indigo-400 bg-indigo-500 text-[0.625rem] font-medium text-white">
-                    {walk.dogs[0][0].toUpperCase()}
+                    {walk.num_dogs}
                   </span>
                   <span className="truncate">
                     {new Date(walk.date).toLocaleDateString()} meetup
@@ -64,7 +64,7 @@ export default function PreviousWalks() {
               ) : (
                 <>
                   <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-indigo-400 bg-indigo-500 text-[0.625rem] font-medium text-white">
-                    {walk.dogs[0][0].toUpperCase()}
+                    {walk.num_dogs}
                   </span>
                   <span className="truncate">
                     {new Date(walk.date).toLocaleDateString()}{" "}
