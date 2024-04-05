@@ -14,6 +14,7 @@ import {
   MagnifyingGlassIcon,
   PhoneIcon,
 } from "@heroicons/react/24/outline";
+import MyDogModal from "./myDogModal";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -30,8 +31,11 @@ export default function Profile({
   const [postData, setPostData] = useState(posts.data);
   const [ownerInfo, setOwnerInfo] = useState(ownerDetails.data[0]);
   const [dogData, setDogData] = useState(dogs.data);
-  const [editClicked, setEditClicked] = useState(false);
+  const [updatedDogDetails, setUpdatedDogDetails] = useState([]);
+  const [profileEditClicked, setProfileEditClicked] = useState(false);
+  const [dogEditClicked, setDogEditClicked] = useState(false);
   const [ownerName, setOwnerName] = useState(ownerInfo.owner_name);
+  // const [updatedDogData, setUpdatedDogData] = useState(updatedDogDetails.data);
 
   const [firstName, lastName] = ownerName.split(" ");
 
@@ -40,9 +44,15 @@ export default function Profile({
 
   const [newNumber, setNewNumber] = useState(ownerInfo.phonenumber);
   const [newEmail, setNewEmail] = useState(ownerInfo.email);
+  const [selectedDogDetails, setSelectedDogDetails] = useState();
 
-  const handleEditClick = () => {
-    setEditClicked(!editClicked);
+  const handleProfileEditClick = () => {
+    setProfileEditClicked(!profileEditClicked);
+  };
+
+  const handleDogEditClick = () => {
+    setDogEditClicked(!dogEditClicked);
+    console.log("dog edit clicked", dogEditClicked);
   };
 
   const handleFirstNameChange = (e) => {
@@ -70,7 +80,7 @@ export default function Profile({
       },
       body: JSON.stringify({
         firstName: newFirstName,
-        lastName: newLastName, 
+        lastName: newLastName,
       }),
     })
       .then((response) => {
@@ -84,43 +94,44 @@ export default function Profile({
         let newName = newFirstName + " " + newLastName;
         console.log("new name", newName);
         setOwnerName(newName);
-
       })
       .catch((error) => {
         console.error("Error updating owner name:", error);
       });
 
-      // update owner contact
-      fetch(`http://localhost:8800/owner/${ownerID}/update-contact`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: newEmail,
-          phoneNumber: newNumber, 
-        }),
+    // update owner contact
+    fetch(`http://localhost:8800/owner/${ownerID}/update-contact`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: newEmail,
+        phoneNumber: newNumber,
+      }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
       })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-          return response.json();
-        })
-        .then((data) => {
-          console.log("Owner contact updated successfully:", data);
-       
-  
-        })
-        .catch((error) => {
-          console.error("Error updating owner contact:", error);
-        });
+      .then((data) => {
+        console.log("Owner contact updated successfully:", data);
+      })
+      .catch((error) => {
+        console.error("Error updating owner contact:", error);
+      });
 
-      // close editing tab 
-      setEditClicked(!editClicked);
-
+    // close editing tab
+    setProfileEditClicked(!profileEditClicked);
   };
-  
+
+  const handleSelectedDogDetails = (selectedDogDetails) => {
+    setUpdatedDogDetails(selectedDogDetails);
+  };
+
+  console.log("updated dog details", updatedDogDetails);
 
   return (
     <div className="lg:col-start-3 lg:row-end-1">
@@ -137,10 +148,10 @@ export default function Profile({
             </div>
             <div className="flex-none self-end px-6 pt-4">
               <dt className="sr-only">Status</dt>
-              {editClicked ? (
+              {profileEditClicked ? (
                 <div className="">
                   <dd className="inline-flex  items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/20 mr-2">
-                    <button onClick={handleEditClick}>cancel</button>
+                    <button onClick={handleProfileEditClick}>cancel</button>
                   </dd>
                   <dd className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
                     <button onClick={handleSave}>save</button>
@@ -148,7 +159,7 @@ export default function Profile({
                 </div>
               ) : (
                 <dd className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-                  <button onClick={handleEditClick}>edit</button>{" "}
+                  <button onClick={handleProfileEditClick}>edit</button>{" "}
                 </dd>
               )}
             </div>
@@ -161,7 +172,7 @@ export default function Profile({
                 />
               </dt>
               <dd className="text-sm font-medium leading-6 text-gray-900">
-                {editClicked ? (
+                {profileEditClicked ? (
                   <>
                     <input
                       type="text"
@@ -177,11 +188,11 @@ export default function Profile({
                       value={newLastName}
                       onChange={handleLastNameChange}
                       className="appearance-none  w-20 px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm mr-2"
-
                     />
                   </>
                 ) : (
-                  ownerName  )}
+                  ownerName
+                )}
               </dd>
             </div>
             <div className="mt-4 flex w-full flex-none gap-x-4 px-6">
@@ -193,13 +204,12 @@ export default function Profile({
                 />
               </dt>
               <dd className="text-sm leading-6 text-gray-500">
-                {editClicked ? (
+                {profileEditClicked ? (
                   <input
                     type="text"
                     value={newNumber}
                     onChange={handlePhoneNumberChange}
                     className="appearance-none  w-30 px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm mr-2"
-
                   />
                 ) : (
                   newNumber
@@ -215,13 +225,12 @@ export default function Profile({
                 />
               </dt>
               <dd className="text-sm leading-6 text-gray-500">
-                {editClicked ? (
+                {profileEditClicked ? (
                   <input
                     type="text"
                     value={newEmail}
                     onChange={handleEmailChange}
                     className="appearance-none  w-30 px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm mr-2"
-
                   />
                 ) : (
                   newEmail
@@ -244,34 +253,67 @@ export default function Profile({
             </div>
             <div className="flex-none self-end px-6 pt-4">
               <dt className="sr-only">Status</dt>
-              <dd className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-                edit
-              </dd>
+              {dogEditClicked ? (
+                <div className="">
+                  <MyDogModal
+                    ownerID={ownerID}
+                    onSelectedDogDetails={handleSelectedDogDetails}
+                  />
+                  <dd className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+                    <button onClick={handleDogEditClick}>edit</button>
+                  </dd>
+                </div>
+              ) : (
+                <dd className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+                  <button onClick={handleDogEditClick}>edit</button>
+                </dd>
+              )}
             </div>
             <div className="mt-6 flex w-full flex-none gap-x-4 border-t border-gray-900/5 px-6 pt-6">
-              {dogData.map((dog, index) => [
-                <dt key={`dt-${index}`} className="flex-none">
-                  <span className="sr-only">Dogs</span>
-                  <FaceSmileIcon
-                    className="h-6 w-5 text-gray-400"
-                    aria-hidden="true"
-                  />
-                </dt>,
-                <dd
-                  key={`dd-${index}`}
-                  className="text-sm font-medium leading-6 text-gray-900"
-                >
-                  {dog.name}
-                
-                </dd>,
-                <dd
-                key={`dd-${index}`}
-                className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-600/20">
-
-                {dog.breed}
-              
-              </dd>,
-              ])}
+              {updatedDogDetails
+                ? updatedDogDetails.data &&
+                  updatedDogDetails.data.map((dog, index) => [
+                    <dt key={`dt-${index}`} className="flex-none">
+                      <span className="sr-only">Dogs</span>
+                      <FaceSmileIcon
+                        className="h-6 w-5 text-gray-400"
+                        aria-hidden="true"
+                      />
+                    </dt>,
+                    <dd
+                      key={`dd-${index}`}
+                      className="text-sm font-medium leading-6 text-gray-900"
+                    >
+                      {dog.name}
+                    </dd>,
+                    <dd
+                      key={`dd-breed-${index}`}
+                      className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-600/20"
+                    >
+                      {dog.breed}
+                    </dd>,
+                  ])
+                : dogData.map((dog, index) => [
+                    <dt key={`dt-${index}`} className="flex-none">
+                      <span className="sr-only">Dogs</span>
+                      <FaceSmileIcon
+                        className="h-6 w-5 text-gray-400"
+                        aria-hidden="true"
+                      />
+                    </dt>,
+                    <dd
+                      key={`dd-${index}`}
+                      className="text-sm font-medium leading-6 text-gray-900"
+                    >
+                      {dog.name}
+                    </dd>,
+                    <dd
+                      key={`dd-breed-${index}`}
+                      className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-600/20"
+                    >
+                      {dog.breed}
+                    </dd>,
+                  ])}
             </div>
           </dl>
           <div className="mt-6 px-2 py-2"></div>

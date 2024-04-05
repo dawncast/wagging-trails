@@ -1,5 +1,5 @@
 import express from "express";
-import { deleteDog, dogsForOwner, fetchDogsFromDB, insertDog, updateDogBday, updateDogBreed, updateDogName, updateOwnerForDog } from "../services/ownsDogService.js";
+import { deleteDog, dogsForOwner, fetchDogsFromDB, insertDog, updateDogBday, updateDogBreed, updateDogName, updateOwnerForDog, selectDogDetails } from "../services/ownsDogService.js";
 
 const router = express.Router();
 
@@ -89,6 +89,25 @@ router.put("/:dogid/update-dog-bday", async (req,res) => {
     res.status(500).json({ success: false});
   }
 });
+
+router.get("/:dogid/:cond", async (req, res) => {
+  try {
+    const dogid = req.params.dogid;
+    const cond = req.params.cond
+    const tableContent = await selectDogDetails(dogid, cond);
+    
+    if (!tableContent) {
+      res.status(404).json({ error: "Dog not found" });
+      return;
+    }
+    
+    res.json({ data: tableContent });
+  } catch (err) {
+    console.error("Error retrieving dog details: ", err);
+    res.status(500).json({ err: "Internal server error" });
+  }
+});
+
 
 
 export default router;
