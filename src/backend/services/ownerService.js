@@ -194,6 +194,22 @@ async function updateOwnerContact(ownerID, email, newPhoneNumber) {
   }
 }
 
+async function searchForOwners(sometext) {
+  try {
+    const client = await pool.connect();
+    const query = `SELECT array_agg(CONCAT(firstname, ' ', lastname)) 
+                  FROM owner_name 
+                  WHERE firstname LIKE ${sometext}% OR lastname LIKE ${sometext}`;
+    const value = `${sometext}%`;
+    const result = await client.query(query,value);
+    client.release();
+    return result.rows;
+  } catch (error) {
+    console.error("Error fetching data of the owner:", error);
+    throw error;
+  }
+}
+
 
 
 export {
@@ -203,4 +219,5 @@ export {
   updateOwnerName,
   updateOwnerContact,
   fetchOwnerProfilePage,
+  searchForOwners,
 };
