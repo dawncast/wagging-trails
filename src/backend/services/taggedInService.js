@@ -56,4 +56,46 @@ async function deleteTaggedIn(postID) {
   }
 }
 
-export { insertTaggedDog, deleteTaggedIn };
+async function findAllTags(tags) {
+  let client;
+  try {
+    client = await pool.connect();
+
+    await client.query("BEGIN");
+
+    const createQuery =
+    "CREATE TABLE all_tags (tag VARCHAR(255) PRIMARY KEY)";
+    const tagTable = await client.query(createQuery);
+  
+  for (const tag of tags) {
+    const tagInsertQuery =
+      "INSERT INTO all_tags (tag) VALUES ($1)";
+    const tagInsertValues = [tag];
+    await client.query(tagInsertQuery, tagInsertValues);
+    }
+
+    const divisionQuery =
+    "SELECT DISTINCT p.postid FROM post_walk_tag p WHERE NOT EXISTS (SELECT tag FROM all_tags pp EXCEPT SELECT pp.tag FROM post_walk_tag pp WHERE p.postid = pp.postid)";
+    const result = await client.query(divisionQuery);
+
+    const deleteAllTags = 
+    "DROP TABLE IF EXISTS all_tags";
+    await client.query(deleteAllTags);
+
+    // Commit the transaction
+    await client.query("COMMIT");
+
+    return result.rows;
+  } catch (error) {
+    // Rollback the transaction in case of error
+    await client.query("ROLLBACK");
+    console.error("Error discovering post:", error);
+    throw error;
+  } finally {
+    if (client) {
+      client.release();
+    }
+  }
+}
+
+export { insertTaggedDog, deleteTaggedIn, findAllTags };
