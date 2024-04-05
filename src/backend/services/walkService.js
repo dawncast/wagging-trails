@@ -105,6 +105,38 @@ async function insertWalk(location, date, distance) {
   }
 }
 
+async function fetchDogPerWalkCounter(ownerID) {
+  try {
+    const client = await pool.connect();
+    const query = {
+      text: `
+      SELECT num_dogs, COUNT(*) AS num_walks
+      FROM (
+            SELECT w.walkid, COUNT(wf.dogid) AS num_dogs
+            FROM Walk w 
+            JOIN WentFor wf ON w.walkid = wf.walkid 
+            WHERE w.walkid IN (
+                      SELECT wf.walkid
+                      FROM WentFor wf
+                      JOIN owns_dog od ON wf.dogid = od.dogid
+                      WHERE od.ownerid = $1
+            )
+            GROUP BY w.walkid
+      ) AS walk_dog_count
+      GROUP BY num_dogs
+      ORDER BY num_dogs DESC
+    `,
+      values: [ownerID],
+    };
+    const result = await client.query(query);
+    client.release();
+    return result.rows;
+  } catch (error) {
+    console.error("Error fetching data for post from the database:", error);
+    throw error;
+  }
+}
+
 // should retrieve walkID, dogID, dogName, and date of walk.
 // if postID is null, we can provide a chance for the owner to
 // create the post for the said walk.
@@ -137,7 +169,12 @@ async function fetchAllWalks(ownerID) {
       LEFT JOIN On_MeetUp om ON w.walkID = om.walkID
       LEFT JOIN Schedules s ON om.meetUpID = s.meetUpID
       LEFT JOIN Owner_Name own1 ON s.ownerID = own1.ownerID
-      WHERE od.ownerID = $1
+      WHERE w.walkid IN (
+                      SELECT wf.walkid
+                      FROM WentFor wf
+                      JOIN owns_dog od ON wf.dogid = od.dogid
+                      WHERE od.ownerid = $1
+            )
       GROUP BY w.walkID, wd.date, wdi.distance, om.meetupID, pw.postID, pwo.ownerID, wf.rating
       ORDER BY wd.date DESC NULLS LAST;
     `,
@@ -241,4 +278,5 @@ export {
   updateWalkLocaton,
   updateWalkDate,
   updateWalkDistance,
+  fetchDogPerWalkCounter,
 };

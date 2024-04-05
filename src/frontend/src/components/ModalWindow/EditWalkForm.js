@@ -10,7 +10,7 @@ import axios from "axios";
 
 function EditWalk({ visible, onClose, log }) {
   // stub
-  const ownerID = 5;
+  const ownerID = 1;
 
   // data will be for deleting the schedule selected, so we need to
   // receive the taskID
@@ -298,6 +298,8 @@ function EditWalk({ visible, onClose, log }) {
       onClick={handleOnClose}
       className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex justify-center items-center"
     >
+      {" "}
+      {console.log(log)}
       <div className="bg-white p-4 rounded-xl">
         <h2 className="font-semibold text-center text-xl text-gray-700">
           Edit your {log.meetupid !== null ? "Meetup" : "Walk"}

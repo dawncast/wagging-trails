@@ -4,13 +4,13 @@ import SideBar from "../components/HomePage/Sidebar";
 import SideBarEdit from "../components/HomePage/SidebarEdit";
 import Profile from "../components/ProfilePage/profile.js";
 
-
 function ProfilePage() {
   const { ownerID } = useParams();
   const [posts, setPosts] = useState(null);
   const [friends, setFriends] = useState(null);
   const [dogs, setDogs] = useState(null);
   const [ownerDetails, setOwnerDetails] = useState(null);
+  const [walkCount, setWalkCount] = useState(null);
 
 
    // fetches owner details
@@ -45,21 +45,36 @@ function ProfilePage() {
       .catch((error) => console.error("Error fetching dogs:", error));
   }, [ownerID]);
 
- 
+  // fetches walk counter
+  useEffect(() => {
+    fetch(`http://localhost:8800/walk/walk-counter/${ownerID}`)
+      .then((response) => response.json())
+      .then((data) => setWalkCount(data))
+      .catch((error) => console.error("Error fetching walkCounters:", error));
+  }, [ownerID]);
 
+  if (!posts || !dogs || !friends || !walkCount) {
 
-  if (!posts || !dogs || !friends) {
     return <div>Loading...</div>;
   }
 
- console.log("owner state:", ownerDetails)
+  console.log("owner state:", ownerDetails);
   console.log("Post state:", posts);
   console.log("Friend state:", friends);
   console.log("Dog state:", dogs);
   return (
     <div>
       <SideBarEdit
-        mainFeed={<Profile ownerID={ownerID} posts={posts} friends={friends} dogs={dogs} ownerDetails={ownerDetails} />}
+        mainFeed={
+          <Profile
+            ownerID={ownerID}
+            posts={posts}
+            friends={friends}
+            dogs={dogs}
+            ownerDetails={ownerDetails}
+            walkCount={walkCount}
+          />
+        }
       />
     </div>
   );

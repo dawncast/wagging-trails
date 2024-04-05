@@ -7,7 +7,7 @@ function classNames(...classes) {
 }
 
 export default function PreviousWalks() {
-  const ownerID = 5; // stub
+  const ownerID = 1; // stub
 
   // Walk states
   const [walks, setWalks] = useState(null);
