@@ -101,10 +101,10 @@ router.get("/:ownerID", async (req, res) => {
   }
 });
 
-router.get("/search-for-owners", async (req, res) => {
+router.get("/:text/search-for-owners", async (req, res) => {
   try {
-    const { sometext } = req.body;
-    const tableContent = await searchForOwners(sometext);
+    const text = req.params.text.toLowerCase();
+    const tableContent = await searchForOwners(text);
     if (!tableContent) {
       res.status(404).json({ error: "Profile not found" });
       return;

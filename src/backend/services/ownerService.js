@@ -197,11 +197,13 @@ async function updateOwnerContact(ownerID, email, newPhoneNumber) {
 async function searchForOwners(sometext) {
   try {
     const client = await pool.connect();
-    const query = `SELECT array_agg(CONCAT(firstname, ' ', lastname)) 
+    const query = `SELECT ownerid, CONCAT(firstname, ' ', lastname) AS owner_name
                   FROM owner_name 
-                  WHERE firstname LIKE ${sometext}% OR lastname LIKE ${sometext}`;
-    const value = `${sometext}%`;
-    const result = await client.query(query,value);
+                  WHERE lower(firstname) LIKE $1 OR lower(lastname) LIKE $1
+                  GROUP BY ownerid
+                  ORDER BY firstname, lastName`;
+
+    const result = await client.query(query, [`${sometext}%`]);
     client.release();
     return result.rows;
   } catch (error) {
@@ -209,8 +211,6 @@ async function searchForOwners(sometext) {
     throw error;
   }
 }
-
-
 
 export {
   fetchOwnersFromDB,
