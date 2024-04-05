@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 
 export default function Search() {
@@ -12,8 +12,17 @@ export default function Search() {
     else setSearchResults([]);
   };
 
-  const handleTagSearch = async (event) => {
-    const tags = searchQuery.split(" ").filter((tag) => tag.startsWith("#"));
+  const handleTagSearch = async () => {
+    if (searchQuery === "" || !searchQuery.trim().startsWith("#")) {
+      alert("Please write your tag in the search bar");
+      return;
+    }
+
+    const tags = searchQuery
+      .split(" ")
+      .map((tag) => tag.slice(1))
+      .join("+");
+    window.location.href = `/post-by-tags/${tags}`;
   };
 
   const handleSearch = async (query) => {

@@ -28,20 +28,20 @@ router.delete("/:postid/delete-tagged-in", async (req, res) => {
   }
 });
 
-router.get("/posts-with-tags", async (req, res) => {
+router.post("/posts-with-tags", async (req, res) => {
   try {
     const { tags } = req.body;
     const tableContent = await findAllTags(tags);
-    
+
     if (!tableContent) {
       res.status(404).json({ error: "Posts not found" });
       return;
     }
     res.json({ data: tableContent });
-} catch (err) {
-  console.error("Error retrieving posts:", err);
-  res.status(500).json({ err: "Internal server error" });
-}
+  } catch (err) {
+    console.error("Error retrieving posts:", err);
+    res.status(500).json({ err: "Internal server error" });
+  }
 });
 
 export default router;

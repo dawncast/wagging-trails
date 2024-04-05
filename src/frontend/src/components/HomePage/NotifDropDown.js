@@ -14,7 +14,6 @@ export default function Example() {
       .then((response) => response.json())
       .then((data) => {
         setNotification(data.data);
-        console.log("Fetched notification:", data.data);
       })
       .catch((error) => console.error("Error fetching notification", error));
   }, []);
@@ -24,7 +23,6 @@ export default function Example() {
       .then((response) => response.json())
       .then((data) => {
         setFriendPost(data.data);
-        console.log("Fetched friendposts:", data.data);
       })
       .catch((error) => console.error("Error fetching notification", error));
   }, []);
@@ -40,9 +38,6 @@ export default function Example() {
       }
     });
   });
-  console.log(combinedData);
-
-  console.log("friendpost" + notification);
 
   const solutions = [
     {
