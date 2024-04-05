@@ -7,6 +7,7 @@ import {
   updateWalkLocaton,
   updateWalkDate,
   updateWalkDistance,
+  fetchDogPerWalkCounter,
 } from "../services/walkService.js";
 
 const router = express.Router();
@@ -39,6 +40,21 @@ router.get("/:ownerID", async (req, res) => {
   try {
     const ownerID = req.params.ownerID;
     const tableContent = await fetchAllWalks(ownerID);
+    if (!tableContent) {
+      res.status(404).json({ error: "Walks not found" });
+      return;
+    }
+    res.json({ data: tableContent });
+  } catch (err) {
+    console.error("Error retrieving walks:", err);
+    res.status(500).json({ err: "Internal server error" });
+  }
+});
+
+router.get("/walk-counter/:ownerID", async (req, res) => {
+  try {
+    const ownerID = req.params.ownerID;
+    const tableContent = await fetchDogPerWalkCounter(ownerID);
     if (!tableContent) {
       res.status(404).json({ error: "Walks not found" });
       return;

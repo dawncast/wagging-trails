@@ -10,7 +10,7 @@ import axios from "axios";
 
 function EditWalk({ visible, onClose, log }) {
   // stub
-  const ownerID = 5;
+  const ownerID = 1;
 
   // data will be for deleting the schedule selected, so we need to
   // receive the taskID
