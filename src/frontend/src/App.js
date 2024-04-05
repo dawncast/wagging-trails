@@ -11,7 +11,7 @@ import TagPage from "./pages/TagPage";
 import ProfilePage from "./pages/ProfilePage";
 import DisplayDog from "./pages/DisplayDog";
 import MyFriendsPage from "./pages/MyFriends";
-
+import MultiTagPage from "./pages/MultipleTagPage";
 
 function App() {
   return (
@@ -24,6 +24,7 @@ function App() {
           <Route path="/post/:ownerID/:postID" element={<PostPage />}></Route>
           <Route path="/profile/:ownerID" element={<ProfilePage />}></Route>
           <Route path="/post/:tag" element={<TagPage />}></Route>
+          <Route path="/post-by-tags/:tags" element={<MultiTagPage />}></Route>
           <Route path="/owners" element={<DisplayOwner />}></Route>
           <Route path="/add-owner" element={<AddOwner />}></Route>
           <Route path="/update-owner" element={<UpdateOwner />}></Route>
