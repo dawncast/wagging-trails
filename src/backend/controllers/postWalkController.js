@@ -19,9 +19,10 @@ router.get("/", (req, res) => {
   res.json("hello there");
 });
 
-router.get("/all", async (req, res) => {
+router.get("/all/:condition", async (req, res) => {
   try {
-    const tableContent = await fetchAllPostData();
+    const cond = req.params.condition;
+    const tableContent = await fetchAllPostData(cond);
     if (!tableContent) {
       res.status(404).json({ error: "Posts not found" });
       return;

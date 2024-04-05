@@ -18,11 +18,21 @@ import Logo from "../SchedulingBar/Logo";
 import NotificationDropDown from "./NotifDropDown";
 import Search from "../TopBar/Search";
 
-export default function SideBarEdit({ mainFeed, ownerID }) {
+export default function SideBarEdit({ mainFeed, ownerID, onChange, value }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const conds = {
+    one: "--",
+    two: "HAVING COUNT(DISTINCT od.dogid) >= 2",
+    three: "HAVING COUNT(DISTINCT own1.ownerid) > 1",
+  };
 
   const handleDropDownClick = () => {
     console.log("Dropdown clicked");
+  };
+
+  const handleCondChange = (e) => {
+    onChange(e.target.value);
   };
 
   return (
@@ -152,6 +162,37 @@ export default function SideBarEdit({ mainFeed, ownerID }) {
               </div>
             </div>
           </div>
+
+          {value && (
+            <div className="flex items-center justify-center mt-10 gap-3">
+              <input
+                type="radio"
+                value={conds.one}
+                checked={value === conds.one}
+                onChange={handleCondChange}
+              />
+              <label className="text-gray-500">all</label>
+              <br />
+
+              <input
+                type="radio"
+                value={conds.two}
+                checked={value === conds.two}
+                onChange={handleCondChange}
+              />
+              <label className="text-gray-500">group dog walks</label>
+              <br />
+
+              <input
+                type="radio"
+                value={conds.three}
+                checked={value === conds.three}
+                onChange={handleCondChange}
+              />
+              <label className="text-gray-500">meetups</label>
+              <br />
+            </div>
+          )}
 
           <main className="py-10">
             <div className="px-4 sm:px-6 lg:px-8">{mainFeed}</div>

@@ -173,7 +173,7 @@ async function fetchDataForOwnerProfilePage(ownerID) {
 // other owner names (if meetup)
 // postID, ownerID (for the href redirect)
 
-async function fetchAllPostData() {
+async function fetchAllPostData(condition) {
   try {
     const client = await pool.connect();
     const query = `
@@ -204,6 +204,7 @@ async function fetchAllPostData() {
     LEFT JOIN Schedules s ON omu.meetUpID = s.meetUpID
     LEFT JOIN Owner_Name own1 ON s.ownerID = own1.ownerID
     GROUP BY pw.postID, w.walkID, own.ownerID, own.firstName, own.lastName, w.location, wd.date
+    ${condition}
     ORDER BY pw.postID DESC, wd.date DESC;
     `;
     const result = await client.query(query);
@@ -337,11 +338,9 @@ async function insertTag(postid, tag) {
     client = await pool.connect();
 
     await client.query("BEGIN");
-    const query =
-      "INSERT INTO post_walk_tag (postid, tag) VALUES ($1, $2)";
+    const query = "INSERT INTO post_walk_tag (postid, tag) VALUES ($1, $2)";
     const values = [postid, tag];
     const result = await client.query(query, values);
-   
 
     await client.query("COMMIT");
     return true;
@@ -367,7 +366,7 @@ export {
   updatePostContent,
   deletePost,
   deleteTag,
-  insertTag
+  insertTag,
 };
 
 // unused functions
