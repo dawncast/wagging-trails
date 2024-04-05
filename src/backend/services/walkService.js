@@ -115,7 +115,7 @@ async function fetchAllWalks(ownerID) {
     const client = await pool.connect();
     const query = {
       text: `
-      SELECT w.walkID, 
+      SELECT w.walkID, COUNT (DISTINCT od.dogID) AS num_dogs,
       ARRAY_AGG(DISTINCT od.dogID) as dogIDs, 
       ARRAY_AGG(DISTINCT od.name) as dogs, w.location, wf.rating,
       wd.date, wdi.distance, 
