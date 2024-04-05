@@ -1,31 +1,36 @@
 import { auth } from "../../firebase.js";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { useNavigate } from 'react-router-dom';
 
-export default function LoginForm() {
-    
+
+export default function LoginForm() { 
+  const navigate = useNavigate();
+
+
+
   const onSubmit = async (event) => {
-    event.preventDefault(); // Prevent form submission
+    event.preventDefault(); 
 
     const email = event.target.email.value;
     const password = event.target.password.value;
 
     try {
-      // Attempt to sign in the user with the provided credentials
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
         password
       );
 
-      // If authentication succeeds, you can access the user information using userCredential.user
       console.log("Authentication successful:", userCredential.user);
 
-      // Redirect or perform other actions upon successful login
+      navigate('/home/1');
+
+
     } catch (error) {
-      // Handle authentication errors here
       console.error("Authentication error:", error.message);
     }
   };
+
 
   return (
     <>
