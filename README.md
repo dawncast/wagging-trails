@@ -3,6 +3,50 @@
 A 304 Project by Delsther James Edralin, Sangita Dutta, and Aman Johal.
 For are more expanded breakdown of this README, see _milestone 3.pdf_.
 
+
+# Milestone 4 README
+
+Here are the notes for using the application.
+
+## Installation:
+Upon cloning the repository, please install dependencies:
+
+```
+npm i
+```
+
+On these directories:
+```
+project_f6o6r_o4l8z_z1f3s/src
+project_f6o6r_o4l8z_z1f3s/src/backend
+project_f6o6r_o4l8z_z1f3s/src/frontend
+```
+
+## Setting up:
+
+On pgAdmin 4, **create** a new Database if there isn't an existing one already.
+
+Then, create a *.env* file filled with these variables:
+```
+USER={username in postgres. It's typically postgres}
+PASSWORD={your password}
+HOST=localhost
+PORT=5432
+DATABASE={the database name you created in pgAdmin 4}
+```
+Please store this in *project_f6o6r_o4l8z_z1f3s/src/backend*.
+
+
+## Booting up the application
+
+In the directory *project_f6o6r_o4l8z_z1f3s/src*, please use:
+
+```
+npm start
+```
+
+If done correctly, it will launch the application.
+
 ## Project Description
 
 The project is a social platform that manages outdoor, dog walking activities. The domain of this project focuses on **pet wellbeing**, which relates to pet care, recreation, and health. This mainly caters for people that are dog owners and want to guarantee their dogs to receive consistent stimulation by regular walks.
@@ -15,6 +59,8 @@ The project is a social platform that manages outdoor, dog walking activities. T
 > - Axios (http request from node.js)
 > - Cors (for Connect/Express middleware)
 
+
+# Milestone 3 README
 ## Task/breakdown
 
 This section will first have the development checklist per member, in which the division of task was chosen to be end-to-end. Below it are the timeline and descriptions of the features needed for the application. This can be seen in the _milestone 3.pdf_ as well.
