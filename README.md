@@ -46,6 +46,7 @@ npm start
 ```
 
 If done correctly, it will launch the application.
+<br/>
 
 ## Project Description
 
@@ -69,8 +70,8 @@ This section will first have the development checklist per member, in which the 
 
 | Aman                                 | Sangita                               | James                            |
 | ------------------------------------ | ------------------------------------- | -------------------------------- |
-| <ul><li>[x] Owner’s Friend List Page | <ul><li>[x] Home/Newsfeed             | <ul><li>[ ] Owner’s Profile Page |
-| <ul><li>[ ] Dog Modal Window         | <ul><li>[ ] Login Page                | <ul><li>[x] Owner’s Post Page    |
+| <ul><li>[x] Owner’s Friend List Page | <ul><li>[x] Home/Newsfeed             | <ul><li>[x] Owner’s Profile Page |
+| <ul><li>[x] Dog Modal Window         | <ul><li>[ ] Login Page                | <ul><li>[x] Owner’s Post Page    |
 |                                      | <ul><li>[x] Side Menu Bar             | <ul><li>[x] Side Scheduling Bar  |
 |                                      | <ul><li>[x] Notification Modal Window |                                  |
 
