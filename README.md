@@ -94,7 +94,7 @@ This section will first have the development checklist per member, in which the 
 | Aman | Sangita                                     | James                                                                    |
 | ---- | ------------------------------------------- | ------------------------------------------------------------------------ |
 |      | <ul><li>[x] Service rerouting to PostgreSQL | <ul><li>[x] Server, controller, and service file setup and documentation |
-|      | <ul><li>[ ] Frontend/Tailwind Layouting     | <ul><li>[x] Frontend setup                                               |
+|      | <ul><li>[x] Frontend/Tailwind Layouting     | <ul><li>[x] Frontend setup                                               |
 |      | <ul><li>[ ] Persistent Storage Integration  | <ul><li>[x] Media Storage Integration                                    |
 
 ## Timeline
