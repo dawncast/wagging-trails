@@ -1,6 +1,6 @@
 import express from "express";
 
-import { initiateDB, fillDB } from "../services/databaseService.js";
+import { fillDB } from "../services/databaseService.js";
 
 const router = express.Router();
 
