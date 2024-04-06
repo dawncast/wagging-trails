@@ -42,6 +42,8 @@ const EditPostMedia = forwardRef(({ postid, data }, ref) => {
     console.log(url);
     try {
       await axios.delete(`http://localhost:8800/media/${url}/delete-media`);
+      alert("image deleted. Please click edit post to continue editing.");
+      window.location.reload();
     } catch (err) {
       console.error("Error deleting media:", err);
     }

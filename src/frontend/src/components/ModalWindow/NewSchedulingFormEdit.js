@@ -227,6 +227,11 @@ function CreateSchedule({ visible, onClose }) {
 
   // for schedule submission
   const handleScheduleSubmit = async () => {
+    if (selectedDogs.length === 0) {
+      // If there's only one dog selected, do not allow removal
+      alert("You cannot create schedule with no dogs.");
+      return;
+    }
     try {
       const notificationIDs = []; // store all notificationIDs to match with Logs
 
@@ -235,7 +240,7 @@ function CreateSchedule({ visible, onClose }) {
         const notifData = {
           ownerID: ownerID,
           dogName: dog.text,
-          notifContent: "Walk with" + dog.text,
+          notifContent: `Time to ${selectedWalkEvent} with ${dog.text}!`,
         };
 
         const response = await axios.post(
@@ -285,6 +290,7 @@ function CreateSchedule({ visible, onClose }) {
         console.log("Log created:" + response.data);
       }
       // we're done.
+      window.location.reload();
     } catch (error) {
       console.error("Error creating schedule:", error);
     }
@@ -311,7 +317,7 @@ function CreateSchedule({ visible, onClose }) {
     >
       <div className="bg-white p-4 rounded-xl">
         <h2 className="font-semibold text-center text-xl text-gray-700">
-          Create a Schedule new new
+          Create a Schedule
         </h2>
 
         <div className="flex items-center my-3 mx-1">

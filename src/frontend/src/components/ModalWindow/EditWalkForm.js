@@ -268,8 +268,6 @@ function EditWalk({ visible, onClose, log }) {
     }
   };
 
-  const navigate = useNavigate();
-
   const handleDelete = async (e) => {
     e.preventDefault();
 
@@ -277,7 +275,8 @@ function EditWalk({ visible, onClose, log }) {
       await axios.delete(
         `http://localhost:8800/walk/${log.walkid}/delete-walk`
       );
-      navigate("/home");
+      alert("Deleted.");
+      window.location.reload();
     } catch (err) {
       console.error("Error deleting walk:", err);
     }

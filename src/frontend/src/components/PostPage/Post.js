@@ -2,7 +2,6 @@ import { React, useState, useEffect, useRef } from "react";
 import { Tab } from "@headlessui/react";
 import { StarIcon } from "@heroicons/react/20/solid";
 import DatePicker from "react-datepicker";
-import { useNavigate } from "react-router-dom";
 import "react-datepicker/dist/react-datepicker.css";
 import DropdownSelect from "../ModalWindow/Dropdown";
 import { XMarkIcon } from "@heroicons/react/24/outline";
@@ -21,7 +20,7 @@ function isImage(url) {
 
 export default function Post({ data }) {
   // should have the ownerID of the current user
-  const ownerID = 5;
+  const ownerID = 1;
   const MAX_CONTENT_LENGTH = 255;
 
   console.log("data passed", data);
@@ -181,12 +180,12 @@ export default function Post({ data }) {
       }
 
       await mediaRef.current.handleSubmit();
+      alert("Post Created.");
       window.location.reload();
     } catch (err) {
       console.error("Error editing post:", err);
     }
   };
-  const navigate = useNavigate();
 
   const handleDelete = async (e) => {
     e.preventDefault();
@@ -195,7 +194,8 @@ export default function Post({ data }) {
       await axios.delete(
         `http://localhost:8800/posts/${data.postid}/delete-post`
       );
-      navigate("/home");
+      alert("Post deleted.");
+      window.location.reload();
     } catch (err) {
       console.error("Error deleting post:", err);
     }
