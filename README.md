@@ -1,6 +1,6 @@
 # Wagging Trails: _project_f6o6r_o4l8z_z1f3s_
 
-A 304 Project by Delsther James Edralin, Sangita Dutta, and Aman Johal.
+A 304 Project by Delsther James Edralin, Sangita Dutta, and Aman Johal. Milestone 4 README below.
 
 ## Project Description
 
@@ -8,7 +8,9 @@ The project is a social platform that manages outdoor, dog walking activities. T
 
 ### Stack and Libraries Used
 
-> **Backend:** Node.js, Express, PostgreSQL<br><br> >**Frontend:** React Native, JavaScript<br><br> >**Other Libraries/Packages needed:**
+> **Backend:** Node.js, Express, PostgreSQL<br><br> 
+>**Frontend:** React Native, JavaScript<br><br> 
+>**Other Libraries/Packages needed:**
 >
 > - Nodemon (prototyping)
 > - Axios (http request from node.js)
