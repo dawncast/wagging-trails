@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import DisplayOwner from "./pages/DisplayOwner";
 import AddOwner from "./pages/AddOwner";
 import UpdateOwner from "./pages/UpdateOwner";
@@ -18,6 +18,7 @@ function App() {
     <div>
       <BrowserRouter>
         <Routes>
+          <Route path="/" element={<Navigate to="/home/1" />} />
           <Route path="/home/:ownerID" element={<FeedPage />}></Route>
           <Route path="/login" element={<Login />}></Route>
           <Route path="/register" element={<Register />}></Route>
