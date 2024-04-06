@@ -1,7 +1,18 @@
 # Wagging Trails: _project_f6o6r_o4l8z_z1f3s_
 
 A 304 Project by Delsther James Edralin, Sangita Dutta, and Aman Johal.
-For are more expanded breakdown of this README, see _milestone 3.pdf_.
+
+## Project Description
+
+The project is a social platform that manages outdoor, dog walking activities. The domain of this project focuses on **pet wellbeing**, which relates to pet care, recreation, and health. This mainly caters for people that are dog owners and want to guarantee their dogs to receive consistent stimulation by regular walks.
+
+### Stack and Libraries Used
+
+> **Backend:** Node.js, Express, PostgreSQL<br><br> >**Frontend:** React Native, JavaScript<br><br> >**Other Libraries/Packages needed:**
+>
+> - Nodemon (prototyping)
+> - Axios (http request from node.js)
+> - Cors (for Connect/Express middleware)
 
 
 # Milestone 4 README
@@ -48,17 +59,6 @@ npm start
 If done correctly, it will launch the application.
 <br/>
 
-## Project Description
-
-The project is a social platform that manages outdoor, dog walking activities. The domain of this project focuses on **pet wellbeing**, which relates to pet care, recreation, and health. This mainly caters for people that are dog owners and want to guarantee their dogs to receive consistent stimulation by regular walks.
-
-### Stack and Libraries Used
-
-> **Backend:** Node.js, Express, PostgreSQL<br><br> >**Frontend:** React Native, JavaScript<br><br> >**Other Libraries/Packages needed:**
->
-> - Nodemon (prototyping)
-> - Axios (http request from node.js)
-> - Cors (for Connect/Express middleware)
 
 
 # Milestone 3 README
