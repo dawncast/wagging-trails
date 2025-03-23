@@ -62,41 +62,6 @@ If done correctly, it will launch the application.
 
 
 # Milestone 3 README
-## Task/breakdown
-
-This section will first have the development checklist per member, in which the division of task was chosen to be end-to-end. Below it are the timeline and descriptions of the features needed for the application. This can be seen in the _milestone 3.pdf_ as well.
-
-**Frontend Development**
-
-| Aman                                 | Sangita                               | James                            |
-| ------------------------------------ | ------------------------------------- | -------------------------------- |
-| <ul><li>[x] Owner’s Friend List Page | <ul><li>[x] Home/Newsfeed             | <ul><li>[x] Owner’s Profile Page |
-| <ul><li>[x] Dog Modal Window         | <ul><li>[ ] Login Page                | <ul><li>[x] Owner’s Post Page    |
-|                                      | <ul><li>[x] Side Menu Bar             | <ul><li>[x] Side Scheduling Bar  |
-|                                      | <ul><li>[x] Notification Modal Window |                                  |
-
-**Backend Entity Functions Development**
-
-| Aman                                                        | Sangita                                                        | James                                                 |
-| ----------------------------------------------------------- | -------------------------------------------------------------- | ----------------------------------------------------- |
-| <ul><li>[X] `Owner` - for friend list                       | <ul><li>[ ] `Owner` - for login and search                     | <ul><li>[X] `Owner` - for profile page                |
-| <ul><li>[X] `Friendship` - for friend list                  | <ul><li>[x] `Walk` - for scheduling bar and post               | <ul><li>[X] `Owns_Dog` - for profile page             |
-| <ul><li>[X] `Owns_Dog` - for dog window                     | <ul><li>[x] `Post_Walk` - for post                             | <ul><li>[x] `Walk` - for scheduling bar and post      |
-| <ul><li>[X] `Walk` - for dog window                         | <ul><li>[ ] `Friendship` - for posts                           | <ul><li>[x] `Post_Walk` - for scheduling bar and post |
-| <ul><li>[X] `Post_Walk` - for dog window                    | <ul><li>[X] `Receives_Notifications` - for notification window | <ul><li>[X] `On_MeetUp` - for scheduling bar and post |
-| <ul><li>[X] `WentFor` - for dog window                      | <ul><li>[x] `FriendPost` - for posts                           | <ul><li>[x] `Schedules` - for scheduling bar          |
-| <ul><li>[ ] `On_MeetUp` - for dog window                    |                                                                | <ul><li>[X] `TaggedIn` - for post                     |
-| <ul><li>[x] `Post_Media`, `Video`, `Photo` - for dog window |                                                                | <ul><li>[x] `Post_Media`, `Video`, `Photo` - for post |
-| <ul><li>[ ] `TaggedIn` - for dog window                     |                                                                | <ul><li>[x] `Logs` - for scheduling                   |
-
-**Misc. Checklist**
-
-| Aman | Sangita                                     | James                                                                    |
-| ---- | ------------------------------------------- | ------------------------------------------------------------------------ |
-|      | <ul><li>[x] Service rerouting to PostgreSQL | <ul><li>[x] Server, controller, and service file setup and documentation |
-|      | <ul><li>[x] Frontend/Tailwind Layouting     | <ul><li>[x] Frontend setup                                               |
-|      | <ul><li>[ ] Persistent Storage Integration  | <ul><li>[x] Media Storage Integration                                    |
-
 ## Timeline
 
 **Week 1 [Mar 4 - 10]:** Setting up the code base.
