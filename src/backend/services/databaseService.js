@@ -129,17 +129,18 @@ export async function fillDB() {
   let client;
   try {
     client = await pool.connect();
-    client.query(fillQuery);
-    return true;
+    await client.query(fillQuery);
+    return true; 
   } catch (error) {
     console.error("Error filling database.", error);
-    throw error;
+    return false; 
   } finally {
     if (client) {
-      client.release();
+      client.release(); 
     }
   }
 }
+
 
 export default pool;
 

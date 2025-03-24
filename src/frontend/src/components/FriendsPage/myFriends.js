@@ -31,7 +31,7 @@ console.log(friends);
         </button>
       </div>
     </div>
-    <ul role="list" className="divide-y divide-gray-100">
+    <ul className="divide-y divide-gray-100">
       {friends.map((friend) => (
         <li key={friend.ownerid2} className="flex justify-between gap-x-6 py-5">
           <div className="flex min-w-0 gap-x-4">
@@ -46,10 +46,8 @@ console.log(friends);
               </p>
               <p className="mt-1 flex text-xs leading-5 text-gray-500">
                 <a href={`mailto:${friend.email}`} className="truncate hover:underline">
-                  email: {friend.email}
-                 
-                </a>
-            
+                  email: {friend.email}   
+                </a>    
               </p>
               <p className="mt-1 flex text-xs leading-5 text-gray-500">
               number: {friend.phonenumber}

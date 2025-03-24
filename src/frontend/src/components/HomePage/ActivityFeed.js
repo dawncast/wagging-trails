@@ -12,7 +12,6 @@ const post = {
       name: "Angled view",
       src: "walkingdog.jpeg",
     },
-    // More images...
   ],
   description: `
     <p>good sunny day, foraged a seashell</p>
@@ -22,7 +21,6 @@ const post = {
       name: "Comments",
       items: ["comment1", "comment2"],
     },
-    // More sections...
   ],
 };
 

@@ -39,37 +39,6 @@ export default function Example() {
     });
   });
 
-  const solutions = [
-    {
-      name: "Blog",
-      description: "Learn about tips, product updates and company culture",
-      href: "#",
-    },
-    {
-      name: "Help center",
-      description:
-        "Get all of your questions answered in our forums of contact support",
-      href: "#",
-    },
-    {
-      name: "Guides",
-      description:
-        "Learn how to maximize our platform to get the most out of it",
-      href: "#",
-    },
-    {
-      name: "Events",
-      description:
-        "Check out webinars with experts and learn about our annual conference",
-      href: "#",
-    },
-    {
-      name: "Security",
-      description: "Understand how we take your privacy seriously",
-      href: "#",
-    },
-  ];
-
   return (
     <Popover className="relative">
       <Popover.Button className="inline-flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900">

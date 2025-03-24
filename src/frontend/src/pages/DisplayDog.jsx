@@ -19,7 +19,7 @@ const DisplayDog = () => {
 
 
   return (
-    <ul role="list" className="divide-y divide-gray-100">
+    <ul className="divide-y divide-gray-100">
       {dogs.data?.map((dog) => (
         <li key={dog.id} className="flex justify-between gap-x-6 py-5">
             <div className="min-w-0 flex-auto">
